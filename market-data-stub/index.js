@@ -7,7 +7,23 @@ let clients = [];
 app.use(express.json());
 app.use(express.static("./public"));
 
-let fxRates = { "USD/JPY": 110.45, "EUR/USD": 1.1357 };
+let fxRates =[
+    { 
+        "pair": "USD/JPY",
+        "baseCurrency": "USD",
+        "quoteCurrency": "JPY",
+        "ask": 110.45,
+        "bid": 108.45
+    },
+    {
+        "pair": "EUR/USD",
+        "baseCurrency": "EUR",
+        "quoteCurrency": "USD",
+        "ask": 1.1357,
+        "bid": 1.1337
+    }
+];
+let record = { "timestamp": new Date().toISOString(), rates: [ ...fxRates ] }
 
 function formatToFourDecimals(num) {
   num = String(num);
@@ -19,16 +35,21 @@ function formatToFourDecimals(num) {
 }
 
 function updateFxRates() {
-    for (let pair in fxRates) {
-        const newRate = Number(fxRates[pair]) + (Math.random() - 0.5) * 0.001;
-        fxRates[pair] = formatToFourDecimals(newRate);
-    }
+    fxRates.forEach(
+        item => {
+            const newAsk = Number(item["ask"]) + (Math.random() - 0.5) * 0.001;
+            const newBid = Number(item["bid"]) + (Math.random() - 0.5) * 0.001;
+            item["ask"] = formatToFourDecimals(newAsk);
+            item["bid"] = formatToFourDecimals(newBid);
+        }
+    )
 }
 
 
-function sendDataToAllClients(data) {
+function sendDataToAllClients(record) {
+    record['timestamp'] =  new Date().toISOString();
     clients.forEach((client) =>
-        client.response.write(JSON.stringify(data) + "\n")
+        client.response.write(JSON.stringify(record))
     );
 }
 
@@ -53,7 +74,7 @@ app.get("/subscribe", async (req, res) => {
 
 
 function updateData() { 
-    sendDataToAllClients(fxRates);
+    sendDataToAllClients(record);
     updateFxRates(); // Update data with a random number 
     setTimeout(updateData, 1000); // Schedule next update in 10ms 
 }
