@@ -48,12 +48,14 @@ function updateFxRates() {
 
 function sendDataToAllClients(record) {
     record['timestamp'] =  new Date().toISOString();
-    clients.forEach((client) =>
-        client.response.write(JSON.stringify(record))
+    clients.forEach((client) => {
+            console.log("Client:" + client.id + " message:" + JSON.stringify(record));
+            client.response.write(`data: ${JSON.stringify(record)}\n\n`);
+        }
     );
 }
 
-app.get("/subscribe", async (req, res) => {
+app.get("/forex/rates", async (req, res) => {
     const clients_id = v4();
     const headers = {
         "Content-Type": "text/event-stream",
