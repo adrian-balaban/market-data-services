@@ -1,0 +1,4 @@
+### Parent docker-compose that includes
+###       SERVICES          ###
+###       STUBS             ###
+###       KAFKA             ###

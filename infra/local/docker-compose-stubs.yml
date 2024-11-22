@@ -1,0 +1,5 @@
+services:
+  fx-market-stub:
+    image: localhost/market-data-stub:latest
+    ports:
+      - 3080:3080

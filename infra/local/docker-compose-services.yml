@@ -1,0 +1,7 @@
+services:
+  fx-market-connector:
+    image: docker.io/library/fx-market-connector:latest
+    depends_on:
+      - broker
+    ports:
+     - 4080:4080

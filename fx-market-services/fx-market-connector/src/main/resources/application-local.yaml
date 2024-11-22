@@ -6,10 +6,10 @@ server:
   port: 4080
 
 kafka:
-  bootstrap-servers: PLAINTEXT://broker:29092
+  bootstrap-servers: localhost:9092
 
 vendor:
   market:
     data:
       stub:
-        url: http://fx-market-stub:3080
+        url: "http://localhost:3080"
