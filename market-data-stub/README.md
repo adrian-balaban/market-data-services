@@ -3,6 +3,7 @@ Dummy FX Market Data Stub
 It streams dummy FX Rates via SSE protocol
 
 1. Run locally:
+    `npm install`
     `node index.js`
 
 2. Run on docker:
