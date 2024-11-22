@@ -1,5 +1,6 @@
 package com.fx.market.fxmarketconnector.vendor.stub;
 
+import com.fx.market.fxmarketconnector.vendor.stub.model.FxRateEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -16,17 +17,17 @@ public class MarketDataStubClient {
     @Autowired
     private MarketDataStubProperties marketDataStubProperties;
 
+    private final static  WebClient client = WebClient.create();
+
+    private final static ParameterizedTypeReference<ServerSentEvent<FxRateEvent>> sseType
+            = new ParameterizedTypeReference<>() {
+    };
+
     public Flux<ServerSentEvent<FxRateEvent>> consumeServerSentEvent() {
-        log.info("Starting consuming SSE from {}", marketDataStubProperties.getUrl());
-
-        WebClient client = WebClient.create(marketDataStubProperties.getUrl());
-        ParameterizedTypeReference<ServerSentEvent<FxRateEvent>> sseType
-                = new ParameterizedTypeReference<>() {
-        };
-
+        log.info("Requested GET of SSE from {}", marketDataStubProperties.getUrl());
         return client.get()
-            .uri(FX_MARKET_DATA_PATH)
-            .retrieve()
-            .bodyToFlux(sseType);
+                .uri(marketDataStubProperties.getUrl() + FX_MARKET_DATA_PATH)
+                .retrieve()
+                .bodyToFlux(sseType);
     }
 }

@@ -1,0 +1,37 @@
+package com.fx.market.fxmarketconnector.service;
+
+import com.fx.market.fxmarketconnector.FxMarketConnectorApplication;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+
+@Slf4j
+@Service
+public class FxMarketConnectionInitializer {
+
+    @Autowired
+    private FxMarketConnectorService fxMarketConnectorService;
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void initializeFxMarketConnection() {
+        log.info("Initializing Fx Market Connection");
+        try {
+            fxMarketConnectorService.processFxMarketRates();
+        } catch (Exception ex) {
+            log.error("Critical Error: ", ex);
+        } finally {
+            log.error("TODO: Shutdown!");
+        }
+
+        log.error("Unexpected finish of FxMarketConnection");
+    }
+}

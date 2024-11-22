@@ -1,15 +1,12 @@
 spring:
   application:
     name: fxMarketDataConnector
-  kafka:
-    properties:
-      session:
-        timeout:
-          ms: 45000
-    bootstrap-servers: localhost:9092
 
 server:
   port: 4080
+
+kafka:
+  bootstrap-servers: localhost:9092
 
 vendor:
   market:

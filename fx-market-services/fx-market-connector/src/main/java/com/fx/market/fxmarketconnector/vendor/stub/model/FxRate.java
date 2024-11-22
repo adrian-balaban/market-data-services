@@ -1,4 +1,4 @@
-package com.fx.market.fxmarketconnector.vendor.stub;
+package com.fx.market.fxmarketconnector.vendor.stub.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

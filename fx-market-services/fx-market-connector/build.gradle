@@ -14,13 +14,10 @@ dependencies {
 	implementation "org.springframework.cloud:spring-cloud-stream:${SPRING_CLOUD_STREAM}"
 
 	// Kafka
-	implementation 'org.apache.kafka:kafka-clients'
-	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'io.projectreactor.kafka:reactor-kafka'
 
 	// Proto
 	implementation 'com.google.protobuf:protobuf-java:3.25.5' // version 4 breaks java compilation
-	implementation 'org.modelmapper:modelmapper:3.2.1'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
