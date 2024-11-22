@@ -1,0 +1,13 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+rootProject.name = 'fx-market-services'
+
+include ':model-fx-proto'
+include ':fx-market-connector'
+
+project(":model-fx-proto").projectDir = file("./libs/model-fx-proto")

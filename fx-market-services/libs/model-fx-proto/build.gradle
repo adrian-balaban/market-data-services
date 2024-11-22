@@ -1,0 +1,21 @@
+plugins {
+    id "com.google.protobuf" version "0.9.4"
+}
+
+dependencies {
+    // Proto
+    implementation 'com.google.protobuf:protobuf-java:3.25.5' // version 4 breaks java compilation
+    implementation 'org.modelmapper:modelmapper:3.2.1'
+}
+
+protobuf {
+    protoc {
+        // Don't use local protoc but download on the fly
+        artifact = 'com.google.protobuf:protoc:3.0.0'
+    }
+}
+
+compileJava.dependsOn generateProto
+
+sourceSets.main.java.srcDir "/build/generated/source/proto/main/java"
+
