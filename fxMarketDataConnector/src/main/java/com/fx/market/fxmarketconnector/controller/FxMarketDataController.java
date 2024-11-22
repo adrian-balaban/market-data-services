@@ -24,12 +24,22 @@ public class FxMarketDataController {
     private FxMarketDataKafkaProducer fxMarketDataKafkaProducer;
 
     @GetMapping(path = "/rates", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ServerSentEvent<FxRateEvent>> fxMarketRateStream() {
+    public Flux<ServerSentEvent<FxRateEvent>> fxMarketRate() {
         log.info("Received request for fx-market stream");
 
         return marketDataStubClient.consumeServerSentEvent()
                 .doOnNext(
                     event -> fxMarketDataKafkaProducer.sendMessage(event.id(), event.data().toString())
                 );
+    }
+
+    @GetMapping(path = "/stream-rates", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public void fxMarketRateStream() {
+        log.info("Received request for fx-market stream");
+
+        fxMarketDataKafkaProducer.streamFxRates(
+                marketDataStubClient.consumeServerSentEvent()
+                        .map(sseEvent -> sseEvent.data())
+        );
     }
 }

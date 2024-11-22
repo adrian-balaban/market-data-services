@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+package com.fx.market.kafka.message;
+option java_package = " com.fx.market.kafka.message";
+
+message FxRateEventProto {
+  string timestamp = 1;
+  repeated FxRateProto rates = 2;
+}
+
+message FxRateProto {
+  string pair = 1;
+  string baseCurrency = 2;
+  string quoteCurrency = 3;
+  string ask = 4;
+  string bid = 5;
+}

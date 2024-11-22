@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class FxRateEvent {
 
-    private LocalDateTime timestamp;
-    private List<FxRate> rates;
+    LocalDateTime timestamp;
+    List<FxRate> rates;
 
 }

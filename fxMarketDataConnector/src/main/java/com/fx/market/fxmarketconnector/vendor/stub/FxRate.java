@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FxRate {
 
-    private String pair;
-    private String baseCurrency;
-    private String quoteCurrency;
-    private String ask; // keep as string to avoid conversion
-    private String bid; // keep as string to avoid conversion
+    String pair;
+    String baseCurrency;
+    String quoteCurrency;
+    String ask; // keep as string to avoid conversion
+    String bid; // keep as string to avoid conversion
 }

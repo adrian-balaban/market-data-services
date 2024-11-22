@@ -6,16 +6,7 @@ spring:
       session:
         timeout:
           ms: 45000
-      security:
-        protocol: SASL_SSL
-      sasl:
-        jaas:
-          config:
-        mechanism: PLAIN
-    bootstrap-servers:
-
-client:
-  id:
+    bootstrap-servers: localhost:9092
 
 server:
   port: 4080
@@ -25,10 +16,3 @@ vendor:
     data:
       stub:
         url: "http://localhost:3080"
-  kafka:
-    key:
-    secret:
-
-#logging:
-#  level:
-#    root: DEBUG
