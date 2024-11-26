@@ -25,5 +25,5 @@ pushd ../.. && gradle build && popd
 ## To run the example jobs:
 
 ``` bash
-./submit-jobs.sh
+./submitJobs.sh
 ```

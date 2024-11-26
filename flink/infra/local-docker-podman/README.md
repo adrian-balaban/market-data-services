@@ -29,5 +29,5 @@ docker-compose up
 
 ## To run the example jobs:
 ``` bash
-./submit-jobs.sh
+./submitJobs.sh
 ```

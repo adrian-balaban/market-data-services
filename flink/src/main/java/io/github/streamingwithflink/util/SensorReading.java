@@ -15,6 +15,10 @@
  */
 package io.github.streamingwithflink.util;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+
 /**
  * POJO to hold sensor reading data.
  */
@@ -39,6 +43,8 @@ public class SensorReading {
     }
 
     public String toString() {
-        return "(" + this.id + ", " + this.timestamp + ", " + this.temperature + ")";
+        return "(" + this.id + ", " +
+                LocalDateTime.ofEpochSecond(timestamp / 1000, 0, ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:SS")) +
+                ", " + this.temperature + ")";
     }
 }
