@@ -21,20 +21,21 @@ repositories {
 
 dependencies {
     implementation libs.com.google.code.gson
-    api libs.org.apache.flink.flink.queryable.state.runtime.v2.v12
-    api libs.org.apache.flink.flink.queryable.state.client.java.v2.v12
+    api libs.org.apache.flink.flink.queryable.state.runtime
+    api libs.org.apache.flink.flink.queryable.state.client.java
     runtimeOnly libs.org.slf4j.slf4j.log4j12
     runtimeOnly libs.log4j.log4j
     compileOnly libs.org.apache.flink.flink.java
-    compileOnly libs.org.apache.flink.flink.streaming.java.v2.v12
-    compileOnly libs.org.apache.flink.flink.runtime.web.v2.v12
+    compileOnly libs.org.apache.flink.flink.streaming.java
+    compileOnly libs.org.apache.flink.flink.runtime.web
     compileOnly libs.org.apache.derby.derby
 }
 
 group = 'io.github.streamingwithflink'
 version = '1.0'
 description = 'Java Examples for Stream Processing with Apache Flink'
-//java.sourceCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 publishing {
     publications {
