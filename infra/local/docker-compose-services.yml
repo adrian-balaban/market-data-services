@@ -5,3 +5,5 @@ services:
       - broker
     ports:
      - 4080:4080
+    networks:
+      - kafka_net
