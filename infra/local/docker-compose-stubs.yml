@@ -3,3 +3,5 @@ services:
     image: localhost/market-data-stub:latest
     ports:
       - 3080:3080
+    networks:
+      - kafka_net
