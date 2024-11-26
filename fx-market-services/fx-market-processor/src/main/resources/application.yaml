@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: fxMarketDataProcessor
+
+server:
+  port: 4081
+
+kafka:
+  bootstrap-servers: localhost:9092

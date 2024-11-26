@@ -13,9 +13,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation "org.springframework.cloud:spring-cloud-stream:${SPRING_CLOUD_STREAM}"
 
-	// Kafka
-	implementation 'io.projectreactor.kafka:reactor-kafka'
-
 	// Proto
 	implementation 'com.google.protobuf:protobuf-java:3.25.5' // version 4 breaks java compilation
 

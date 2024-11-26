@@ -9,5 +9,8 @@ rootProject.name = 'fx-market-services'
 
 include ':model-fx-proto'
 include ':fx-market-connector'
+include ':fx-market-processor'
+include ':fx-market-flink-connector'
+include ':fx-market-flink-processor'
 
 project(":model-fx-proto").projectDir = file("./libs/model-fx-proto")

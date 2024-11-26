@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: fxMarketFlinkDataProcessor
+
+server:
+  port: 4084
