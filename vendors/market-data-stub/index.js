@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const { v4 } = require("uuid");
 let clients = [];
-
+let customBody = {};
 app.use(express.json());
 app.use(express.static("./public"));
 
@@ -24,6 +24,7 @@ let fxRates =[
     }
 ];
 let record = { "timestamp": new Date().toISOString(), rates: [ ...fxRates ] }
+let customRecord = { "timestamp": new Date().toISOString(), customBody }
 
 function formatToFourDecimals(num) {
   num = String(num);
@@ -73,6 +74,11 @@ app.get("/forex/rates", async (req, res) => {
     });
 });
 
+app.post("/emitevent", async (req, res) => {
+    customRecord.customBody = req.body;
+    sendDataToAllClients(customRecord);
+    res.send("Sent to SSE:" + '\n' + JSON.stringify(req.body));
+});
 
 
 function updateData() { 
