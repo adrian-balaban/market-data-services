@@ -3,47 +3,11 @@ const express = require("express");
 const app = express();
 const { v4 } = require("uuid");
 let clients = [];
+let payload = {};
 app.use(express.json());
 app.use(express.static("./public"));
 
-let fxRates =[
-    { 
-        "pair": "USD/JPY",
-        "baseCurrency": "USD",
-        "quoteCurrency": "JPY",
-        "ask": 110.45,
-        "bid": 108.45
-    },
-    {
-        "pair": "EUR/USD",
-        "baseCurrency": "EUR",
-        "quoteCurrency": "USD",
-        "ask": 1.1357,
-        "bid": 1.1337
-    }
-];
-let record = { "timestamp": new Date().toISOString(), rates: [ ...fxRates ] }
-
-function formatToFourDecimals(num) {
-  num = String(num);
-  let match = num.match(/^\d+\.0*\d{0,4}/);
-  if (match) {
-    return match[0];
-  }
-  return num;
-}
-
-function updateFxRates() {
-    fxRates.forEach(
-        item => {
-            const newAsk = Number(item["ask"]) + (Math.random() - 0.5) * 0.001;
-            const newBid = Number(item["bid"]) + (Math.random() - 0.5) * 0.001;
-            item["ask"] = formatToFourDecimals(newAsk);
-            item["bid"] = formatToFourDecimals(newBid);
-        }
-    )
-}
-
+let record = { "timestamp": new Date().toISOString(), customBody: payload }
 
 function sendDataToAllClients(record) {
     record['timestamp'] =  new Date().toISOString();
@@ -72,12 +36,15 @@ app.get("/forex/rates", async (req, res) => {
     });
 });
 
-
-
-function updateData() { 
+app.post("/emitevent", async (req, res) => {
+    record.customBody = req.body;
     sendDataToAllClients(record);
-    updateFxRates(); // Update data with a random number 
-    setTimeout(updateData, 1000); // Schedule next update in 10ms 
+    res.send("Sent to SSE:" + '\n' + JSON.stringify(req.body));
+});
+
+
+function updateData() {
+    sendDataToAllClients(record);
 }
 
 
