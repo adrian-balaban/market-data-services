@@ -36,7 +36,7 @@ app.get("/forex/rates", async (req, res) => {
     });
 });
 
-app.post("/emitevent", async (req, res) => {
+app.post("/emitEvent", async (req, res) => {
     record.customBody = req.body;
     sendDataToAllClients(record);
     res.send("Sent to SSE:" + '\n' + JSON.stringify(req.body));
