@@ -1,0 +1,31 @@
+buildscript {
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${SPRING_BOOT_GRADLE_PLUGIN}")
+    }
+}
+
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+    implementation project(':fx-market-flink-processor')
+
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation "org.springframework.cloud:spring-cloud-stream-test-binder:${SPRING_CLOUD_STREAM}"
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+task copyJar(type: Copy) {
+    dependsOn ':fx-market-flink-processor:jar'
+    from project(':fx-market-flink-processor').tasks.jar.archiveFile
+    into layout.buildDirectory.dir("flink-jars")
+}
+
+processResources {
+    dependsOn copyJar
+}
