@@ -4,4 +4,4 @@ services:
     ports:
       - 3080:3080
     networks:
-      - kafka_net
+      - docker_net
