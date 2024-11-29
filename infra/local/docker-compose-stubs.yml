@@ -1,7 +1,13 @@
 services:
   fx-market-stub:
+    build:
+      context: ../../vendors/market-data-stub
     image: localhost/fx-market/market-data-stub:0.0.1
     ports:
       - 3080:3080
-    networks:
-      - kafka_net
+    volumes:
+      - ../../vendors/market-data-stub:/usr/src/app
+
+networks:
+  kafka_net:
+    driver: bridge
