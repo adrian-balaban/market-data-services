@@ -7,7 +7,7 @@ let payload = {};
 app.use(express.json());
 app.use(express.static("./public"));
 
-let record = { "timestamp": new Date().toISOString(), customBody: payload }
+let record = { "timestamp": new Date().toISOString(), rates: payload }
 
 function sendDataToAllClients(record) {
     record['timestamp'] =  new Date().toISOString();
@@ -37,7 +37,7 @@ app.get("/forex/rates", async (req, res) => {
 });
 
 app.post("/emitEvent", async (req, res) => {
-    record.customBody = req.body;
+    record.rates = req.body;
     sendDataToAllClients(record);
     res.send("Sent to SSE:" + '\n' + JSON.stringify(req.body));
 });
