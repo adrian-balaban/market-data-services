@@ -1,0 +1,83 @@
+@startuml
+!include <k8s/Common>
+!include <k8s/Context>
+!include <k8s/Simplified>
+!include <k8s/OSS/all>
+!include <kubernetes/k8s-sprites-unlabeled-25pct>
+
+title FX Market Data Team - Component Diagram
+footer FX Market Data Team - Component Diagram
+left to right direction
+
+"Bloomberg" --> Internet
+package "Bloomberg" {
+    component [B-PIPE ?]
+}
+cloud Internet {
+}
+package "Bloomberg Mock" as BMExternal {
+   component "fxMarketDataConnector\n(JavaScript)"
+}
+
+node "Kafka KStream/KTable Demo" as "KafkaKStreamKTableDemo" {
+    package "FxMarketConnector" as K_FMC {
+        component "(Java , Spring Boot)"
+    }
+    package "Kafka / Confluent" as K_KC {
+        component "KStream/Topic\nproto_fx_rates" as K_KS
+        component "KTable/GlobalKTable\nPAIR A/RATE A\nPAIR B/RATE B\nPAIR C/RATE C\n" as K_KT
+    }
+
+    BMExternal --> K_FMC
+    K_FMC --> K_KS
+    K_KS --> K_KT
+}
+
+node "Knative Demo : Kubernetes Cluster with Knative Installed" as KnativeDemo {
+    package "Bloomberg Mock" as BMCluster {
+        component "fxMarketDataConnector\n(JavaScript)\nK8s Deployment"
+    }
+    node "Version 1 (Source to Sink)" {
+        package "FxMarketConnector" as FMC1 {
+            component "Java ?, Spring Boot ?"
+        }
+        package "Kafka (Confluent?)" as K1 {
+            component "KStream/Topic\nproto_fx_rates" as KS1
+            component "KTable/GlobalKTable\nPAIR A/RATE A\nPAIR B/RATE B\nPAIR C/RATE C\n" as KT1
+        }
+    BMCluster --> "FMC1"
+    FMC1 --> KS1
+    KS1 --> KT1
+    }
+    node "Version 2 (Channels and Subscriptions)" {
+    }
+    node "Version 3 ((Brokers,Triggers and Filters)" {
+    }
+}
+
+!include <cloudogu/common>
+!include <cloudogu/dogus/jenkins>
+!include <cloudogu/dogus/cloudogu>
+!include <cloudogu/dogus/scm>
+!include <cloudogu/dogus/smeagol>
+!include <cloudogu/dogus/nexus>
+!include <cloudogu/tools/k8s>
+
+node "Ecosystem"  {
+DOGU_JENKINS(jenkins, Jenkins/ArgoCD)
+DOGU_SCM(scm, Github)
+DOGU_SMEAGOL(project, Project)
+DOGU_NEXUS(nexus,Container-repository\nLocal?)
+}
+TOOL_K8S(k8s, Kubernetes)
+
+actor teamMember
+
+teamMember --> project : "Changes"
+project -> scm : Push
+scm -> jenkins : Trigger
+jenkins -> nexus : Deploy
+jenkins --> k8s : Deploy
+
+
+@enduml
