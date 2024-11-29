@@ -1,0 +1,44 @@
+@startuml
+!include <k8s/Common>
+!include <k8s/Context>
+!include <k8s/Simplified>
+!include <k8s/OSS/all>
+!include <kubernetes/k8s-sprites-unlabeled-25pct>
+
+title FX Market Data Team - Knative Demo - Component Diagram
+footer FX Market Data Team - Knative Demo - Component Diagram
+skin rose
+skinparam componentStyle uml2
+
+scale max 2048 width
+skinparam {
+    nodesep 10
+    ranksep 10
+}
+
+package "Bloomberg" {
+    component [B-PIPE ?]
+}
+
+cloud Internet {
+}
+
+"Bloomberg" --> Internet
+
+node "Kubernetes Cluster with Knative Eventing and Serving Installed" {
+package "Bloomberg Mock" {
+    component "fxMarketDataConnector\n(JavaScript)\nK8s Deployment"
+}
+package "FxMarketConnector" {
+    component "Java ?, Spring Boot ?\nK8s Deployment"
+}
+package "Kafka (Confluent?)" {
+    component "KStream/Topic\nproto_fx_rates"
+    component "KTable/GlobalKTable\nPAIR A/RATE A\nPAIR B/RATE B\nPAIR C/RATE C\n"
+}
+"KStream/Topic\nproto_fx_rates"-->"KTable/GlobalKTable\nPAIR A/RATE A\nPAIR B/RATE B\nPAIR C/RATE C\n"
+"Bloomberg Mock" --> "FxMarketConnector"
+ "FxMarketConnector" --> "KStream/Topic\nproto_fx_rates"
+
+
+@enduml
