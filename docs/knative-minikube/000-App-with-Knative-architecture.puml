@@ -7,38 +7,33 @@
 
 title FX Market Data Team - Knative Demo - Component Diagram
 footer FX Market Data Team - Knative Demo - Component Diagram
-skin rose
-skinparam componentStyle uml2
+left to right direction
 
-scale max 2048 width
-skinparam {
-    nodesep 10
-    ranksep 10
-}
-
+"Bloomberg" --> Internet
 package "Bloomberg" {
     component [B-PIPE ?]
 }
-
 cloud Internet {
 }
 
-"Bloomberg" --> Internet
-
-node "Kubernetes Cluster with Knative Eventing and Serving Installed" {
-package "Bloomberg Mock" {
-    component "fxMarketDataConnector\n(JavaScript)\nK8s Deployment"
+node "Kubernetes Cluster with Knative Installed" as v1 {
+    package "Bloomberg Mock" {
+        component "fxMarketDataConnector\n(JavaScript)\nK8s Deployment"
+    }
+    node "Version 1 (Source to Sink)" {
+        package "FxMarketConnector" as FMC1 {
+            component "Java ?, Spring Boot ?"
+        }
+        package "Kafka (Confluent?)" as K1 {
+            component "KStream/Topic\nproto_fx_rates" as KS1
+            component "KTable/GlobalKTable\nPAIR A/RATE A\nPAIR B/RATE B\nPAIR C/RATE C\n" as KT1
+        }
+    "Bloomberg Mock" --> "FMC1"
+    FMC1 --> KS1
+    KS1 --> KT1
+    }
+node "Version 2 (Channels and Subscriptions)" {
 }
-package "FxMarketConnector" {
-    component "Java ?, Spring Boot ?\nK8s Deployment"
+node "Version 3 ((Brokers,Triggers and Filters)" {
 }
-package "Kafka (Confluent?)" {
-    component "KStream/Topic\nproto_fx_rates"
-    component "KTable/GlobalKTable\nPAIR A/RATE A\nPAIR B/RATE B\nPAIR C/RATE C\n"
-}
-"KStream/Topic\nproto_fx_rates"-->"KTable/GlobalKTable\nPAIR A/RATE A\nPAIR B/RATE B\nPAIR C/RATE C\n"
-"Bloomberg Mock" --> "FxMarketConnector"
- "FxMarketConnector" --> "KStream/Topic\nproto_fx_rates"
-
-
 @enduml
