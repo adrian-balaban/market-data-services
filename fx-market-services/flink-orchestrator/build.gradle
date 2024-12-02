@@ -4,10 +4,19 @@ buildscript {
     }
 }
 
+final String FLINK_JOBS_JARS_PATH="src/main/resources/flink-jobs"
+
 apply plugin: 'org.springframework.boot'
 
 dependencies {
     implementation project(':fx-market-flink-processor')
+    implementation project(':model-flink-api')
+    implementation project(':common-utils')
+    implementation fileTree(dir: FLINK_JOBS_JARS_PATH, include: ['*.jar'])
+
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${SPRING_CLOUD_OPEN_FEIGN}"
+    implementation 'io.github.openfeign:feign-okhttp:13.5'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
@@ -20,12 +29,33 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-task copyJar(type: Copy) {
-    dependsOn ':fx-market-flink-processor:jar'
-    from project(':fx-market-flink-processor').tasks.jar.archiveFile
-    into layout.buildDirectory.dir("flink-jars")
+tasks.named('compileJava') {
+    dependsOn tasks.named('copyFxMarketFlinkProcessorJar')
+}
+
+tasks.named('clean') {
+    dependsOn cleanDirectory
+    dependsOn(':fx-market-flink-processor:clean')
+}
+
+task copyFxMarketFlinkProcessorJar(type: Copy) {
+    dependsOn(':fx-market-flink-processor:shadowJar')
+    //doLast {
+        from project(':fx-market-flink-processor').fileTree('build/libs') {
+            include '*-all.jar'
+        }
+        into FLINK_JOBS_JARS_PATH
+    //}
+}
+
+task cleanDirectory(type: Delete) {
+    delete fileTree(dir: FLINK_JOBS_JARS_PATH, include: '**/*')
+}
+
+bootJar {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 processResources {
-    dependsOn copyJar
+    dependsOn copyFxMarketFlinkProcessorJar
 }
