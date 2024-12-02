@@ -47,7 +47,6 @@ public class FxMarketFlinkProcessor {
                         WatermarkStrategy.noWatermarks(),
                         "Kafka Source"
                 )
-                .map((fxRateEventProto -> fxRateEventProto))
                 .flatMap(new FxRatesFlatMapper())
                 .keyBy(FxRate::getPair)
                 .reduce((FxRate aggValue, FxRate newValue) -> newValue);

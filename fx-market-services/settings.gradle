@@ -9,8 +9,12 @@ rootProject.name = 'fx-market-services'
 
 //Libs
 include ':model-fx-proto'
+include ':model-flink-api'
+include ':common-utils'
 
 project(":model-fx-proto").projectDir = file("./libs/model-fx-proto")
+project(":model-flink-api").projectDir = file("./libs/model-flink-api")
+project(":common-utils").projectDir = file("./libs/common-utils")
 
 
 //Flink Jobs

@@ -1,0 +1,86 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
+buildscript { // To be removed once OpenApi Generator bug is solved:
+    dependencies { // https://github.com/OpenAPITools/openapi-generator/issues/18753
+        classpath("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml") {
+            version { strictly("2.14.2") }
+        }
+    }
+}
+
+plugins {
+    id("org.openapi.generator") version "7.10.0"
+}
+
+apply plugin: "java-library"
+apply plugin: 'org.openapi.generator'
+
+dependencies {
+
+//    api "com.fasterxml.jackson.core:jackson-annotations"
+    api "com.google.code.findbugs:jsr305:${GOOGLE_CODE_FINDBUGS_JSR305_VERSION}"
+    api "io.swagger:swagger-annotations:${SWAGGER_ANNOTATIONS_VERSION}"
+    api "com.google.code.gson:gson"
+    api "jakarta.annotation:jakarta.annotation-api"
+    api "jakarta.validation:jakarta.validation-api"
+    api "javax.annotation:javax.annotation-api:${JAVAX_ANNOTATION_API_VERSION}"
+    api "javax.validation:validation-api:${JAVAX_VALIDATION_API_VERSION}"
+    api "org.springframework:spring-context"
+    api "org.springframework:spring-core"
+    api 'org.openapitools:jackson-databind-nullable:0.2.6'
+
+    api 'io.gsonfire:gson-fire:1.9.0'
+
+
+    //api 'com.fasterxml.jackson.core:jackson-core:2.18.2'
+    //api 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
+    //api 'com.fasterxml.jackson.core:jackson-annotations:2.18.2'
+
+}
+
+def openApiSpecs = [
+        [file: "flink.yml", model: "com.fx.flink.model"],
+]
+
+openApiSpecs.each {
+    String taskName = "generateModel_" + it.file
+    String file = it.file
+    String model = it.model
+    task(taskName, type: GenerateTask) {
+        inputSpec = "$projectDir/openapi/$file"
+        outputDir = "$buildDir/generated-models"
+        generatorName = "java"
+        modelPackage = model.toString()
+        configOptions = [
+                additionalModelTypeAnnotations: '@org.springframework.validation.annotation.Validated',
+                useBeanValidation             : 'true',
+                useJakartaEe                  : 'true',
+                useSpringBoot3                : 'true',
+                dateLibrary                   : 'custom',
+                java8                         : 'true',
+                serializableModel             : 'true',
+                library: 'webclient'
+        ]
+        globalProperties = [
+                models    : '',
+                modelTests: 'false',
+                generateSupportingFiles: 'true',
+                supportingFilesToGenerate: 'JSON.java'
+        ]
+        typeMappings = [
+                "Date": "LocalDate",
+                "Float": "java.math.BigDecimal"
+        ]
+        nameMappings = [
+                // Flink OpenApi has a naming collision - start
+                "failure-cause": 'failure_dash_cause',
+                "failureCause": 'failure_cause',
+                // Flink OpenApi has a naming collision - end
+        ]
+        importMappings = [
+                "Date": "java.time.LocalDate"
+        ]
+    }
+    compileJava.dependsOn(taskName)
+}
+sourceSets.main.java.srcDir "$buildDir/generated-models/src/main/java"
