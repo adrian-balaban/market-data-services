@@ -14,13 +14,15 @@ testing {
 
         functionalTest(JvmTestSuite) {
             dependencies {
-                implementation project()
+                implementation project(':model-fx-proto')
                 implementation 'com.google.code.gson:gson:2.10.1'
                 implementation 'org.apache.kafka:kafka-clients:3.5.1'
                 implementation 'org.springframework.kafka:spring-kafka:3.0.11'
                 implementation 'org.springframework:spring-context:5.3.29'
                 implementation 'org.springframework.kafka:spring-kafka-test:3.0.11'
                 implementation 'org.springframework.boot:spring-boot-starter-test:2.7.15'
+                implementation 'org.awaitility:awaitility:4.2.0'
+
             }
 
             targets {
@@ -44,6 +46,7 @@ tasks.test {
 }
 
 dependencies {
+    implementation project(':model-fx-proto')
     implementation 'org.apache.kafka:kafka-clients:3.5.1'
     implementation 'org.springframework.kafka:spring-kafka:3.0.11'
     implementation 'org.springframework:spring-context:5.3.29'

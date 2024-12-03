@@ -2,6 +2,9 @@ plugins {
     id "com.google.protobuf" version "0.9.4"
 }
 
+apply plugin: "java-library"
+
+
 dependencies {
     // Proto
     implementation 'com.google.protobuf:protobuf-java:3.25.5' // version 4 breaks java compilation
@@ -11,7 +14,8 @@ dependencies {
 protobuf {
     protoc {
         // Don't use local protoc but download on the fly
-        artifact = 'com.google.protobuf:protoc:3.0.0'
+        //artifact = 'com.google.protobuf:protoc:3.0.0'
+        artifact = 'com.google.protobuf:protoc:3.14.0:osx-x86_64'
     }
 }
 
