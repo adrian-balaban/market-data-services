@@ -30,16 +30,10 @@ dependencies {
     api 'org.openapitools:jackson-databind-nullable:0.2.6'
 
     api 'io.gsonfire:gson-fire:1.9.0'
-
-
-    //api 'com.fasterxml.jackson.core:jackson-core:2.18.2'
-    //api 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
-    //api 'com.fasterxml.jackson.core:jackson-annotations:2.18.2'
-
 }
 
 def openApiSpecs = [
-        [file: "flink.yml", model: "com.fx.flink.model"],
+        [file: "flink.yml", model: "com.fx.flink.model"]
 ]
 
 openApiSpecs.each {
@@ -59,7 +53,7 @@ openApiSpecs.each {
                 dateLibrary                   : 'custom',
                 java8                         : 'true',
                 serializableModel             : 'true',
-                library: 'webclient'
+                library                       : 'webclient'
         ]
         globalProperties = [
                 models    : '',
