@@ -56,6 +56,12 @@ bootJar {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
+bootBuildImage {
+    environment = [
+            'BPE_JAVA_TOOL_OPTIONS': '-Xms1024m -Xms1024m -XX:MaxDirectMemorySize=512m' // MaxDirectMemorySize has to be grater than sum of fat jars size
+    ]
+}
+
 processResources {
     dependsOn copyFxMarketFlinkProcessorJar
 }

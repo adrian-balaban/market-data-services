@@ -50,7 +50,6 @@ public class FlinkOrchestratorService {
         log.info("FlinkOrchestratorService - ApplicationReadyEvent End of Setup. Monitoring jobs...");
 
         while (true) {
-
             try {
                 jobIds.forEach(
                         jobId ->

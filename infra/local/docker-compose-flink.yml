@@ -11,6 +11,11 @@ services:
         jobmanager.rpc.address: jobmanager        
     networks:
       - docker_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/jars"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   taskmanager:
     image: flink:1.20.0-scala_2.12-java17

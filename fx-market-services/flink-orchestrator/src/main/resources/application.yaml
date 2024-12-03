@@ -6,4 +6,4 @@ server:
   port: 4082
 
 flink:
-  url: http://localhost:8084
+  url: http://jobmanager:8081

@@ -25,4 +25,3 @@ compileJava   {
 compileJava.dependsOn generateProto
 
 sourceSets.main.java.srcDir "/build/generated/source/proto/main/java"
-
