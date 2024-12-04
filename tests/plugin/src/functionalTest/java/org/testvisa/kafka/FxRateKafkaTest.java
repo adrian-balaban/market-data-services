@@ -33,7 +33,7 @@ public class FxRateKafkaTest {
     public void testReadFromFxRateTopic() throws Exception {
         TestsPluginFunctionalTest emit = new TestsPluginFunctionalTest();
 
-        // 1. Генерация текущего timestamp
+        // 1.  timestamp
         long timestamp = System.currentTimeMillis();
        System.out.println("----------------------------"+ timestamp);
 
@@ -56,9 +56,9 @@ public class FxRateKafkaTest {
    //     });
 
 
-        // 5. Использование Awaitility для ожидания сообщения
+        // 5.
         await()
-                .atMost(10, SECONDS) // Максимальное время ожидания
+                .atMost(10, SECONDS) //  время ожидания
                 .untilAsserted(() -> {
                     ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(500)); // Polling
 
@@ -66,11 +66,11 @@ public class FxRateKafkaTest {
                     // x = com.fx.market.kafka.message.FxRateEventProto.parseFrom(a);
 
 
-                    // Проверка, что хотя бы одно сообщение содержит нужный timestamp
+                    //  timestamp
                     assertTrue(
                             StreamSupport.stream(records.records(topic).spliterator(), false)
                                     .anyMatch(record -> record.value().contains("\"timestamp\":" + timestamp)),
-                            "Сообщение с указанным timestamp не найдено!"
+                            " timestamp !"
                     );
                 });
 

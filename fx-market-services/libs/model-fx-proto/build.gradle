@@ -15,7 +15,13 @@ protobuf {
     protoc {
         // Don't use local protoc but download on the fly
         //artifact = 'com.google.protobuf:protoc:3.0.0'
-        artifact = 'com.google.protobuf:protoc:3.14.0:osx-x86_64'
+        if (System.getProperty('os.name').toLowerCase().contains('windows')) { // Configuration for Windows
+            artifact = 'com.google.protobuf:protoc:3.14.0'
+        } else if (System.getProperty('os.name').toLowerCase().contains('mac')) { // Configuration for macOS
+            artifact = 'com.google.protobuf:protoc:3.14.0:osx-x86_64'
+        } else {
+            artifact = 'com.google.protobuf:protoc:3.14.0:linux-x86_64'
+        }
     }
 }
 

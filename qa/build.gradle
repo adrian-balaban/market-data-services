@@ -1,0 +1,92 @@
+buildscript {
+    ext {
+        springBootVersion = '3.1.4'
+        serenityCoreVersion = '4.0.21'
+        junitVersion = '4.13.1'
+    }
+
+    repositories {
+        mavenCentral()
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath 'net.serenity-bdd:serenity-gradle-plugin:4.0.21'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'java-library'
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
+}
+
+apply from: "test_versions.gradle"
+apply from: "../fx-market-services/versions.gradle"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation "io.cucumber:cucumber-spring:${CUCUMBER_VERSION}"
+    testImplementation "io.cucumber:cucumber-java:${CUCUMBER_VERSION}"
+    testImplementation "io.cucumber:cucumber-junit:${CUCUMBER_VERSION}"
+    testImplementation "io.cucumber:cucumber-junit-platform-engine:${CUCUMBER_VERSION}"
+    //testImplementation 'org.junit.vintage:junit-vintage-engine:5.11.3'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.4.0'
+
+    implementation project(':model-fx-proto')
+
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+
+test {
+    useJUnitPlatform()
+    systemProperty("cucumber.junit-platform.naming-strategy", "long")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.boot:spring-boot-dependencies:${SPRING_BOOT_VERSION}"
+    }
+}
+
+subprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url 'https://plugins.gradle.org/m2/' }
+        maven { url 'https://packages.confluent.io/maven/' }
+    }
+
+    buildscript {
+        repositories {
+            mavenCentral()
+            maven { url 'https://plugins.gradle.org/m2/' }
+        }
+    }
+
+    apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:${SPRING_BOOT_VERSION}"
+        }
+    }
+}
