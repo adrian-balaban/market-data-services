@@ -2,3 +2,8 @@
 ###       SERVICES          ###
 ###       STUBS             ###
 ###       KAFKA             ###
+
+
+networks:
+  docker_net:
+    driver: "bridge"

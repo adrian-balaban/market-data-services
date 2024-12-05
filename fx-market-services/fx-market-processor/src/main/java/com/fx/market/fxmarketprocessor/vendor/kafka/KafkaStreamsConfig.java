@@ -1,5 +1,6 @@
 package com.fx.market.fxmarketprocessor.vendor.kafka;
 
+import com.fx.market.kafka.FxRateEventProtoSerde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.processor.WallclockTimestampExtractor;
@@ -31,7 +32,7 @@ public class KafkaStreamsConfig {
                 APPLICATION_ID_CONFIG, "fx-market-processor-stream-operator",
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
                 DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Integer().getClass().getName(),
-                DEFAULT_VALUE_SERDE_CLASS_CONFIG, ProtoMessageSerde.class.getName(),
+                DEFAULT_VALUE_SERDE_CLASS_CONFIG, FxRateEventProtoSerde.class.getName(),
                 DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, WallclockTimestampExtractor.class.getName(),
                 StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 0, // Set commit interval to 1000 ms
                 StreamsConfig.RESTORE_CONSUMER_PREFIX, 0
