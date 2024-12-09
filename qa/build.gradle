@@ -57,6 +57,7 @@ dependencies {
     testImplementation "io.cucumber:cucumber-java:${CUCUMBER_VERSION}"
     testImplementation "io.cucumber:cucumber-junit-platform-engine:${CUCUMBER_VERSION}"
     testImplementation 'org.awaitility:awaitility:4.2.0'
+    testImplementation "org.junit.platform:junit-platform-suite:1.10.0"
     testImplementation 'org.springframework.kafka:spring-kafka-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
