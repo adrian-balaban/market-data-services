@@ -2,7 +2,8 @@ buildscript {
     ext {
         springBootVersion = '3.1.4'
         serenityCoreVersion = '4.0.21'
-        junitVersion = '4.13.1'
+        cucumberVersion = '7.20.1'
+        junitVersion = '5.10.0'
     }
 
     repositories {
@@ -15,12 +16,14 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath 'net.serenity-bdd:serenity-gradle-plugin:4.0.21'
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
 }
 
 plugins {
     id 'java'
     id 'java-library'
+    id 'org.springframework.boot' version '3.1.4'
     id "io.spring.dependency-management" version "1.0.11.RELEASE"
 }
 
@@ -30,13 +33,32 @@ apply from: "../fx-market-services/versions.gradle"
 repositories {
     mavenCentral()
 }
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+    }
+}
 
 dependencies {
+  //  testImplementation "io.cucumber:cucumber-java:${CUCUMBER_VERSION}"
+   // testImplementation "io.cucumber:cucumber-junit-platform-engine:${CUCUMBER_VERSION}"
+    //testImplementation "org.junit.platform:junit-platform-suite:${JUNIT_PLATFORM}"
+    //testImplementation "org.junit.jupiter:junit-jupiter:5.10.0"
+    //implementation project(':model-fx-proto')
+    // Core dependencies
+    implementation project(':model-fx-proto')
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'org.apache.kafka:kafka-clients:3.5.1'
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'org.springframework:spring-context'
+
+    // Testing dependencies
+    testImplementation "org.junit.jupiter:junit-jupiter:${junitVersion}"
     testImplementation "io.cucumber:cucumber-java:${CUCUMBER_VERSION}"
     testImplementation "io.cucumber:cucumber-junit-platform-engine:${CUCUMBER_VERSION}"
-    testImplementation "org.junit.platform:junit-platform-suite:${JUNIT_PLATFORM}"
-    testImplementation "org.junit.jupiter:junit-jupiter:5.10.0"
-    implementation project(':model-fx-proto')
+    testImplementation 'org.awaitility:awaitility:4.2.0'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 }
 
@@ -57,11 +79,7 @@ test {
         events "passed", "failed", "skipped"
     }
 }
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.boot:spring-boot-dependencies:${SPRING_BOOT_VERSION}"
-    }
-}
+
 
 subprojects {
     repositories {
@@ -81,9 +99,5 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
 
-    dependencyManagement {
-        imports {
-            mavenBom "org.springframework.boot:spring-boot-dependencies:${SPRING_BOOT_VERSION}"
-        }
-    }
+
 }
