@@ -1,4 +1,4 @@
-package org.testvisa.kafka;
+package testvisa.kafka;
 import static org.awaitility.Awaitility.await;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.jupiter.api.Assertions.*;
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.testvisa.TestsPluginFunctionalTest;
+import testvisa.TestsPluginFunctionalTest;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.stream.StreamSupport;
 
 
-@ContextConfiguration
+@ContextConfiguration(classes = KafkaTestConfig.class)
 @ExtendWith(SpringExtension.class)
 @Import(KafkaTestConfig.class)
 public class FxRateKafkaTest {
@@ -60,10 +60,10 @@ public class FxRateKafkaTest {
         await()
                 .atMost(10, SECONDS) //  время ожидания
                 .untilAsserted(() -> {
-                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(500)); // Polling
+                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000)); // Polling
 
-                    var a = new byte['a'];
-                    // x = com.fx.market.kafka.message.FxRateEventProto.parseFrom(a);
+                    //var a = new byte['a'];
+                  //   x = com.fx.market.kafka.message.FxRateEventProto.parseFrom(a);
 
 
                     //  timestamp
