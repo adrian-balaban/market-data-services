@@ -30,11 +30,15 @@ dependencies {
 }
 
 bootBuildImage {
+	version = "${version != 'unspecified' ? version : '0.0.2'}"
+	imageName = "localhost:5001/fx-market/${project.name}:${version}"
+	publish = true
 	docker {
 		host = "unix:///run/podman/podman.sock"
 		bindHostToBuilder = true
+		tlsVerify = false
 	}
 	environment = [
-			'BPE_JAVA_TOOL_OPTIONS': '-Xms1024m -Xms1024m -XX:MaxDirectMemorySize=512m'
+			'BPE_JAVA_TOOL_OPTIONS': '-Xms1024m -Xmx2048m -XX:MaxDirectMemorySize=512m'
 	]
 }
