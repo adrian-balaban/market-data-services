@@ -28,6 +28,10 @@ dependencies {
 }
 
 bootBuildImage {
+	docker {
+		host = "unix:///run/podman/podman.sock"
+		bindHostToBuilder = true
+	}
 	environment = [
 			'BPE_JAVA_TOOL_OPTIONS': '-Xms1024m -Xms1024m -XX:MaxDirectMemorySize=512m'
 	]
