@@ -3,6 +3,7 @@ import static org.awaitility.Awaitility.await;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.jupiter.api.Assertions.*;
 
+import helpers.TestContext;
 import org.apache.kafka.clients.consumer.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,10 +25,15 @@ import java.util.stream.StreamSupport;
 @ExtendWith(SpringExtension.class)
 @Import(KafkaTestConfig.class)
 public class FxRateKafkaTest {
+    private helpers.TestContext context;
 
 
     @Autowired
     private ConsumerFactory<String, String> consumerFactory;
+
+    public FxRateKafkaTest(TestContext testContext) {
+        this.context = testContext;
+    }
 
     @Test
     public void testReadFromFxRateTopic() throws Exception {
