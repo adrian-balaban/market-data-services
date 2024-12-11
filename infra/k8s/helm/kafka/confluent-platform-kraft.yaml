@@ -63,10 +63,10 @@ spec:
     resources:
       requests:
         cpu: 200m
-        memory: 1Gi
+        memory: 2Gi
       limits:
         cpu: 1
-        memory: 2Gi
+        memory: 4Gi
   image:
     application: docker.io/confluentinc/cp-enterprise-control-center:7.7.0
     init: docker.io/confluentinc/confluent-init-container:2.9.0

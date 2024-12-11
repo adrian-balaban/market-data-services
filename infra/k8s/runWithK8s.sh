@@ -17,6 +17,7 @@ sleep 3
 
 NAMESPACE=fxmarket
 
+
 kubectl get namespace ${NAMESPACE} || kubectl create namespace ${NAMESPACE}
 
 ###############################################################
@@ -32,7 +33,6 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 helm install fx-flink oci://${REGISTRY_NAME}/${REPOSITORY_NAME}/flink --version 1.3.16 --namespace ${NAMESPACE}
 
-
 ###############################################################
 echo "$separator"
 echo "DEPLOYING KAFKA"
@@ -47,6 +47,8 @@ helm upgrade        --install confluent-operator \
 sed -i "s/___CHANGE_ME_NAMESPACE___/${NAMESPACE}/g" helm/kafka/confluent-platform-kraft.yaml ## Set proper namespace
 kubectl apply -f helm/kafka/confluent-platform-kraft.yaml
 sed -i "s/${NAMESPACE}/___CHANGE_ME_NAMESPACE___/g" helm/kafka/confluent-platform-kraft.yaml ## Revert
+
+
 
 
 ###############################################################
@@ -107,3 +109,8 @@ kubectl config set-context --current --namespace=${NAMESPACE}
 #    -f ./helm/services/values-common.yaml \
 #    -f ./helm/services/values-fxmarket.yaml fx-market-services \
 #    ./helm/services \
+
+## kubectl exec -ti kafka-0 -- bash
+## kafka-topics --create -replication-factor 3 --partitions 3 --topic fx_rates -bootstrap-server localhost:9092
+## kafka-console-consumer --bootstrap-server localhost:9092 --topic fx_rates
+## kafka-topics --create -replication-factor 3 --partitions 3 --topic fx_rates -bootstrap-server localhost:9092

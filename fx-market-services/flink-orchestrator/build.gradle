@@ -57,7 +57,7 @@ bootJar {
 }
 
 bootBuildImage {
-    version = "${version != 'unspecified' ? version : '0.0.2'}"
+    version = "${rootProject.version != 'unspecified' ? rootProject.version : '0.0.1'}"
     imageName = "localhost:5001/fx-market/${project.name}:${version}"
     publish = true
     docker {
