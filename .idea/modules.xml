@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/flink-orchestrator/fx-market-services.flink-orchestrator.main.iml" filepath="$PROJECT_DIR$/.idea/modules/flink-orchestrator/fx-market-services.flink-orchestrator.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/fx-market-connector/fx-market-services.fx-market-connector.main.iml" filepath="$PROJECT_DIR$/.idea/modules/fx-market-connector/fx-market-services.fx-market-connector.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/fx-market-processor/fx-market-services.fx-market-processor.main.iml" filepath="$PROJECT_DIR$/.idea/modules/fx-market-processor/fx-market-services.fx-market-processor.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/visa.iml" filepath="$PROJECT_DIR$/.idea/visa.iml" />
     </modules>
   </component>

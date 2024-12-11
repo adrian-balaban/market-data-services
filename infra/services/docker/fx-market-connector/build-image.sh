@@ -2,7 +2,7 @@
 set -e
 
 echo "Building OSI Image - fx-market-connector - Start"
-pushd ../../../../fx-market-services && ./gradlew fx-market-connector:bootBuildImage && popd
+pushd ../../../../fx-market-services && ./gradlew fx-market-connector:clean && ./gradlew fx-market-connector:bootBuildImage && popd
 
 
 #docker run docker.io/library/fx-market-connector:latest

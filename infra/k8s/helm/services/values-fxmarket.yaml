@@ -8,7 +8,7 @@ apps:
     name: fx-market-connector
     image:
       repository: localhost:5001/fx-market/fx-market-connector
-      tag: 0.0.2
+      tag: 0.1.1
 
     podAnnotations: {}
 
@@ -63,7 +63,7 @@ apps:
     name: fx-market-processor
     image:
       repository: localhost:5001/fx-market/fx-market-processor
-      tag: 0.0.2
+      tag: 0.1.1
 
     podAnnotations: {}
 
@@ -115,7 +115,7 @@ apps:
     name: flink-orchestrator
     image:
       repository: localhost:5001/fx-market/flink-orchestrator
-      tag: 0.0.2
+      tag: 0.1.1
 
     podAnnotations: {}
 

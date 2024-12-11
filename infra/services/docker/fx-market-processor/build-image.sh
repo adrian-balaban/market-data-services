@@ -2,7 +2,7 @@
 set -e
 
 echo "Building OSI Image - fx-market-processor - Start"
-pushd ../../../../fx-market-services && ./gradlew fx-market-processor:bootBuildImage && popd
+pushd ../../../../fx-market-services && ./gradlew fx-market-processor:clean && ./gradlew fx-market-processor:bootBuildImage && popd
 
 
 #docker run docker.io/library/fx-market-processor:latest
