@@ -2,5 +2,14 @@
 
 *.iml
 *.gradle
+qa/.gradle/
+# ignore all
+.idea/*
+
+# except
+!.idea/workspace.xml
+!.idea/usage.statistics.xml
+!.idea/shelf/
+
 # Ignore Gradle build output directory
 build
