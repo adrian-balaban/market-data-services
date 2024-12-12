@@ -1,4 +1,6 @@
+
 buildscript {
+
     ext {
         springBootVersion = '3.1.4'
         serenityCoreVersion = '4.0.21'
@@ -51,7 +53,7 @@ dependencies {
     implementation 'org.apache.kafka:kafka-clients:3.5.1'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.springframework:spring-context'
-
+    testImplementation 'com.google.protobuf:protobuf-java:3.25.5'
     // Testing dependencies
     testImplementation "org.junit.jupiter:junit-jupiter:${junitVersion}"
     testImplementation "io.cucumber:cucumber-java:${CUCUMBER_VERSION}"
