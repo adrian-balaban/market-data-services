@@ -10,11 +10,11 @@ apply from: "versions.gradle"
 group = 'com.fx.market'
 version = '0.0.1-SNAPSHOT'
 
-java {
+/*java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
-}
+}*/
 
 configurations {
 	compileOnly {
