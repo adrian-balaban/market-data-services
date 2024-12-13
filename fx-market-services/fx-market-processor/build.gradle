@@ -30,8 +30,9 @@ dependencies {
 }
 
 bootBuildImage {
-	version = "${rootProject.version != 'unspecified' ? rootProject.version : '0.0.1'}"
-	imageName = "localhost:5001/fx-market/${project.name}:${version}"
+	var versionVar = "${versionProperty != 'unspecified' ? versionProperty : '0.0.1'}"
+	var registryVar = "${registryProperty != 'unspecified' ? registryProperty : 'docker.io'}"
+	imageName = "${registryVar}/fx-market/${project.name}:${versionVar}"
 	publish = true
 	docker {
 		host = "unix:///run/podman/podman.sock"
