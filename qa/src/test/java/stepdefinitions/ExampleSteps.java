@@ -10,10 +10,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.fx.market.kafka.message.FxRateEventProto;
 import org.junit.jupiter.api.Assertions;
@@ -21,7 +21,7 @@ import testvisa.kafka.FxRateKafkaTest;
 
 public class ExampleSteps {
     private TestContext context;
-    private String endpoint;
+    private String endpoint = "http://localhost:3080/emitEvent";;
     private JsonObject requestBody;
     private HttpResponse<String> response;
 
@@ -44,10 +44,21 @@ public class ExampleSteps {
         requestBody.addProperty("timestamp", context.get("timestamp").toString());
 
         // Create the "rates" array
-        List<Map<String, String>> ratesList = dataTable.asMaps();
+        List<Map<String, String>> ratesData = dataTable.asMaps();
         List<JsonObject> ratesJsonArray = new ArrayList<>();
 
-        for (Map<String, String> rate : ratesList) {
+        Random random = new Random();
+        DecimalFormat decimalFormat = new DecimalFormat("#.####", DecimalFormatSymbols.getInstance(Locale.US)); // Локаль с точкой
+
+        List<Map<String, String>> updatedRatesData = new ArrayList<>();
+        for (Map<String, String> row : ratesData) {
+            Map<String, String> mutableRow = new HashMap<>(row); // Создаём изменяемую копию
+            mutableRow.put("ask", mutableRow.get("ask").equals("*") ? decimalFormat.format(generateRandomRate(random)) : mutableRow.get("ask"));
+            mutableRow.put("bid", mutableRow.get("bid").equals("*") ? decimalFormat.format(generateRandomRate(random)) : mutableRow.get("bid"));
+            updatedRatesData.add(mutableRow);
+        }
+
+        for (Map<String, String> rate : updatedRatesData) {
             JsonObject rateJson = new JsonObject();
             rateJson.addProperty("pair", rate.get("pair"));
             rateJson.addProperty("baseCurrency", rate.get("baseCurrency"));
@@ -61,7 +72,11 @@ public class ExampleSteps {
         requestBody.add("rates", new Gson().toJsonTree(ratesJsonArray));
     }
 
-    @When("the rates data is sent to the API")
+    private double generateRandomRate(Random random) {
+        return 1.0 + (2.0 - 1.0) * random.nextDouble();
+    }
+
+    @When("the rates are sent by Bloomberg")
     public void sendRatesData() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -71,15 +86,16 @@ public class ExampleSteps {
                 .build();
 
         response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        Assertions.assertNotNull(response, "Response should not be null");
+        Assertions.assertEquals(200, response.statusCode(), "Unexpected HTTP status code");
+
     }
 
     @Then("the response status code should be {int}")
     public void verifyStatusCode(int expectedStatusCode) {
-        Assertions.assertNotNull(response, "Response should not be null");
-        Assertions.assertEquals(expectedStatusCode, response.statusCode(), "Unexpected HTTP status code");
-    }
+           }
 
-    @When("message in kafka verified")
+    @When("FX Rates landed on kafka")
     public void i_run_the_example() throws Exception {
         new FxRateKafkaTest(context).testReadFromFxRateTopic();
     }
@@ -88,6 +104,7 @@ public class ExampleSteps {
     public void setApiEndpoint(String apiEndpoint) {
         this.endpoint = apiEndpoint;
     }
+
 
     @Then("I should see the example result")
     public void i_should_see_the_example_result() {

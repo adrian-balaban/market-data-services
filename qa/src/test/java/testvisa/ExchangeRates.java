@@ -6,7 +6,7 @@ public class ExchangeRates {
     private String timestamp;
     private List<Rate> rates;
 
-    // Конструктор для ExchangeRates
+
     public ExchangeRates(String timestamp, List<Rate> rates) {
         this.timestamp = timestamp;
         this.rates = rates;
@@ -36,7 +36,6 @@ public class ExchangeRates {
                 '}';
     }
 
-    // Вложенный класс Rate
     public static class Rate {
         private String pair;
         private String baseCurrency;
@@ -44,7 +43,6 @@ public class ExchangeRates {
         private String ask;
         private String bid;
 
-        // Конструктор для Rate
         public Rate(String pair, String baseCurrency, String quoteCurrency, String ask, String bid) {
             this.pair = pair;
             this.baseCurrency = baseCurrency;
