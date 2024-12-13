@@ -7,8 +7,8 @@ apps:
   fxmarketdatastub:
     name: fx-market-data-stub
     image:
-      repository: localhost:5001/fx-market/market-data-stub
-      tag: 0.1.0
+      repository: localhost:5001/fx-market-externals/market-data-stub
+#      tag: 0.0.0
 
     podAnnotations: {}
 

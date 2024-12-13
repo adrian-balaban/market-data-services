@@ -1,35 +1,49 @@
 #!/usr/bin/env bash
 
-test_mode_flag='false'
+set -e # exit immediately if any command within the script returns a non-zero exit status
 
-docker_registry="localhost:5001"
+SEPARATOR="==================================="
+TEST_MODE='false' # default if not provided
+DOCKER_REGISTRY="docker.io" # default if not provided
+TAG='0.0.1' # default if not provided
+
 
 print_usage() {
-  printf "Usage: ..."
+  echo "Usage:"
+  echo "-test <true|false>            <- to build with test mode - default: false"
+  echo "-tag <docker_tag>             <- to specify docker tag for services"
+  echo "-registry <DOCKER_REGISTRY>   <- to specify docker registry"
 }
 
-while getopts 't' flag; do
-  case "${flag}" in
-    t) test_mode_flag=true ;;
-    *) print_usage
-       exit 1 ;;
+# Parse command-line options
+while [[ "$#" -gt 0 ]]; do
+  case "$1" in
+    -test) TEST_MODE="$2"; shift ;;
+    -tag) TAG="$2"; shift ;;
+    -registry) DOCKER_REGISTRY="$2"; shift ;;
+    *) print_usage; exit 1 ;;
   esac
+  shift
 done
 
-echo "$separator"
+
+echo "$SEPARATOR"
 echo "BUILDING STUBS - START"
-echo "$separator"
-echo "TEST_MODE:$test_mode_flag"
-echo "$separator"
+echo "$SEPARATOR"
+echo "TAG: ${TAG}" # default if not provided
+echo "TEST_MODE: ${TEST_MODE}" # default if not provided
+echo "DOCKER_REGISTRY: ${DOCKER_REGISTRY}" # default if not provided
+echo "$SEPARATOR"
 sleep 2
 
-tag='0.1.0'
+DOCKER_IMAGE_NAME=${DOCKER_REGISTRY}/fx-market-externals/market-data-stub:${TAG}
 
 pushd ../../../vendors/market-data-stub &&
-  docker build --build-arg TEST_MODE_ARG=$test_mode_flag -t ${docker_registry}/fx-market/market-data-stub:${tag} . --load &&
-  docker push ${docker_registry}/fx-market/market-data-stub:${tag} --tls-verify=false &&
+  docker build --build-arg TEST_MODE_ARG=$TEST_MODE -t ${DOCKER_IMAGE_NAME} . --load &&
+  docker push ${DOCKER_IMAGE_NAME} --tls-verify=false &&
 popd
 
-echo "$separator"
+
+echo "$SEPARATOR"
 echo "BUILDING STUBS - END"
-echo "$separator"
+echo "$SEPARATOR"

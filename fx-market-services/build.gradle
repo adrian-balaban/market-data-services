@@ -9,14 +9,13 @@ plugins {
 apply from: "versions.gradle"
 
 group = 'com.fx.market'
-version = '0.1.1'
+//version = '0.0.1-SNAPSHOT'
 
-// Fails on linux, to verify if still needed
-//java {
-//	toolchain {
-//		languageVersion = JavaLanguageVersion.of(21)
-//	}
-//}
+ext {
+	//sample: ./gradlew fx-market-connector:bootBuildImage -Pversion=${TAG} -Pregistry=${DOCKER_REGISTRY}
+	versionProperty = project.getProperty('version')
+	registryProperty = project.hasProperty('registry') ? project.getProperty('registry') : 'docker.io' // default
+}
 
 configurations {
 	compileOnly {

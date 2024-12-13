@@ -1,10 +1,33 @@
 #!/usr/bin/env bash
-set -e
+set -e # exit immediately if any command within the script returns a non-zero exit status
+
+DOCKER_REGISTRY="docker.io" # default if not provided
+TAG='0.0.1' # default if not provided
+
+print_usage() {
+  echo "Usage:"
+  echo "-tag <docker_tag>             <- to specify docker tag for services"
+  echo "-registry <DOCKER_REGISTRY>   <- to specify docker registry"
+}
+
+# Parse command-line options
+while [[ "$#" -gt 0 ]]; do
+  case "$1" in
+    -tag) TAG="$2"; shift ;;
+    -registry) DOCKER_REGISTRY="$2"; shift ;;
+    *) print_usage; exit 1 ;;
+  esac
+  shift
+done
 
 echo "Building OSI Image - fx-market-connector - Start"
-pushd ../../../../fx-market-services && ./gradlew fx-market-connector:clean && ./gradlew fx-market-connector:bootBuildImage && popd
 
+pushd ../../../../fx-market-services
 
-#docker run docker.io/library/fx-market-connector:latest
+./gradlew fx-market-connector:clean && \
+./gradlew fx-market-connector:bootBuildImage -Pversion=${TAG} -Pregistry=${DOCKER_REGISTRY}
+
+popd
+
 
 echo "Building OSI Image - fx-market-connector - Finish"
