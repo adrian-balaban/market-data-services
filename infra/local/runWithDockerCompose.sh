@@ -22,7 +22,8 @@ echo "$separator"
 sleep 2
 
 pushd ../services/docker/fx-market-connector && ./build-image.sh && popd
-
+pushd ../services/docker/fx-market-processor && ./build-image.sh && popd
+pushd ../services/docker/flink-orchestrator && ./build-image.sh && popd
 
 echo "$separator"
 echo "BUILDING STUBS"
@@ -38,4 +39,4 @@ echo "RUNNING COMPOSE WITH DOCKER-COMPOSE"
 echo "$separator"
 sleep 2
 
-docker-compose compose up -d
+docker compose up -d

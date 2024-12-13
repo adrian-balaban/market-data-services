@@ -7,10 +7,23 @@ pluginManagement {
 
 rootProject.name = 'fx-market-services'
 
+//Libs
 include ':model-fx-proto'
-include ':fx-market-connector'
-include ':fx-market-processor'
-include ':fx-market-flink-connector'
-include ':fx-market-flink-processor'
+include ':model-flink-api'
+include ':common-utils'
 
 project(":model-fx-proto").projectDir = file("./libs/model-fx-proto")
+project(":model-flink-api").projectDir = file("./libs/model-flink-api")
+project(":common-utils").projectDir = file("./libs/common-utils")
+
+
+//Flink Jobs
+include ':fx-market-flink-processor'
+
+project(":fx-market-flink-processor").projectDir = file("./flink-jobs/fx-market-flink-processor")
+
+//Services
+include ':flink-orchestrator'
+include ':fx-market-connector'
+include ':fx-market-processor'
+

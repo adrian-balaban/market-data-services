@@ -1,6 +1,0 @@
-spring:
-  application:
-    name: fxMarketFlinkDataConnector
-
-server:
-  port: 4083
