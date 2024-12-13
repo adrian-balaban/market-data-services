@@ -6,6 +6,8 @@ apply plugin: "java-library"
 
 
 dependencies {
+    implementation 'org.apache.kafka:kafka-streams'
+
     // Proto
     implementation 'com.google.protobuf:protobuf-java:3.25.5' // version 4 breaks java compilation
     implementation 'org.modelmapper:modelmapper:3.2.1'
@@ -25,7 +27,11 @@ protobuf {
     }
 }
 
+compileJava   {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
 compileJava.dependsOn generateProto
 
 sourceSets.main.java.srcDir "/build/generated/source/proto/main/java"
-

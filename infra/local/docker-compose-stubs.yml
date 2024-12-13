@@ -9,7 +9,3 @@ services:
       - ../../vendors/market-data-stub:/usr/src/app
     networks:
       - docker_net
-
-networks:
-  docker_net:
-    driver: bridge
