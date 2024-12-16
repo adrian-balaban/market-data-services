@@ -14,7 +14,9 @@ group = 'com.fx.market'
 ext {
 	//sample: ./gradlew fx-market-connector:bootBuildImage -Pversion=${TAG} -Pregistry=${DOCKER_REGISTRY}
 	versionProperty = project.getProperty('version')
+	dockerRepositoryProperty = 'fx-market-services'
 	registryProperty = project.hasProperty('registry') ? project.getProperty('registry') : 'docker.io' // default
+	profileProperty = project.hasProperty('profile') ? project.getProperty('profile') : 'local' // default
 }
 
 configurations {

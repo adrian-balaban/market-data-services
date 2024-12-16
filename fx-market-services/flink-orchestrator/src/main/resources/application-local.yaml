@@ -1,9 +1,0 @@
-spring:
-  application:
-    name: FlinkOrchestrator
-
-server:
-  port: 4082
-
-flink:
-  url: http://localhost:8084

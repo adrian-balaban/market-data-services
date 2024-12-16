@@ -59,7 +59,8 @@ bootJar {
 bootBuildImage {
     var versionVar = "${versionProperty != 'unspecified' ? versionProperty : '0.0.1'}"
     var registryVar = "${registryProperty != 'unspecified' ? registryProperty : 'docker.io'}"
-    imageName = "${registryVar}/fx-market/${project.name}:${versionVar}"
+    var profileVar = "${profileProperty != 'unspecified' ? profileProperty : ''}"
+    imageName = "${registryVar}/${dockerRepositoryProperty}/${project.name}:${versionVar}"
     publish = true
     docker {
         host = "unix:///run/podman/podman.sock"
@@ -67,6 +68,7 @@ bootBuildImage {
         tlsVerify = false
     }
     environment = [
+            'BPE_SPRING_PROFILES_ACTIVE': profileVar,
             'BPE_JAVA_TOOL_OPTIONS': '-Xms1024m -Xmx2048m -XX:MaxDirectMemorySize=512m' // MaxDirectMemorySize has to be grater than sum of fat jars size
     ]
 }

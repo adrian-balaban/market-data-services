@@ -38,9 +38,9 @@ echo "$SEPARATOR"
 helm upgrade --install \
     --namespace ${NAMESPACE} \
     --set tag="${TAG}" \
-    --set apps.fxmarketconnector.image.repository="${DOCKER_REGISTRY}/fx-market/fx-market-connector" \
-    --set apps.fxmarketprocessor.image.repository="${DOCKER_REGISTRY}/fx-market/fx-market-processor" \
-    --set apps.flinkorchestrator.image.repository="${DOCKER_REGISTRY}/fx-market/flink-orchestrator" \
+    --set apps.fxmarketconnector.image.repository="${DOCKER_REGISTRY}/fx-market-services/fx-market-connector" \
+    --set apps.fxmarketprocessor.image.repository="${DOCKER_REGISTRY}/fx-market-services/fx-market-processor" \
+    --set apps.flinkorchestrator.image.repository="${DOCKER_REGISTRY}/fx-market-services/flink-orchestrator" \
     -f ../helm/services/values-common.yaml \
     -f ../helm/services/values-fxmarket.yaml fx-market-services \
     ../helm/services

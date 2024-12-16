@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: FlinkOrchestrator
+
+server:
+  port: 8080
+
+flink:
+  url: "http://fx-flink-jobmanager:8081"
+  jobs:
+    - name: fxmarketflinkproces
+      arguments:
+        topic: fx_rates
+        bootstrapServers: kafka:9092
