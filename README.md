@@ -1,4 +1,10 @@
 # market-data-processor
+if you are MacOS user, before pushing changes to repo please do
+`git config --global core.fileMode false`
+(it prevents changing files permissions in repo)
+
+`git config --global core.autocrlf input`
+(set proper EOF)
 
 
 ### To run everything locally:
