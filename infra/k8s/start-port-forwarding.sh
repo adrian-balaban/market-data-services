@@ -12,6 +12,6 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
-
+kubectl port-forward -n ${NAMESPACE} svc/kafka 9092:9092 &
 kubectl port-forward -n ${NAMESPACE} svc/controlcenter 9021:9021 &
 kubectl port-forward -n ${NAMESPACE} svc/fx-flink-jobmanager 8081:8081 &

@@ -1,3 +1,6 @@
+## Installation
+https://kind.sigs.k8s.io/docs/user/quick-start/#installation
+
 If you are running Kind cluster with podman:
 
 `sudo cat /etc/containers/registries.conf.d/kind.conf`:
