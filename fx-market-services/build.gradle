@@ -19,6 +19,7 @@ ext {
 	profileProperty = project.hasProperty('profile') ? project.getProperty('profile') : 'local' // default
 }
 
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
