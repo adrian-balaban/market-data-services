@@ -43,9 +43,9 @@
 
 3. ## Connect
     - Run `./start-port-forwarding.sh -n <NAMESPACE>`
-      - Flink UI: http://localhost:8081/
-      - KAFKA UI: http://localhost:9021/    <- Control center is quite unstable, but Kafka is fine
-
+      - *Flink UI*: `http://localhost:8081/`
+      - *KAFKA UI*: `http://localhost:9021/`   <- Control center is quite unstable, but Kafka is fine
+      - *Kafka Broker*: `localhost:9092`
     - Close `./stop-port-frwarding.sh`
 
 ---
