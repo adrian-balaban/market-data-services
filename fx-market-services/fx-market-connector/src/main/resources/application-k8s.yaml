@@ -3,13 +3,13 @@ spring:
     name: fxMarketDataConnector
 
 server:
-  port: 4080
+  port: 8080
 
 kafka:
-  bootstrap-servers: localhost:9092
+  bootstrap-servers: PLAINTEXT://kafka:9092
 
 vendor:
   market:
     data:
       stub:
-        url: "http://localhost:3080"
+        url: "http://fx-market-data-stub-svc:3080"

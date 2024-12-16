@@ -7,7 +7,7 @@ SEPARATOR="==================================="
 
 BUILD_PHASE='true' # default if not provided
 TEST_MODE='false' # default if not provided
-DOCKER_REGISTRY="docker.io" # default if not provided
+DOCKER_REGISTRY="localhost:5001" # default if not provided
 NAMESPACE="fxmarket" # default if not provided
 TAG='0.1.0' # default if not provided
 
@@ -40,11 +40,12 @@ is_pod_running() {
 }
 
 wait_for_pod() {
-  local pod_name=$(kubectl get pods -n=$NAMESPACE -o jsonpath='{.items[*].metadata.name}' | tr ' ' '\n' | grep $1)
+  local pod_name=$(kubectl get pods --sort-by=.metadata.creationTimestamp -n=$NAMESPACE -o jsonpath='{.items[*].metadata.name}' | tr ' ' '\n' | grep $1 | head -n 1)
   if [ -z "${pod_name// }" ]; ## check if blank string
     then echo "Waiting 10 seconds for pod $1 to appear ..."
     sleep 10
     wait_for_pod "$1"
+    return 0 # once recursive method finished don't go further
   fi
 
   echo "Waiting for pod $pod_name in namespace $NAMESPACE to be running..."
@@ -121,7 +122,7 @@ pushd ./scripts
 
 popd
 
-sleep 30
+sleep 5
 
 wait_for_pod "flink-jobmanager"
 wait_for_pod "zookeeper-0"

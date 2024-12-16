@@ -2,23 +2,40 @@ package com.fx.market.flink.processor;
 
 import com.fx.market.flink.processor.pojo.FxRate;
 import com.fx.market.flink.processor.helpers.FxRateEventProtoMessageDeserializer;
-import com.fx.market.flink.processor.model.FxRateEventProto;
 import com.fx.market.flink.processor.pojo.FxRateEvent;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import static com.fx.market.flink.processor.pojo.FxRate.fromFxRateProto;
 
 public class FxMarketFlinkProcessor {
 
+    private static final Logger log = LoggerFactory.getLogger(FxMarketFlinkProcessor.class);
+
     public static void main(String[] args) throws Exception {
+        ParameterTool parameter = ParameterTool.fromArgs(args);
+        String bootstrapServers = "broker:29092"; // default
+        String topic = "fx_rates"; // default
+
+        // On FLINK GUI Program Arguments enter: --bootstrapServers kafka:9091
+        if (parameter.has("bootstrapServers")) {
+            bootstrapServers = parameter.get("bootstrapServers");
+        }
+        if (parameter.has("topic")) {
+            topic = parameter.get("topic");
+        }
+
+        log.info("FX_INFO: bootstrapServers set to {}", bootstrapServers);
+        log.info("FX_INFO: topic set to {}", topic);
 
         Configuration config = new Configuration();
 
@@ -31,12 +48,9 @@ public class FxMarketFlinkProcessor {
         //env.getConfig().disableGenericTypes();
 //        env.getConfig().registerTypeWithKryoSerializer(FxRateEventProto.class, ProtobufSerializer.class);
 
-
-        final String bootstrapServers = "broker:29092";
-
         KafkaSource<FxRateEvent> source = KafkaSource.<FxRateEvent>builder()
                 .setBootstrapServers(bootstrapServers)
-                .setTopics("fx_rates")
+                .setTopics(topic)
                 .setGroupId("flink-consumer-group")
                 .setStartingOffsets(OffsetsInitializer.latest())
                 .setValueOnlyDeserializer(new FxRateEventProtoMessageDeserializer())
