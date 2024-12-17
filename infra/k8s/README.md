@@ -4,6 +4,7 @@
    1. ### Tools
       - Kubectl (tested on v1.31.3)
       - Helm (tested on v3.16.3)
+      - If Local Cluster - Kind / Minikube
    2. ### Cluster connection 
       - `kubectl get nodes` returns properly list of nodes.
       1. Local
@@ -46,6 +47,7 @@
       - *Flink UI*: `http://localhost:8081/`
       - *KAFKA UI*: `http://localhost:9021/`   <- Control center is quite unstable, but Kafka is fine
       - *Kafka Broker*: `localhost:9092`
+      - *Market Data Stub*: `localhost:3080`
     - Close `./stop-port-frwarding.sh`
 
 ---
