@@ -39,4 +39,4 @@ echo "RUNNING COMPOSE WITH DOCKER-COMPOSE"
 echo "$separator"
 sleep 2
 
-docker-compose compose up -d
+docker compose up -d

@@ -1,0 +1,15 @@
+# Ignore Gradle project-specific cache directory
+
+*.iml
+*.gradle
+qa/.gradle/
+# ignore all
+.idea/*
+qa/target/*
+# except
+!.idea/workspace.xml
+!.idea/usage.statistics.xml
+!.idea/shelf/
+
+# Ignore Gradle build output directory
+build
