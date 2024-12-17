@@ -1,6 +1,9 @@
 Dummy FX Market Data Stub
 
-It streams dummy FX Rates via SSE protocol
+# Before  
+**npm run watch** you can change any file under /market-data-stub and it will deploy changes automatically to container
+
+   It streams dummy FX Rates via SSE protocol
 
 1. Run locally:
     `npm install`
@@ -42,3 +45,4 @@ It streams dummy FX Rates via SSE protocol
         ]
     }
     ```
+  
