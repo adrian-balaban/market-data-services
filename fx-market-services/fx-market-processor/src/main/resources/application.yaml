@@ -6,4 +6,4 @@ server:
   port: 4081
 
 kafka:
-  bootstrap-servers: PLAINTEXT://broker:29092
+  bootstrap-servers: PLAINTEXT://localhost:9092

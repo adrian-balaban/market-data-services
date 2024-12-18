@@ -1,0 +1,83 @@
+{{- $outer := . -}}
+{{ range .Values.apps }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .name }}
+  labels:
+    app: {{ .name }}
+    managed-by: Helm
+    release: {{ $.Release.Name }}
+    version: {{ $.Values.tag }}
+spec:
+  replicas: {{ $.Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .name }}
+      release: {{ $.Release.Name }}
+  template:
+    metadata:
+    {{- with .podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        app: {{ .name }}
+        release: {{ $.Release.Name }}
+        version: {{ $.Values.tag }}
+    spec:
+      {{- with .initContainers }}
+      initContainers:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .name }}
+          image: "{{ .image.repository }}:{{ if .image.tag }}{{ .image.tag}}{{ else }}{{ $.Values.tag }}{{ end }}"
+          imagePullPolicy: {{ $.Values.pullPolicy }}
+          env:
+{{ if .extraEnv }}{{ toYaml .extraEnv | indent 10 }}{{ end }}
+          ports:
+            - name: http
+              containerPort: {{ .service.port }}
+              protocol: TCP
+{{- with $.Values.livenessProbe }}
+          livenessProbe:
+{{- toYaml $.Values.livenessProbe | nindent 12  -}}
+{{ toYaml $.Values.livenessProbeParams | nindent 12  }}
+{{- end }}
+          resources:
+            {{- toYaml .resources | nindent 12 }}
+          volumeMounts:
+          {{- range .volumes }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+              readOnly: true
+          {{- end }}
+      {{- with .nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+      topologySpreadConstraints:
+{{ include "application.topologySpreadConstraints" $outer | indent 6 -}}
+      volumes:
+        {{- range .volumes }}
+        - name: {{ .name }}
+          secret:
+            defaultMode: 420
+            secretName: {{ .secretName }}
+            optional: {{ .optional | default "true" }}
+      {{- end }}
+{{end }}

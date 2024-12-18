@@ -7,3 +7,8 @@ server:
 
 flink:
   url: http://jobmanager:8081
+  jobs:
+    - name: fxmarketflinkproces
+      arguments:
+        topic: fx_rates
+        bootstrapServers: kafka:9092
