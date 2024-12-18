@@ -17,3 +17,7 @@ To connect to services in Docker, refer to the following ports:
 - Kafka Connect: 8083
 - ksqlDB: 8088
 - Confluent REST Proxy: 8082
+
+
+## Image Registry:
+http://localhost:5001/v2/_catalog
