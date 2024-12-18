@@ -1,7 +1,6 @@
 package stepdefinitions;
 
 import com.google.gson.Gson;
-import helpers.TestContext;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
@@ -13,21 +12,27 @@ import java.net.http.HttpResponse;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import com.fx.market.kafka.message.FxRateEventProto;
 import org.junit.jupiter.api.Assertions;
-import testvisa.kafka.FxRateKafkaTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.core.ConsumerFactory;
+import testvisa.KafkaTestConfig;
 
-public class ExampleSteps {
-    private TestContext context;
+@SpringBootTest(classes = KafkaTestConfig.class)
+public class ExecuteSteps {
+
     private String endpoint = "http://localhost:3080/emitEvent";;
     private JsonObject requestBody;
     private HttpResponse<String> response;
+    String timestamp;
 
-    public ExampleSteps() {
-        this.context = new TestContext();
-    }
+    @Autowired
+    private ConsumerFactory<String, String> consumerFactory;
 
     @Given("Service is started")
     public void i_have_an_example()  {
@@ -35,13 +40,17 @@ public class ExampleSteps {
         FxRateEventProto proto = null;
     }
 
-    @Given("the following rates data is prepared:")
+    @When("the following rates data is prepared:")
     public void prepareRatesData(io.cucumber.datatable.DataTable dataTable) {
         // Create the root JSON object
         requestBody = new JsonObject();
-        context.set("timestamp",System.currentTimeMillis());
-        System.out.println("----------------------------" + context.get("timestamp"));
-        requestBody.addProperty("timestamp", context.get("timestamp").toString());
+
+        LocalDateTime now = LocalDateTime.ofInstant(Instant.now(), java.time.ZoneOffset.UTC);
+         timestamp =  DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").format(now);
+
+        SharedScenarioContext.getInstance().set("timestamp",timestamp);
+
+        requestBody.addProperty("timestamp", timestamp);
 
         // Create the "rates" array
         List<Map<String, String>> ratesData = dataTable.asMaps();
@@ -94,11 +103,6 @@ public class ExampleSteps {
     @Then("the response status code should be {int}")
     public void verifyStatusCode(int expectedStatusCode) {
            }
-
-    @When("FX Rates landed on kafka")
-    public void i_run_the_example() throws Exception {
-        new FxRateKafkaTest(context).testReadFromFxRateTopic();
-    }
 
     @Given("the API endpoint is {string}")
     public void setApiEndpoint(String apiEndpoint) {
