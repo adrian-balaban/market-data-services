@@ -1,14 +1,14 @@
-package testvisa;
+package helpers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.junit.jupiter.api.BeforeAll;
+import testvisa.ExchangeRates;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Instant;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -24,7 +24,7 @@ public class TestsPluginFunctionalTest {
     }
 
   //  @Test
-    public void testEmitEventEndpoint(long timestamp) throws Exception {
+    public void testEmitEventEndpoint(String timestamp) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
 
         Gson gson = new Gson();
@@ -35,7 +35,7 @@ public class TestsPluginFunctionalTest {
         ExchangeRates.Rate rate2 = new ExchangeRates.Rate("EUR/USD", "EUR", "USD", "1.1111", "1.1101");
 
         ExchangeRates exchangeRates = new ExchangeRates(
-                Instant.ofEpochMilli(timestamp).toString(),
+                timestamp,
                 List.of(rate1, rate2)
         );
 

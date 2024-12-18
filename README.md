@@ -5,10 +5,12 @@ if you are MacOS user, before pushing changes to repo please do
 
 `git config --global core.autocrlf input`
 (set proper EOF)
+,
 
+### Requirements:
+- java Graavlm v 21
 
 ### To run everything locally:
-
 1) Infra
     - `cd infra/kafka`
     - Run compose (depends what you have installed):

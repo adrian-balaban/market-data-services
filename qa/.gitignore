@@ -12,4 +12,4 @@ qa/target/*
 !.idea/shelf/
 
 # Ignore Gradle build output directory
-build
+build/*
