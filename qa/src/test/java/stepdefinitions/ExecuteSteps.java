@@ -42,17 +42,14 @@ public class ExecuteSteps {
 
     @When("the following rates data is prepared:")
     public void prepareRatesData(io.cucumber.datatable.DataTable dataTable) {
-        // Create the root JSON object
         requestBody = new JsonObject();
-
         LocalDateTime now = LocalDateTime.ofInstant(Instant.now(), java.time.ZoneOffset.UTC);
-         timestamp =  DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").format(now);
+        timestamp =  DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").format(now);
 
         SharedScenarioContext.getInstance().set("timestamp",timestamp);
 
         requestBody.addProperty("timestamp", timestamp);
 
-        // Create the "rates" array
         List<Map<String, String>> ratesData = dataTable.asMaps();
         List<JsonObject> ratesJsonArray = new ArrayList<>();
 
@@ -108,7 +105,6 @@ public class ExecuteSteps {
     public void setApiEndpoint(String apiEndpoint) {
         this.endpoint = apiEndpoint;
     }
-
 
     @Then("I should see the example result")
     public void i_should_see_the_example_result() {

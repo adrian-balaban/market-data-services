@@ -20,14 +20,10 @@ public class TestsPluginFunctionalTest {
 
     @BeforeAll
     static void setup() {
-
     }
 
-  //  @Test
     public void testEmitEventEndpoint(String timestamp) throws Exception {
-        HttpClient client = HttpClient.newHttpClient();
 
-        Gson gson = new Gson();
          client = HttpClient.newHttpClient();
          gson = new GsonBuilder().setPrettyPrinting().create();
 
