@@ -29,10 +29,11 @@ public class FlinkOrchestratorService {
     @Autowired
     private FlinkJobService flinkJobService;
 
+    @Autowired
+    private FlinkJobMonitor flinkJobMonitor;
+
     @EventListener(ApplicationReadyEvent.class)
     public void init() {
-        List<String> jobIds = new ArrayList<>();
-
         log.info("FlinkOrchestratorService - ApplicationReadyEvent Start");
         List<File> flinkJars = jarLoader.loadFlinkProcessorWithResourceLoader();
 
@@ -43,25 +44,11 @@ public class FlinkOrchestratorService {
                 jarFile -> {
                     flinkJarService.uploadNewJar(jarFile);
                     JarRunResponseBody jarRunResponseBody = flinkJarService.runNewJarByName(jarFile.getName());
-                    jobIds.add(jarRunResponseBody.getJobid());
+                    flinkJobMonitor.addJobId(jarRunResponseBody.getJobid());
                 }
         );
 
         log.info("FlinkOrchestratorService - ApplicationReadyEvent End of Setup. Monitoring jobs...");
-
-        while (true) {
-            try {
-                jobIds.forEach(
-                        jobId ->
-                                log.info(
-                                        "JobId: {}, status: {}", jobId,
-                                        nullSafe(()-> flinkJobService.getJobStatus(jobId).getStatus().getValue()))
-                );
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
 }

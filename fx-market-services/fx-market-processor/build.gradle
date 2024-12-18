@@ -30,7 +30,18 @@ dependencies {
 }
 
 bootBuildImage {
+	var versionVar = "${versionProperty != 'unspecified' ? versionProperty : '0.0.1'}"
+	var registryVar = "${registryProperty != 'unspecified' ? registryProperty : 'docker.io'}"
+	var profileVar = "${profileProperty != 'unspecified' ? profileProperty : ''}"
+	imageName = "${registryVar}/${dockerRepositoryProperty}/${project.name}:${versionVar}"
+	publish = true
+	docker {
+		host = "unix:///run/podman/podman.sock"
+		bindHostToBuilder = true
+		tlsVerify = false
+	}
 	environment = [
-			'BPE_JAVA_TOOL_OPTIONS': '-Xms1024m -Xms1024m -XX:MaxDirectMemorySize=512m'
+			'BPE_SPRING_PROFILES_ACTIVE': profileVar,
+			'BPE_JAVA_TOOL_OPTIONS': '-Xms1024m -Xmx2048m -XX:MaxDirectMemorySize=512m'
 	]
 }
