@@ -29,25 +29,14 @@ import java.util.stream.StreamSupport;
 @SpringBootTest(classes = KafkaTestConfig.class)
 @ExtendWith(SpringExtension.class)
 public class FxRateKafkaTest {
-  //  private helpers.TestContext context;
-
 
     @Autowired
     private ConsumerFactory<String, String> consumerFactory;
 
-   // public FxRateKafkaTest(TestContext testContext) {
-   //     this.context = testContext;
-   // }
-   public FxRateKafkaTest( ) {
-   }
+    public FxRateKafkaTest( ) {
+    }
     @Autowired
     private ApplicationContext context;
-
-    @Test
-    public void verifyBeans() {
-        assertNotNull(context.getBean(ConsumerFactory.class), "ConsumerFactory не найден в контексте!");
-        System.out.println("ConsumerFactory бин успешно загружен.");
-    }
 
     @Test
     public void testReadFromFxRateTopic() throws Exception {
@@ -71,9 +60,6 @@ public class FxRateKafkaTest {
                 .untilAsserted(() -> {
                     ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000)); // Polling
 
-               //     var a = new byte['a'];
-                 //   var x = com.fx.market.kafka.message.FxRateEventProto.parseFrom(a);
-
                     assertTrue(
                             StreamSupport.stream(records.records(topic).spliterator(), false)
                                     .anyMatch(record -> record.value().contains(timestamp)),
@@ -83,9 +69,5 @@ public class FxRateKafkaTest {
 
         consumer.close();
     }
-
-
-
-
 
 }
