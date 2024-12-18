@@ -117,6 +117,9 @@ pushd ./scripts
   ./deployFlink.sh -n ${NAMESPACE}
   if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
+  ./deployKnativeCamelK.sh
+  if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
+
   ./deployExternals.sh -tag ${TAG} -registry ${DOCKER_REGISTRY} -n ${NAMESPACE}
   if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
