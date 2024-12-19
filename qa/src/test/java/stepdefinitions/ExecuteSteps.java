@@ -97,17 +97,5 @@ public class ExecuteSteps {
 
     }
 
-    @Then("the response status code should be {int}")
-    public void verifyStatusCode(int expectedStatusCode) {
-           }
 
-    @Given("the API endpoint is {string}")
-    public void setApiEndpoint(String apiEndpoint) {
-        this.endpoint = apiEndpoint;
-    }
-
-    @Then("I should see the example result")
-    public void i_should_see_the_example_result() {
-        System.out.println("Then step");
-    }
 }
