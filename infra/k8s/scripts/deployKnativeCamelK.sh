@@ -3,13 +3,14 @@
 trap "exit 1" TERM
 export TOP_PID=$$
 set -e # exit immediately if any command within the script returns a non-zero exit status
+set -o xtrace
 
 SEPARATOR="==================================="
 
 NAMESPACE="camel-k"
 REGISTRY_NAME=registry-1.docker.io
 REPOSITORY_NAME=bitnamicharts
-KNATIVE_VERSION=v1.15.3
+KNATIVE_VERSION=v1.15.2
 
 ###############################################################
 
@@ -21,7 +22,7 @@ echo "$SEPARATOR"
 echo "DEPLOYING Knative - START"
 echo "$SEPARATOR"
 
-kubectl apply -f https://github.com/knative/operator/releases/download/knative-$KNATIVE_VERSION/operator.yaml
+kubectl apply -f https://github.com/knative/operator/releases/download/knative-${KNATIVE_VERSION}/operator.yaml
 kubectl apply -f - <<EOF
 apiVersion: v1
 kind: Namespace
@@ -48,8 +49,8 @@ spec:
     network:
       ingress-class: "kourier.ingress.networking.knative.dev"
 EOF
-kubectl wait KnativeServing knative-serving -n knative-serving --for=condition=Ready
-kubectl apply -f https://github.com/knative/serving/releases/download/knative-$KNATIVE_VERSION/serving-default-domain.yaml
+kubectl wait KnativeServing knative-serving -n knative-serving --for=condition=Ready --timeout=180s
+kubectl apply -f https://github.com/knative/serving/releases/download/knative-${KNATIVE_VERSION}/serving-default-domain.yaml
 kubectl apply -f - <<EOF
 apiVersion: v1
 kind: Namespace
@@ -62,14 +63,14 @@ metadata:
   name: knative-eventing
   namespace: knative-eventing
 EOF
-kubectl wait KnativeEventing knative-eventing -n knative-eventing --for=condition=Ready
+kubectl wait KnativeEventing knative-eventing -n knative-eventing --for=condition=Ready --timeout=180s
 
 echo Install Knative kafka broker - https://knative.dev/docs/eventing/brokers/broker-types/kafka-broker/#create-a-kafka-broker
-kubectl apply --filename https://github.com/knative-extensions/eventing-kafka-broker/releases/download/knative-$KNATIVE_VERSION/eventing-kafka-controller.yaml
+kubectl apply --filename https://github.com/knative-extensions/eventing-kafka-broker/releases/download/knative-${KNATIVE_VERSION}/eventing-kafka-controller.yaml
 echo Install the Kafka Broker data plane
-kubectl apply --filename https://github.com/knative-extensions/eventing-kafka-broker/releases/download/knative-$KNATIVE_VERSION/eventing-kafka-broker.yaml
+kubectl apply --filename https://github.com/knative-extensions/eventing-kafka-broker/releases/download/knative-${KNATIVE_VERSION}/eventing-kafka-broker.yaml
 echo Verify that kafka-controller, kafka-broker-receiver and kafka-broker-dispatcher are running
-kubectl wait pod --all -n knative-eventing --for=condition=ready
+kubectl wait pod --all -n knative-eventing --for=condition=ready --timeout=180s
 
 
 echo Create a Knative Kafka Broker

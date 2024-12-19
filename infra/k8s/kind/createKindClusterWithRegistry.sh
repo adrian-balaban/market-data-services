@@ -1,5 +1,7 @@
 #!/bin/sh
-set -o errexit
+
+set -e # exit immediately if any command within the script returns a non-zero exit status
+set -o xtrace
 
 # 1. Create registry container unless it already exists
 reg_name='kind-registry'
