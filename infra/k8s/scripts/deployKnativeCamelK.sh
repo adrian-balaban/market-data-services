@@ -5,10 +5,10 @@ export TOP_PID=$$
 
 SEPARATOR="==================================="
 
-NAMESPACE="camel-k" # for camel-k installations
+NAMESPACE="camel-k"
 REGISTRY_NAME=registry-1.docker.io
 REPOSITORY_NAME=bitnamicharts
-KNATIVE_VERSION=v1.15.5
+KNATIVE_VERSION=v1.15.3
 
 ###############################################################
 
