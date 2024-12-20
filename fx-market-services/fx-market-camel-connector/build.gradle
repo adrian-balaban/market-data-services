@@ -1,0 +1,20 @@
+buildscript {
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${SPRING_BOOT_GRADLE_PLUGIN}")
+	}
+}
+
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+	implementation 'org.apache.camel.springboot:camel-spring-boot-bom:4.9.0'
+	implementation 'org.apache.camel:camel-stream:4.8.2'
+
+
+	implementation 'org.apache.camel.springboot:camel-spring-boot-starter:4.9.0'
+	implementation 'io.projectreactor:reactor-core'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
