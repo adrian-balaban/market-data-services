@@ -1,0 +1,21 @@
+#kubectl apply -f application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: market-data-services
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/Jereczek/market-data-processor.git'
+    targetRevision: 14-ArgoCD #master
+    path: 'infra/argo/solution/env/dev'
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: fx-market-master
+  syncPolicy:
+    automated:
+      prune: true # Delete components if no longer used
+      selfHeal: true # Automatically Fetch and override any manual changes
+    syncOptions:
+      - CreateNamespace=true
