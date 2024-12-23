@@ -40,7 +40,7 @@ DOCKER_IMAGE_NAME=${DOCKER_REGISTRY}/fx-market-externals/market-data-stub:${TAG}
 
 pushd ../../../vendors/market-data-stub &&
   docker build --build-arg TEST_MODE_ARG=$TEST_MODE -t ${DOCKER_IMAGE_NAME} . --load &&
-  docker push ${DOCKER_IMAGE_NAME} --tls-verify=false &&
+  docker push ${DOCKER_IMAGE_NAME} &&
 popd
 
 

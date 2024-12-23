@@ -111,51 +111,52 @@ apps:
   ###################################
   ##### FLINK ORCHESTRATOR APP ######
   ###################################
-  flinkorchestrator:
-    name: flink-orchestrator
-    image:
-      repository: localhost:5001/fx-market-services/flink-orchestrator
-#      tag: 0.0.0
-
-    podAnnotations: {}
-
-    service:
-      type: ClusterIP
-      port: 8080
-
-    extraEnv:
-      - name: SERVER_PORT
-        value: "8080"
-      - name: FLINK_URL
-        value: "http://fx-flink-jobmanager:8081"
-
-    resources:
-      limits:
-        cpu: 1
-        memory: 3584Mi
-      requests:
-        cpu: 500m
-        memory: 3584Mi
-
-    volumes: []
-      # - name: server-certs
-      #   secretName: api-fxmarketconnector
-      #   mountPath: /opt/certs/fxmarketconnector
-      #   optional: true
-      # - name: mtls-certs2
-    #   secretName: mtls-certs2
-    #   mountPath: /opt/certs/mtls2
-    #   optional: true
-
-    autoscaling:
-      enabled: false
-      minReplicas: 1
-      maxReplicas: 1
-      targetCPUUtilizationPercentage: 80
-      # targetMemoryUtilizationPercentage: 80
-
-    initContainers: {}
-    imagePullSecrets: {}
-    nodeSelector: {}
-    tolerations: []
-    affinity: {}
+  ##flinkorchestrator:
+   # name: flink-orchestrator
+   # image:
+   #   repository: localhost:5001/fx-market-services/flink-orchestrator
+#  #    tag: 0.0.0
+#
+   # podAnnotations: {}
+#
+   # service:
+   #   type: ClusterIP
+   #   port: 8080
+#
+   # extraEnv:
+   #   - name: SERVER_PORT
+   #     value: "8080"
+   #   - name: FLINK_URL
+   #     value: "http://fx-flink-jobmanager:8081"
+#
+   # resources:
+   #   limits:
+   #     cpu: 1
+   #     memory: 3584Mi
+   #   requests:
+   #     cpu: 500m
+   #     memory: 3584Mi
+#
+   # volumes: []
+   #   # - name: server-certs
+   #   #   secretName: api-fxmarketconnector
+   #   #   mountPath: /opt/certs/fxmarketconnector
+   #   #   optional: true
+   #   # - name: mtls-certs2
+   # #   secretName: mtls-certs2
+   # #   mountPath: /opt/certs/mtls2
+   # #   optional: true
+#
+   # autoscaling:
+   #   enabled: false
+   #   minReplicas: 1
+   #   maxReplicas: 1
+   #   targetCPUUtilizationPercentage: 80
+   #   # targetMemoryUtilizationPercentage: 80
+#
+   # initContainers: {}
+   # imagePullSecrets: {}
+   # nodeSelector: {}
+   # tolerations: []
+   # affinity: {}
+#
