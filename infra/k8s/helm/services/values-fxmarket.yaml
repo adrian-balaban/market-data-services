@@ -2,12 +2,12 @@
 
 apps:
   ###################################
-  ##### FX MARKET CONNECTOR APP #####
+  ##### FX MARKET CAMEL CONNECTOR APP #####
   ###################################
-  fxmarketconnector:
-    name: fx-market-connector
+  fxmarketcamelconnector:
+    name: fx-market-camel-connector
     image:
-      repository: localhost:5001/fx-market-services/fx-market-connector
+      repository: localhost:5001/fx-market-services/fx-market-camel-connector
 #      tag: 0.0.0
 
     podAnnotations: {}
@@ -40,6 +40,61 @@ apps:
       # - name: mtls-certs2
       #   secretName: mtls-certs2
       #   mountPath: /opt/certs/mtls2
+    #   optional: true
+
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 1
+      targetCPUUtilizationPercentage: 80
+      # targetMemoryUtilizationPercentage: 80
+
+    initContainers: {}
+    imagePullSecrets: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+
+  ###################################
+  ##### FX MARKET CONNECTOR APP #####
+  ###################################
+  fxmarketconnector:
+    name: fx-market-connector
+    image:
+      repository: localhost:5001/fx-market-services/fx-market-connector
+    #      tag: 0.0.0
+
+    podAnnotations: {}
+
+    service:
+      type: ClusterIP
+      port: 8080
+
+    extraEnv:
+      - name: SERVER_PORT
+        value: "8080"
+      - name: KAFKA_BOOTSTRAP_SERVERS
+        value: "PLAINTEXT://kafka:9092"
+      - name: VENDOR_MARKET_DATA_STUB_URL
+        value: "http://fx-market-data-stub-svc:3080"
+
+    resources:
+      limits:
+        cpu: 1
+        memory: 3072Mi
+      requests:
+        cpu: 500m
+        memory: 3072Mi
+
+    volumes: []
+      # - name: server-certs
+      #   secretName: api-fxmarketconnector
+      #   mountPath: /opt/certs/fxmarketconnector
+      #   optional: true
+      # - name: mtls-certs2
+      #   secretName: mtls-certs2
+    #   mountPath: /opt/certs/mtls2
     #   optional: true
 
     autoscaling:

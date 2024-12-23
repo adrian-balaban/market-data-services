@@ -1,6 +1,7 @@
 package com.fx.market.fxmarketcamelconnector.routes;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.KafkaConstants;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,8 +13,10 @@ public class FxMarketCamelRoute extends RouteBuilder {
 
         // Transform the body of received items and log
         from("stream:http?httpUrl=http://localhost:3080/forex/rates")
-                .setBody().simple("BasicReactorToCamel - Camel received ${body}")
-                .to("log:INFO");
+                //.setBody().simple("BasicReactorToCamel - Camel received ${body}")
+                .to("log:INFO")
+                .setHeader(KafkaConstants.KEY, constant("Camel")) // Key of the message
+                .to("kafka:test?brokers=localhost:9092");;
         // Logic to Extract Rates
         // Logic to Group By Rates
         // Logic to Save the latest Rate for each ccy pair
