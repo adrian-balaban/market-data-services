@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: fxMarketCamelDataConnector
+camel:
+  springboot:
+    main-run-controller: true
+server:
+  port: 4080
+
+kafka:
+  bootstrap-servers: localhost:9092
+
+vendor:
+  market:
+    data:
+      stub:
+        url: "http://localhost:3080"

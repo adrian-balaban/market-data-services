@@ -14,7 +14,7 @@ dependencies {
 	implementation "org.springframework.cloud:spring-cloud-stream:${SPRING_CLOUD_STREAM}"
 
 	// Kafka
-	implementation 'io.projectreactor.kafka:reactor-kafka'
+	implementation 'io.projectreactor.kafka:reactor-kafka:1.3.23'
 
 	// Proto
 	implementation 'com.google.protobuf:protobuf-java:3.25.5' // version 4 breaks java compilation
@@ -34,7 +34,7 @@ bootBuildImage {
 	imageName = "${registryVar}/${dockerRepositoryProperty}/${project.name}:${versionVar}"
 	publish = true
 	docker {
-		host = "unix:///run/podman/podman.sock"
+		host = "unix:///run/user/1000/podman/podman.sock"
 		bindHostToBuilder = true
 		tlsVerify = false
 	}
