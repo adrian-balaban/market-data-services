@@ -3,7 +3,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: market-data-services
-  namespace: argocd
+  namespace: ___CHANGE_ME_NAMESPACE___
 spec:
   project: default
   source:
@@ -12,7 +12,7 @@ spec:
     path: 'infra/argo/solution/env/dev'
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: fx-market-master
+    namespace: ___CHANGE_ME_NAMESPACE___
   syncPolicy:
     automated:
       prune: true # Delete components if no longer used

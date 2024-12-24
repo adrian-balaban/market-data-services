@@ -17,3 +17,9 @@ helm upgrade --install \
 --set apps.fxmarketdatastub.image.repository="localhost:5001/fx-market-externals/market-data-stub" \
 -f ../helm/services/values-externals.yaml fx-market-externals \
 ../helm/services > externals.yaml
+
+
+
+└──╼ $kubectl edit clusterrolebinding argocd-application-controller -n mj1
+
+└──╼ $kubectl edit clusterrolebinding argocd-server -n mj1
