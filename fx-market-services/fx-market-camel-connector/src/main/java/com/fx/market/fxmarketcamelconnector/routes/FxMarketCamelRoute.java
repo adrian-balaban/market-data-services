@@ -1,26 +1,37 @@
 package com.fx.market.fxmarketcamelconnector.routes;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class FxMarketCamelRoute extends RouteBuilder {
 
+    @Autowired
+    private MarketDataStubProperties marketDataStubProperties;
+    private static final String FX_MARKET_DATA_PATH = "/forex/rates";
+
+    @Value("${kafka.bootstrap-servers}")
+    private String bootstrapServers;
+    private static final String TOPIC = "fx_rates_camel";
+
     @Override
     public void configure() throws Exception {
-        //CamelContext context = new DefaultCamelContext();
+        log.info("Configuring Camel Route for FX Market Data");
+        log.info("url: {} ", marketDataStubProperties.getUrl() + FX_MARKET_DATA_PATH);
+        log.info("bootstrapServers: {} ", bootstrapServers);
+        log.info("topic: {} ", TOPIC);
 
-        // Transform the body of received items and log
-        from("stream:http?httpUrl=http://localhost:3080/forex/rates")
-                //.setBody().simple("BasicReactorToCamel - Camel received ${body}")
+        from("stream:http?httpUrl="+marketDataStubProperties.getUrl() + FX_MARKET_DATA_PATH)
+                .marshal()
+                .protobuf("com.fx.market.kafka.message.FxRateEventProto$FxRateEvent", "json")
                 .to("log:INFO")
-                .setHeader(KafkaConstants.KEY, constant("Camel")) // Key of the message
-                .to("kafka:test?brokers=localhost:9092");;
-        // Logic to Extract Rates
-        // Logic to Group By Rates
-        // Logic to Save the latest Rate for each ccy pair
-
+                //.setHeader(KafkaConstants.KEY, constant("Camel")) // Key of the message
+                .to("kafka:"+TOPIC+"?brokers="+bootstrapServers);
     }
 }
 

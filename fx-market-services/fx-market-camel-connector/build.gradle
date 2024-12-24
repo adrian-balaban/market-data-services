@@ -26,6 +26,9 @@ dependencies {
 	// Proto
 	implementation 'com.google.protobuf:protobuf-java:3.25.5' // version 4 breaks java compilation
 
+	implementation 'org.apache.camel:camel-protobuf:4.9.0'
+	implementation 'org.apache.camel.springboot:camel-protobuf-starter:4.9.0'
+
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 

@@ -116,7 +116,11 @@ pushd ./scripts
   ./deployKafka.sh -n ${NAMESPACE}
   if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
-  ./deployFlink.sh -n ${NAMESPACE}
+          # To fix: helm install fx-flink oci://registry-1.docker.io/bitnamicharts/flink --version 1.3.16 --namespace fxmarket
+          #Pulled: registry-1.docker.io/bitnamicharts/flink:1.3.16
+          #Digest: sha256:1d7e9123ab44755e9535b52249dbe2acfb1401a536d91b257051da560ba794f7
+          #Error: INSTALLATION FAILED: cannot re-use a name that is still in use
+  #./deployFlink.sh -n ${NAMESPACE}
   if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
   #./deployKnativeCamelK.sh
