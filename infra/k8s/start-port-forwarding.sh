@@ -13,7 +13,7 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 #CD
-kubectl port-forward svc/argocd-server -n argocd 8080:443
+kubectl port-forward svc/argocd-server -n ${NAMESPACE} 38080:443
 
 #TOOLS
 kubectl port-forward -n ${NAMESPACE} svc/kafka 9092:9092 &
