@@ -19,6 +19,11 @@ ext {
 	profileProperty = project.hasProperty('profile') ? project.getProperty('profile') : 'local' // default
 }
 
+java {
+	toolchain {
+		languageVersion.set(JavaLanguageVersion.of(21))
+	}
+}
 
 configurations {
 	compileOnly {

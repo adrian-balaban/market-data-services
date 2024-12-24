@@ -69,7 +69,8 @@ echo Install the Kafka controller by running the following command:
 kubectl apply -f https://github.com/knative-extensions/eventing-kafka-broker/releases/download/knative-v1.15.2/eventing-kafka-controller.yaml
 
 echo Install the KafkaChannel data plane by running the following command:
-kubectl apply -f https://github.com/knative-extensions/eventing-kafka-broker/releases/download/knative-v1.15.2/eventing-kafka-channel.yaml
+#To fix
+#kubectl apply -f https://github.com/knative-extensions/eventing-kafka-broker/releases/download/knative-v1.15.2/eventing-kafka-channel.yaml
 
 
 
@@ -92,7 +93,8 @@ echo Apache Kafka Sink
 echo Install the Kafka controller by running the command:
 kubectl apply -f https://github.com/knative-extensions/eventing-kafka-broker/releases/download/knative-v1.15.2/eventing-kafka-controller.yaml
 echo Install the Kafka Sink data plane by running the command:
-kubectl apply -f https://github.com/knative-extensions/eventing-kafka-broker/releases/download/knative-v1.15.2/eventing-kafka-sink.yaml
+#To fix
+#kubectl apply -f https://github.com/knative-extensions/eventing-kafka-broker/releases/download/knative-v1.15.2/eventing-kafka-sink.yaml
 
 echo Github Source
 echo A single-tenant GitHub source creates one Knative service per GitHub source.

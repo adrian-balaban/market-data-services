@@ -1,4 +1,4 @@
-package com.fx.market.fxmarketcamelconnector.vendor.stub;
+package com.fx.market.fxmarketcamelconnector.routes;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
