@@ -1,9 +1,7 @@
 spring:
   application:
     name: fxMarketCamelDataConnector
-camel:
-  springboot:
-    main-run-controller: true
+
 server:
   port: 4080
 

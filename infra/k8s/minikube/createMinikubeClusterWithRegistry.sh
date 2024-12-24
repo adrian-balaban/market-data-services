@@ -76,4 +76,3 @@ echo https://minikube.sigs.k8s.io/docs/handbook/addons/registry-aliases/
 kubectl port-forward --namespace kube-system service/registry 5001:80
 
 
-echo continue with installing:./deployFlink.sh &&./deployKafka&&./deployKnativeCamelK.sh

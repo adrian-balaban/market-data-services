@@ -1,0 +1,47 @@
+buildscript {
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${SPRING_BOOT_GRADLE_PLUGIN}")
+	}
+}
+
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+	implementation project(":model-fx-proto")
+
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation "org.springframework.cloud:spring-cloud-stream:${SPRING_CLOUD_STREAM}"
+
+	// Kafka
+	implementation 'org.apache.kafka:kafka-streams'
+	implementation 'org.springframework.kafka:spring-kafka'
+	implementation 'io.confluent:kafka-streams-protobuf-serde:7.7.1'
+
+	// Proto
+	implementation 'com.google.protobuf:protobuf-java:3.25.5' // version 4 breaks java compilation
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'io.projectreactor:reactor-test'
+	testImplementation "org.springframework.cloud:spring-cloud-stream-test-binder:${SPRING_CLOUD_STREAM}"
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+bootBuildImage {
+	var versionVar = "${versionProperty != 'unspecified' ? versionProperty : '0.0.1'}"
+	var registryVar = "${registryProperty != 'unspecified' ? registryProperty : 'docker.io'}"
+	var profileVar = "${profileProperty != 'unspecified' ? profileProperty : ''}"
+	imageName = "${registryVar}/${dockerRepositoryProperty}/${project.name}:${versionVar}"
+	publish = true
+	docker {
+		host = "unix:///run/user/1000/podman/podman.sock"
+		bindHostToBuilder = true
+		tlsVerify = false
+	}
+	environment = [
+			'BPE_SPRING_PROFILES_ACTIVE': profileVar,
+			'BPE_JAVA_TOOL_OPTIONS': '-Xms1024m -Xmx2048m -XX:MaxDirectMemorySize=512m'
+	]
+}
