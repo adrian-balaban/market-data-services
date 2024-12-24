@@ -2,13 +2,13 @@
 
 apps:
   ###################################
-  ##### FX MARKET CAMEL CONNECTOR APP #####
+  ##### FX MARKET CONNECTOR APP #####
   ###################################
-  fxmarketcamelconnector:
-    name: fx-market-camel-connector
+  fxmarketconnector:
+    name: fx-market-connector
     image:
-      repository: localhost:5001/fx-market-services/fx-market-camel-connector
-#      tag: 0.0.0
+      repository: localhost:5001/fx-market-services/fx-market-connector
+    #      tag: 0.0.1
 
     podAnnotations: {}
 
@@ -55,20 +55,19 @@ apps:
     tolerations: []
     affinity: {}
 
-
   ###################################
-  ##### FX MARKET CONNECTOR APP #####
+  ##### FX MARKET CAMEL CONNECTOR APP #####
   ###################################
-  fxmarketconnector:
-    name: fx-market-connector
+  fxmarketcamelconnector:
+    name: fx-market-camel-connector
     image:
-      repository: localhost:5001/fx-market-services/fx-market-connector
-    #      tag: 0.0.0
+      repository: localhost:5001/fx-market-services/fx-market-camel-connector
+#      tag: 0.0.1
 
     podAnnotations: {}
 
     service:
-      type: ClusterIP
+      type: NodePort
       port: 8080
 
     extraEnv:
@@ -88,21 +87,12 @@ apps:
         memory: 3072Mi
 
     volumes: []
-      # - name: server-certs
-      #   secretName: api-fxmarketconnector
-      #   mountPath: /opt/certs/fxmarketconnector
-      #   optional: true
-      # - name: mtls-certs2
-      #   secretName: mtls-certs2
-    #   mountPath: /opt/certs/mtls2
-    #   optional: true
 
     autoscaling:
       enabled: false
       minReplicas: 1
       maxReplicas: 1
       targetCPUUtilizationPercentage: 80
-      # targetMemoryUtilizationPercentage: 80
 
     initContainers: {}
     imagePullSecrets: {}
@@ -147,6 +137,59 @@ apps:
       #   optional: true
       # - name: mtls-certs2
       #   secretName: mtls-certs2
+    #   mountPath: /opt/certs/mtls2
+    #   optional: true
+
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 1
+      targetCPUUtilizationPercentage: 80
+      # targetMemoryUtilizationPercentage: 80
+
+    initContainers: {}
+    imagePullSecrets: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+
+  ###################################
+  ##### FX MARKET CAMEL PROCESSOR APP #####
+  ###################################
+  fxmarketcamelprocessor:
+    name: fx-market-camel-processor
+    image:
+      repository: localhost:5001/fx-market-services/fx-market-camel-processor
+    #      tag: 0.0.1
+
+    podAnnotations: {}
+
+    service:
+      type: ClusterIP
+      port: 8080
+
+    extraEnv:
+      - name: SERVER_PORT
+        value: "8080"
+      - name: KAFKA_BOOTSTRAP_SERVERS
+        value: "PLAINTEXT://kafka:9092"
+
+    resources:
+      limits:
+        cpu: 1
+        memory: 3072Mi
+      requests:
+        cpu: 500m
+        memory: 3072Mi
+
+    volumes: []
+      # - name: server-certs
+      #   secretName: api-fxmarketconnector
+      #   mountPath: /opt/certs/fxmarketconnector
+      #   optional: true
+      # - name: mtls-certs2
+    #   secretName: mtls-certs2
     #   mountPath: /opt/certs/mtls2
     #   optional: true
 

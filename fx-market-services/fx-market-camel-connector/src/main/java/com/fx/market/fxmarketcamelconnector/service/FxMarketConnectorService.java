@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class FxMarketConnectorService {
 
-    private static final String TOPIC = "fx_rates";
+    private static final String TOPIC = "fx_rates_camel";
 
     @Autowired
     private MarketDataStubClient marketDataStubClient;
