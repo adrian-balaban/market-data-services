@@ -9,10 +9,14 @@ BUILD_PHASE='true' # default if not provided
 TEST_MODE='false' # default if not provided
 DOCKER_REGISTRY="localhost:5001" # default if not provided
 NAMESPACE="fxmarket" # default if not provided
-TAG='0.1.0' # default if not provided
+TAG='1.0.0' # default if not provided
+ENV='dev' # default if not provided
+BRANCH='master' # default if not provided
 
 print_usage() {
   echo "Usage:"
+  echo "-branch <branch_name>         <- to specify branch name to build - default: master"
+  echo "-env <env_name>               <- to specify env name for and take relevant manifests - default: env"
   echo "-build <true|false>           <- to build with test mode - default: true"
   echo "-test <true|false>            <- to build with test mode - default: false"
   echo "-n <namespace>                <- to specify namespace"
@@ -60,6 +64,8 @@ wait_for_pod() {
 # Parse command-line options
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
+    -branch) BRANCH="$2"; shift ;;
+    -env) ENV="$2"; shift ;;
     -test) TEST_MODE="$2"; shift ;;
     -build) BUILD_PHASE="$2"; shift ;;
     -n) NAMESPACE="$2"; shift ;;
@@ -71,11 +77,13 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 echo "$SEPARATOR"
-echo "TAG: ${TAG}" # default if not provided
-echo "NAMESPACE: ${NAMESPACE}" # default if not provided
-echo "TEST_MODE: ${TEST_MODE}" # default if not provided
-echo "BUILD_PHASE: ${BUILD_PHASE}" # default if not provided
-echo "DOCKER_REGISTRY: ${DOCKER_REGISTRY}" # default if not provided
+echo "BRANCH: ${BRANCH}"
+echo "ENV: ${ENV}"
+echo "TAG: ${TAG}"
+echo "NAMESPACE: ${NAMESPACE}"
+echo "TEST_MODE: ${TEST_MODE}"
+echo "BUILD_PHASE: ${BUILD_PHASE}"
+echo "DOCKER_REGISTRY: ${DOCKER_REGISTRY}"
 echo "$SEPARATOR"
 sleep 5
 
@@ -152,24 +160,30 @@ sed -i "s/${NAMESPACE}/___CHANGE_ME_NAMESPACE___/g" ./gihubSecret.yaml ## Revert
 sleep 10
 
 pushd ./externals
+    sed -i "s/___CHANGE_ME_ENV___/${NAMESPACE}/g" ./application.yaml ## Set proper namespace
+    sed -i "s/___CHANGE_ME_BRANCH___/${NAMESPACE}/g" ./application.yaml ## Set proper namespace
     sed -i "s/___CHANGE_ME_NAMESPACE___/${NAMESPACE}/g" ./application.yaml ## Set proper namespace
     kubectl apply -f application.yaml
+    sed -i "s/${NAMESPACE}/___CHANGE_ME_ENV___/g" ./application.yaml ## Revert
+    sed -i "s/${NAMESPACE}/___CHANGE_ME_BRANCH___/g" ./application.yaml ## Revert
     sed -i "s/${NAMESPACE}/___CHANGE_ME_NAMESPACE___/g" ./application.yaml ## Revert
 popd
 
 wait_for_pod "fx-market-data-stub"
 
 pushd ./solution
+    sed -i "s/___CHANGE_ME_ENV___/${NAMESPACE}/g" ./application.yaml ## Set proper namespace
+    sed -i "s/___CHANGE_ME_BRANCH___/${NAMESPACE}/g" ./application.yaml ## Set proper namespace
     sed -i "s/___CHANGE_ME_NAMESPACE___/${NAMESPACE}/g" ./application.yaml ## Set proper namespace
     kubectl apply -f application.yaml
+    sed -i "s/${NAMESPACE}/___CHANGE_ME_ENV___/g" ./application.yaml ## Revert
+    sed -i "s/${NAMESPACE}/___CHANGE_ME_BRANCH___/g" ./application.yaml ## Revert
     sed -i "s/${NAMESPACE}/___CHANGE_ME_NAMESPACE___/g" ./application.yaml ## Revert
 popd
 
 echo "$SEPARATOR"
 echo "DEPLOY ARGOCD MANIFESTS- END"
 echo "$SEPARATOR"
-
-
 
 sleep 5
 

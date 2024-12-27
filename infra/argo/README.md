@@ -3,6 +3,8 @@
 Run: `./deployAllWithArgo.sh`
 ```
 Usage:
+-branch <branch_name>         <- to specify branch name to build - default: master
+-env <env_name>               <- to specify env name for and take relevant manifests - default: env
 -build <true|false>           <- to build with test mode - default: true
 -test <true|false>            <- to build with test mode - default: false
 -n <namespace>                <- to specify namespace
