@@ -1,5 +1,4 @@
 ##### APPLICATIONS
-
 apps:
   ###################################
   ##### FX MARKET CONNECTOR APP #####
@@ -20,9 +19,13 @@ apps:
       - name: SERVER_PORT
         value: "8080"
       - name: KAFKA_BOOTSTRAP_SERVERS
-        value: "PLAINTEXT://kafka:9092"
+        value: PLAINTEXT://localhost:9092
       - name: VENDOR_MARKET_DATA_STUB_URL
         value: "http://fx-market-data-stub-svc:3080"
+      - name: KAFKA_ADVERTISED_LISTENERS
+        value: PLAINTEXT://kafka.fxmarket.svc.cluster.local:9092
+      - name: KAFKA_LISTENERS
+        value: PLAINTEXT://0.0.0.0:9092
 
     resources:
       limits:
