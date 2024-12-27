@@ -45,7 +45,8 @@ spec:
       - "password.encoder.secret=secret"
       - "auto.create.topics.enable=true"
       - "listeners=PLAINTEXT://0.0.0.0:9092"
-      - "advertised. listeners=PLAINTEXT://kafka.___CHANGE_ME_NAMESPACE___.svc.cluster.local:9092"
+      - "advertised.listeners=PLAINTEXT://kafka-0.kafka.fxmarket.svc.cluster.local:9092"
+      - "listener.security.protocol.map=PLAINTEXT:PLAINTEXT,REPLICATION:PLAINTEXT"
   podTemplate:
     resources:
       requests:
