@@ -63,7 +63,7 @@ bootBuildImage {
     imageName = "${registryVar}/${dockerRepositoryProperty}/${project.name}:${versionVar}"
     publish = true
     docker {
-        host = "unix:///run/podman/podman.sock" //unix:///run/user/1000/podman/podman.sock"
+        host = "unix:///var/run/docker.sock"
         bindHostToBuilder = true
         tlsVerify = false
     }

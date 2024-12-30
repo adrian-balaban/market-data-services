@@ -27,8 +27,8 @@ echo "Building OSI Image - flink-orchestrator - Start"
 
 pushd ../../../../fx-market-services
 
-./gradlew -stacktrace flink-orchestrator:clean && \
-./gradlew -stacktrace flink-orchestrator:bootBuildImage -Pversion=${TAG} -Pregistry=${DOCKER_REGISTRY} -Pprofile=${SPRING_PROFILE}
+./gradlew flink-orchestrator:clean && \
+./gradlew flink-orchestrator:bootBuildImage -Pversion=${TAG} -Pregistry=${DOCKER_REGISTRY} -Pprofile=${SPRING_PROFILE}
 
 popd
 

@@ -27,8 +27,8 @@ echo "Building OSI Image - fx-market-connector - Start"
 
 pushd ../../../../fx-market-services
 
-./gradlew -stacktrace fx-market-connector:clean && \
-./gradlew -stacktrace fx-market-connector:bootBuildImage -Pversion=${TAG} -Pregistry=${DOCKER_REGISTRY} -Pprofile=${SPRING_PROFILE}
+./gradlew fx-market-connector:clean && \
+./gradlew fx-market-connector:bootBuildImage -Pversion=${TAG} -Pregistry=${DOCKER_REGISTRY} -Pprofile=${SPRING_PROFILE}
 
 popd
 
