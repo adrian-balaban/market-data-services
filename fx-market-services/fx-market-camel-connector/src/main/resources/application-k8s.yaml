@@ -2,9 +2,6 @@ spring:
   application:
     name: fxMarketCamelDataConnector
 
-server:
-  port: 8080
-
 kafka:
   bootstrap-servers: PLAINTEXT://kafka:9092
 

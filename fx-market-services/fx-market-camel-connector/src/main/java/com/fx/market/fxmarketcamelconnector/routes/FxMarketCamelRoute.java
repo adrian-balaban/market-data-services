@@ -1,5 +1,6 @@
 package com.fx.market.fxmarketcamelconnector.routes;
 
+import com.fx.market.kafka.message.FxRateEventProto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
@@ -27,10 +28,10 @@ public class FxMarketCamelRoute extends RouteBuilder {
         log.info("topic: {} ", TOPIC);
 
         from("stream:http?httpUrl="+marketDataStubProperties.getUrl() + FX_MARKET_DATA_PATH)
-                .marshal()
-                .protobuf("com.fx.market.kafka.message.FxRateEventProto$FxRateEvent", "json")
                 .to("log:INFO")
-                //.setHeader(KafkaConstants.KEY, constant("Camel")) // Key of the message
+                .unmarshal()
+                .protobuf(FxRateEventProto.getDefaultInstance(), "json")
+                .setHeader(KafkaConstants.KEY, constant("Camel")) // Kafka Key of the message
                 .to("kafka:"+TOPIC+"?brokers="+bootstrapServers);
     }
 }
