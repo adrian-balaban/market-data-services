@@ -25,7 +25,7 @@ done
 kubectl get namespace ${NAMESPACE} || kubectl create namespace ${NAMESPACE}
 ###############################################################
 echo "$SEPARATOR"
-echo "DEPLOYING NODEPORT FOR KAFKA - START"
+echo "SEARCHING FOR KAFKA NODEPORT - START"
 echo "$SEPARATOR"
 
 NEW_NODE_PORT=30000;
@@ -39,16 +39,8 @@ else
   echo "Setting NodePort to $NEW_NODE_PORT"
 fi
 
-
-sed -i "s/___CHANGE_ME_NAMESPACE___/${NAMESPACE}/g" ../helm/kafka/kafkaNodePort.yaml ## Set proper namespace
-sed -i "s/___CHANGE_ME_KAFKA_NODEPORT___/${NEW_NODE_PORT}/g" ../helm/kafka/kafkaNodePort.yaml ## Set proper namespace
-kubectl apply -f ../helm/kafka/kafkaNodePort.yaml
-if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
-sed -i "s/${NAMESPACE}/___CHANGE_ME_NAMESPACE___/g" ../helm/kafka/kafkaNodePort.yaml ## Revert
-sed -i "s/${NEW_NODE_PORT}/___CHANGE_ME_KAFKA_NODEPORT___/g" ../helm/kafka/kafkaNodePort.yaml ## Revert
-
 echo "$SEPARATOR"
-echo "DEPLOYING NODEPORT FOR KAFKA - END"
+echo "SEARCHING FOR KAFKA NODEPORT - END. NEW KAFKA NODE PORT: $NEW_NODE_PORT"
 echo "$SEPARATOR"
 ###############################################################
 echo "$SEPARATOR"
