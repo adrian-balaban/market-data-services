@@ -132,6 +132,7 @@ if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exi
 
 #echo More info on https://camel.apache.org/camel-k/next/installation/integrationplatform.html
 kubectl apply -f ../helm/camel-k/integration-platform.yaml -n camel-k
+#kamel install --registry docker.io --registry-auth-username adriannbalaban --registry-auth-password dckr_pat_54LuHTnvrOLeneiZzEwxyC6zqMw
 echo wait until all is up and running
 #kubectl get itp -n camel-k -w
 

@@ -29,7 +29,7 @@ minikube config set memory 15000
 minikube config set driver virtualbox
 
 # see https://minikube.sigs.k8s.io/docs/handbook/registry/#enabling-insecure-registries
-minikube start --driver=virtualbox --host-dns-resolver=false --insecure-registry  "10.0.0.0/24" #--cni=false
+minikube start --driver=virtualbox --host-dns-resolver=false --addons registry --insecure-registry  "10.0.0.0/24" #--cni=false
 
 minikube addons enable volumesnapshots
 minikube addons enable csi-hostpath-driver
@@ -41,24 +41,25 @@ minikube addons enable helm-tiller
 minikube addons enable logviewer
 minikube addons enable registry
 minikube addons enable registry-aliases
+eval $(minikube -p minikube docker-env)
 
 echo Get registry IP
 kubectl get service registry -n kube-system -o jsonpath="{.spec.clusterIP}"
 
-reg_port='5000'
-echo Document the local registry
-# https://github.com/kubernetes/enhancements/tree/master/keps/sig-cluster-lifecycle/generic/1755-communicating-a-local-registry
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: local-registry-hosting
-  namespace: kube-public
-data:
-  localRegistryHosting.v1: |
-    host: "localhost:${reg_port}"
-    #help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
-EOF
+#reg_port='5000'
+#echo Document the local registry
+## https://github.com/kubernetes/enhancements/tree/master/keps/sig-cluster-lifecycle/generic/1755-communicating-a-local-registry
+#cat <<EOF | kubectl apply -f -
+#apiVersion: v1
+#kind: ConfigMap
+#metadata:
+#  name: local-registry-hosting
+#  namespace: kube-public
+#data:
+#  localRegistryHosting.v1: |
+#    host: "localhost:${reg_port}"
+#    #help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
+#EOF
 
 echo https://minikube.sigs.k8s.io/docs/handbook/registry/
 echo https://minikube.sigs.k8s.io/docs/handbook/addons/registry-aliases/
@@ -73,6 +74,6 @@ echo https://minikube.sigs.k8s.io/docs/handbook/addons/registry-aliases/
 #echo check http://external-ip:5001/v2/_catalog
 #kubectl get svc registry -n kube-system
 
-kubectl port-forward --namespace kube-system service/registry 5001:80
+#kubectl port-forward --namespace kube-system service/registry 5001:80
 
 

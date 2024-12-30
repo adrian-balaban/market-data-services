@@ -35,6 +35,7 @@ echo "$separator"
 sleep 2
 
 pushd ../../vendors/market-data-stub && podman build --build-arg TEST_MODE_ARG=$test_mode_flag -t fx-market/market-data-stub:0.0.1 . --load && podman tag fx-market/market-data-stub:0.0.1 localhost:5001/fx-market/market-data-stub:0.0.1 && podman push localhost:5001/fx-market/market-data-stub:0.0.1 && popd
+pushd ../../vendors/market-data-stub-4-camel && docker build --build-arg TEST_MODE_ARG=$test_mode_flag -t fx-market-externals/market-data-stub-4-camel:0.0.1 . --load && docker tag fx-market-externals/market-data-stub-4-camel:0.0.1 localhost:5001/fx-market-externals/market-data-stub-4-camel:0.0.1 && docker push localhost:5001/fx-market-externals/market-data-stub-4-camel:0.0.1 && popd
 
 echo "$separator"
 echo "RUNNING COMPOSE WITH PODMAN"

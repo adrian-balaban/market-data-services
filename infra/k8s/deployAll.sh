@@ -116,7 +116,7 @@ pushd ./scripts
   ./deployKafka.sh -n ${NAMESPACE}
   if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
-  ./deployFlink.sh -n ${NAMESPACE}
+#  ./deployFlink.sh -n ${NAMESPACE}
   if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
   #./deployKnativeCamelK.sh
