@@ -30,7 +30,7 @@ public class KafkaStreamsConfig {
         return new KafkaStreamsConfiguration(Map.of(
                 APPLICATION_ID_CONFIG, "fx-market-camel-processor-stream-operator",
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
-                DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Integer().getClass().getName(),
+                DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName(),
                 DEFAULT_VALUE_SERDE_CLASS_CONFIG, FxRateEventProtoSerde.class.getName(),
                 DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, WallclockTimestampExtractor.class.getName(),
                 StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 0, // Set commit interval to 1000 ms
