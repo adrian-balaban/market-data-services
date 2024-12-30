@@ -22,10 +22,9 @@ import static com.fx.market.fxmarketcamelprocessor.service.FxRate.fromFxRateProt
 public class FxMarketProcessorService {
     private static final String TOPIC_INPUT = "fx_rates_camel";
 
-
     @Bean
-    public KStream<Integer, FxRateEventProto> kStream(StreamsBuilder kStreamBuilder) {
-        KStream<Integer, FxRateEventProto> stream = kStreamBuilder.stream(TOPIC_INPUT);
+    public KStream<String, FxRateEventProto> kStream(StreamsBuilder kStreamBuilder) {
+        KStream<String, FxRateEventProto> stream = kStreamBuilder.stream(TOPIC_INPUT);
 
         KTable<String, FxRate> table = stream.flatMap(
                 (key, fxRateEventProto) ->

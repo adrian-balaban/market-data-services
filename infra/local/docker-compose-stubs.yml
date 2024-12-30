@@ -9,3 +9,14 @@ services:
       - ../../vendors/market-data-stub:/usr/src/app
     networks:
       - docker_net
+
+  fx-market-stub-4-camel:
+    build:
+      context: ../../vendors/market-data-stub-4-camel
+    image: localhost:5001/fx-market-externals/market-data-stub-4-camel:0.0.1
+    ports:
+      - 13080:13080
+    volumes:
+      - ../../vendors/market-data-stub4-camel:/usr/src/app
+    networks:
+      - docker_net

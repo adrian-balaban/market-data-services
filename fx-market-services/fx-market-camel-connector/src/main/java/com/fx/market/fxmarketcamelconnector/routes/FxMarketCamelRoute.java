@@ -31,7 +31,7 @@ public class FxMarketCamelRoute extends RouteBuilder {
                 .to("log:INFO")
                 .unmarshal()
                 .protobuf(FxRateEventProto.getDefaultInstance(), "json")
-                .setHeader(KafkaConstants.KEY, constant("Camel")) // Kafka Key of the message
+                //.setHeader(KafkaConstants.KEY, constant("Camel")) // Kafka Key of the message
                 .to("kafka:"+TOPIC+"?brokers="+bootstrapServers);
     }
 }

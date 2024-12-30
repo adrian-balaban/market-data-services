@@ -3,7 +3,7 @@ spring:
     name: fxMarketDataProcessor
 
 server:
-  port: 5081
+  port: 15081
 
 kafka:
   bootstrap-servers: PLAINTEXT://localhost:9092

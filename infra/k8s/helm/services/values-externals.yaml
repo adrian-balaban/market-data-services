@@ -40,3 +40,43 @@ apps:
     nodeSelector: {}
     tolerations: []
     affinity: {}
+
+  ###################################
+  ####### FX MARKET DATA STUB 4 CAMEL #######
+  ###################################
+  fxmarketdatastub4camel:
+    name: fx-market-data-stub-4-camel
+    image:
+      repository: localhost:5001/fx-market-externals/market-data-stub-4-camel
+    #      tag: 0.0.0
+
+    podAnnotations: {}
+
+    service:
+      type: ClusterIP
+      port: 3080
+
+    extraEnv: []
+
+    resources:
+      limits:
+        cpu: 1
+        memory: 1024Mi
+      requests:
+        cpu: 500m
+        memory: 512Mi
+
+    volumes: []
+
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 1
+      targetCPUUtilizationPercentage: 80
+      # targetMemoryUtilizationPercentage: 80
+
+    initContainers: {}
+    imagePullSecrets: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
