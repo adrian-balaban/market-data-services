@@ -1,5 +1,6 @@
 package stepdefinitions;
 
+import helpers.kafka.KafkaTestConsumer;
 import io.cucumber.java.en.Then;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -63,17 +64,11 @@ public class KafkaSteps {
     @Test
     @Then("FX Rates landed on kafka")
     public void testReadFromFxRateTopic12() throws Exception {
-        String topic = "fx_rates";
         var expectedTimestamp = SharedScenarioContext.getInstance().get("timestamp");
 
-        // 3.  Consumer
-        Map<String, Object> consumerProps = new HashMap<>(consumerFactory.getConfigurationProperties());
-        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "test-group");
-     //   consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer");
-        consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
-        Consumer<String, byte[]> consumer = new KafkaConsumer<>(consumerProps);
-        consumer.subscribe(Collections.singletonList(topic));
+        Consumer<String, byte[]> consumer = KafkaTestConsumer.getTestKafkaConsumer();
 
+        consumer.subscribe(Collections.singletonList("fx_rates"));
 
         Awaitility.await()
                 .atMost(5, TimeUnit.SECONDS)
