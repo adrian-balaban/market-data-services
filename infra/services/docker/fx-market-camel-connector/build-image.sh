@@ -27,8 +27,8 @@ echo "Building OSI Image - fx-market-camel-connector - Start"
 
 pushd ../../../../fx-market-services
 
-./gradlew -stacktrace fx-market-camel-connector:clean && \
-./gradlew -stacktrace fx-market-camel-connector:bootBuildImage -Pversion=${TAG} -Pregistry=${DOCKER_REGISTRY} -Pprofile=${SPRING_PROFILE}
+./gradlew fx-market-camel-connector:clean && \
+./gradlew fx-market-camel-connector:bootBuildImage -Pversion=${TAG} -Pregistry=${DOCKER_REGISTRY} -Pprofile=${SPRING_PROFILE}
 
 popd
 

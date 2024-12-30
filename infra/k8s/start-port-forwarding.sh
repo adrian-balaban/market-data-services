@@ -20,6 +20,6 @@ kubectl port-forward -n ${NAMESPACE} svc/controlcenter 9021:9021 &
 kubectl port-forward -n ${NAMESPACE} svc/fx-flink-jobmanager 8081:8081 &
 
 #STUBS
-kubectl port-forward -n ${NAMESPACE} svc/fx-market-data-stub-svc 3080:8081 &
+kubectl port-forward -n ${NAMESPACE} svc/fx-market-data-stub-svc 3080:3080 &
 
 #SERVICES (Add only if needed i.e. by e2e tests)

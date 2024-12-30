@@ -1,6 +1,6 @@
 services:
   fx-market-connector:
-    image: docker.io/library/fx-market-connector:latest
+    image: localhost:5001/fx-market-services/fx-market-connector:0.0.1
     depends_on:
       - broker
     ports:
@@ -9,7 +9,7 @@ services:
       - docker_net
 
   fx-market-processor:
-    image: docker.io/library/fx-market-processor:latest
+    image: localhost:5001/fx-market-services/fx-market-processor:0.0.1
     depends_on:
       - broker
     ports:
@@ -17,8 +17,26 @@ services:
     networks:
       - docker_net
 
+  fx-market-camel-connector:
+    image: localhost:5001/fx-market-services/fx-market-camel-connector:0.0.1
+    depends_on:
+      - broker
+    ports:
+      - 5080:5080
+    networks:
+      - docker_net
+
+  fx-market-camel-processor:
+    image: localhost:5001/fx-market-services/fx-market-camel-processor:0.0.1
+    depends_on:
+      - broker
+    ports:
+      - 5081:5081
+    networks:
+      - docker_net
+
   flink-orchestrator:
-    image: docker.io/library/flink-orchestrator:latest
+    image: localhost:5001/fx-market-services/flink-orchestrator:0.0.1
     depends_on:
       - jobmanager
       - taskmanager
