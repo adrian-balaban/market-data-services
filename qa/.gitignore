@@ -13,3 +13,6 @@ qa/target/*
 
 # Ignore Gradle build output directory
 build/*
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
