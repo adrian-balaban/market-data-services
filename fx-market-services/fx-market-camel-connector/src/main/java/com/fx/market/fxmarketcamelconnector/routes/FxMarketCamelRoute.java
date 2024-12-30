@@ -29,10 +29,10 @@ public class FxMarketCamelRoute extends RouteBuilder {
 
         from("stream:http?httpUrl="+marketDataStubProperties.getUrl() + FX_MARKET_DATA_PATH)
                 .to("log:INFO")
-                .unmarshal()
-                .protobuf(FxRateEventProto.getDefaultInstance(), "json")
-                //.setHeader(KafkaConstants.KEY, constant("Camel")) // Kafka Key of the message
-                .to("kafka:"+TOPIC+"?brokers="+bootstrapServers);
+                //.unmarshal()
+                //.protobuf(FxRateEventProto.getDefaultInstance(), "json")
+                //.setHeader(KafkaConstants.KEY, "key") // Kafka Key of the message
+                .to("kafka:"+TOPIC+"?brokers="+bootstrapServers+"&key=constantKey");
     }
 }
 
