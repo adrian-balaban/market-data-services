@@ -31,6 +31,13 @@ spec:
     application: confluentinc/cp-server:7.7.0
     init: confluentinc/confluent-init-container:2.9.0
   dataVolumeCapacity: 10Gi
+  listeners:
+    external:
+      externalAccess:
+        type: nodePort
+        nodePort:
+          nodePortOffset: ___CHANGE_ME_KAFKA_NODEPORT___
+          host: localhost
   configOverrides:
     server:
       - "confluent.license.topic.replication.factor=1"
@@ -44,12 +51,6 @@ spec:
       - "confluent.cluster.link.enable=true"
       - "password.encoder.secret=secret"
       - "auto.create.topics.enable=true"
-      - "listeners=PLAINTEXT://0.0.0.0:9092,EXTERNAL://0.0.0.0:9071"
-      - "advertised.listeners=PLAINTEXT://kafka.___CHANGE_ME_NAMESPACE___.svc.cluster.local:9092,EXTERNAL://kafka.___CHANGE_ME_NAMESPACE___.svc.cluster.local:9071"
-      - "listener.security.protocol.map=PLAINTEXT:PLAINTEXT,REPLICATION:PLAINTEXT,EXTERNAL:PLAINTEXT"
-      - "inter.broker.listener.name=PLAINTEXT"
-      - "externalAccess.type=nodePort"
-      - "externalAccess.nodePort=___CHANGE_ME_KAFKA_NODEPORT___" # Choose a port within the NodePort range (30000-32767)
   podTemplate:
     resources:
       requests:
