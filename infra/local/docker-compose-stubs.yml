@@ -2,7 +2,7 @@ services:
   fx-market-stub:
     build:
       context: ../../vendors/market-data-stub
-    image: localhost/fx-market/market-data-stub:0.0.1
+    image: localhost:5001/fx-market-externals/market-data-stub:0.1.0
     ports:
       - 3080:3080
     volumes:

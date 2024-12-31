@@ -1,6 +1,6 @@
 services:
   fx-market-connector:
-    image: docker.io/library/fx-market-connector:latest
+    image: localhost:5001/fx-market-services/fx-market-connector:0.1.0
     depends_on:
       - broker
     ports:
@@ -9,7 +9,7 @@ services:
       - docker_net
 
   fx-market-processor:
-    image: docker.io/library/fx-market-processor:latest
+    image: localhost:5001/fx-market-services/fx-market-processor:0.1.0
     depends_on:
       - broker
     ports:
@@ -18,7 +18,7 @@ services:
       - docker_net
 
   flink-orchestrator:
-    image: docker.io/library/flink-orchestrator:latest
+    image: localhost:5001/fx-market-services/flink-orchestrator:0.1.0
     depends_on:
       - jobmanager
       - taskmanager
