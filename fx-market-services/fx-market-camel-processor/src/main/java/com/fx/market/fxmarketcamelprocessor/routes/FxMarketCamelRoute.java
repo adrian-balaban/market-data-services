@@ -1,20 +1,14 @@
-package com.fx.market.fxmarketcamelconnector.routes;
+package com.fx.market.fxmarketcamelprocessor.routes;
 
 import com.fx.market.kafka.message.FxRateEventProto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.kafka.KafkaConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 public class FxMarketCamelRoute extends RouteBuilder {
-
-    @Autowired
-    private MarketDataStubProperties marketDataStubProperties;
-    private static final String FX_MARKET_DATA_PATH = "/forex/rates";
 
     @Value("${kafka.bootstrap-servers}")
     private String bootstrapServers;
@@ -23,15 +17,25 @@ public class FxMarketCamelRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         log.info("Configuring Camel Route for FX Market Data");
-        log.info("url: {} ", marketDataStubProperties.getUrl() + FX_MARKET_DATA_PATH);
         log.info("bootstrapServers: {} ", bootstrapServers);
         log.info("topic: {} ", TOPIC);
 
-        from("stream:http?httpUrl="+marketDataStubProperties.getUrl() + FX_MARKET_DATA_PATH)
-                .to("log:INFO")
+        from("kafka:"+TOPIC+"?brokers="+bootstrapServers)//groupId=fx-market-camel-processor&groupInstanceId=fx-market-camel-processor-1
                 //.unmarshal()
-                //.protobuf(FxRateEventProto.getDefaultInstance(), "json")
-                .to("kafka:"+TOPIC+"?brokers="+bootstrapServers);
+                //.protobuf(FxRateEventProto.getDefaultInstance())
+                .log("Message received from Kafka : ${body}")
+                .log("    on the topic ${headers[kafka.TOPIC]}")
+                .log("    on the partition ${headers[kafka.PARTITION]}")
+                .log("    with the offset ${headers[kafka.OFFSET]}")
+                .log("    with the key ${headers[kafka.KEY]}")
+                .to("log:INFO2");
+                /*.process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String payload = exchange.getIn().getBody(String.class);
+                        // do something with the payload and/or exchange here
+                        exchange.getIn().setBody("Changed body");
+                    }
+                }).to("activemq:myOtherQueue")*/
     }
 }
 
