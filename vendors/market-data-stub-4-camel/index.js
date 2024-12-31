@@ -50,7 +50,6 @@ function sendDataToAllClients(record) {
     clients.forEach((client) => {
             console.log("Client:" + client.id + " message:" + JSON.stringify(record));
             client.response.write(`${JSON.stringify(record)}\n`);
-            //client.response.write(`data: ${JSON.stringify(record)}\n\n`);
         }
     );
 }

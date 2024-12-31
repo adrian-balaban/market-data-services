@@ -1,9 +1,0 @@
-spring:
-  application:
-    name: fxMarketDataProcessor
-
-server:
-  port: 5081
-
-kafka:
-  bootstrap-servers: PLAINTEXT://broker:29092
