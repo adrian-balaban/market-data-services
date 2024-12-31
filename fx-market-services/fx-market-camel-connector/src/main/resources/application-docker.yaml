@@ -4,6 +4,7 @@ spring:
 
 kafka:
   bootstrap-servers: PLAINTEXT://broker:29092
+  topic: fx_rates_camel
 
 vendor:
   market:

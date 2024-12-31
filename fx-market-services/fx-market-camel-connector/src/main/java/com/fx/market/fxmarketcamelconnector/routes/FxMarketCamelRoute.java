@@ -18,20 +18,33 @@ public class FxMarketCamelRoute extends RouteBuilder {
 
     @Value("${kafka.bootstrap-servers}")
     private String bootstrapServers;
-    private static final String TOPIC = "fx_rates_camel";
+    @Value("${kafka.topic}")
+    private String topic;
 
     @Override
     public void configure() throws Exception {
         log.info("Configuring Camel Route for FX Market Data");
         log.info("url: {} ", marketDataStubProperties.getUrl() + FX_MARKET_DATA_PATH);
         log.info("bootstrapServers: {} ", bootstrapServers);
-        log.info("topic: {} ", TOPIC);
+        log.info("topic: {} ", topic);
 
         from("stream:http?httpUrl="+marketDataStubProperties.getUrl() + FX_MARKET_DATA_PATH)
                 .to("log:INFO")
-                //.unmarshal()
-                //.protobuf(FxRateEventProto.getDefaultInstance(), "json")
-                .to("kafka:"+TOPIC+"?brokers="+bootstrapServers);
+                .unmarshal()
+                .protobuf(FxRateEventProto.getDefaultInstance(), "json")
+                .to("kafka:"+topic+"?brokers="+bootstrapServers);
+        /*
+        for processor
+        from("kafka:"+TOPIC+"?brokers="+bootstrapServers)
+                .unmarshal()
+                .protobuf(FxRateEventProto.getDefaultInstance())
+                .log("Message received from Kafka : ${body}")
+                .log("    on the topic ${headers[kafka.TOPIC]}")
+                .log("    on the partition ${headers[kafka.PARTITION]}")
+                .log("    with the offset ${headers[kafka.OFFSET]}")
+                .log("    with the key ${headers[kafka.KEY]}")
+                .to("log:INFO2");
+         */
     }
 }
 

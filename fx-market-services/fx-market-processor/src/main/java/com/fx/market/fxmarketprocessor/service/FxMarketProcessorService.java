@@ -8,6 +8,7 @@ import org.apache.kafka.streams.kstream.Grouped;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Materialized;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import com.fx.market.kafka.message.FxRateEventProto;
@@ -20,12 +21,13 @@ import static com.fx.market.fxmarketprocessor.service.FxRate.fromFxRateProto;
 @Slf4j
 @Configuration
 public class FxMarketProcessorService {
-    private static final String TOPIC_INPUT = "fx_rates";
 
+    @Value("${kafka.topic}")
+    private String topic;
 
     @Bean
     public KStream<Integer, FxRateEventProto> kStream(StreamsBuilder kStreamBuilder) {
-        KStream<Integer, FxRateEventProto> stream = kStreamBuilder.stream(TOPIC_INPUT);
+        KStream<Integer, FxRateEventProto> stream = kStreamBuilder.stream(topic);
 
         KTable<String, FxRate> table = stream.flatMap(
                 (key, fxRateEventProto) ->
