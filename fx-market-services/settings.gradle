@@ -27,5 +27,4 @@ include ':flink-orchestrator'
 include ':fx-market-connector'
 include ':fx-market-camel-connector'
 include ':fx-market-processor'
-include ':fx-market-camel-processor'
 
