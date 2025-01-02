@@ -12,5 +12,10 @@
         <module name="fx-market-services.fx-market-processor.main" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="fx-market-services.fx-market-camel-connector" target="21" />
+      <module name="fx-market-services.fx-market-camel-connector.main" target="21" />
+      <module name="fx-market-services.fx-market-camel-connector.test" target="21" />
+    </bytecodeTargetLevel>
   </component>
 </project>
