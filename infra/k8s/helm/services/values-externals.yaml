@@ -47,7 +47,7 @@ apps:
   fxmarketdatastub4camel:
     name: fx-market-data-stub-4-camel
     image:
-      repository: localhost:5001/fx-market-externals/market-data-stub-4-camel
+      repository: localhost:5001/fx-market-externals/market-data-stub
     #      tag: 0.0.0
 
     podAnnotations: {}
