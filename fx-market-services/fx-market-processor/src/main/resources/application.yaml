@@ -7,5 +7,5 @@ server:
 
 kafka:
   bootstrap-servers: PLAINTEXT://localhost:9092
-  topic: fx_rates_camel
+  topic: fx_rates
   application-id-config: fx-market-processor-stream-operator
