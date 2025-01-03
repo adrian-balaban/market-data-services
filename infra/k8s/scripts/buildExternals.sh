@@ -42,9 +42,6 @@ pushd ../../../vendors/market-data-stub &&
   docker build --build-arg TEST_MODE_ARG=$TEST_MODE -t ${DOCKER_IMAGE_NAME} . --load &&
   docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}  &&
   docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}
-popd
-
-pushd ../../../vendors/market-data-stub-4-camel &&
   DOCKER_IMAGE_NAME=fx-market-externals/market-data-stub-4-camel:${TAG}
   docker build --build-arg TEST_MODE_ARG=$TEST_MODE -t ${DOCKER_IMAGE_NAME} . --load &&
   docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}  &&

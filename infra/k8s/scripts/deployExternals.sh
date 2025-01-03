@@ -41,7 +41,6 @@ helm upgrade --install \
     --namespace ${NAMESPACE} \
     --set tag="${TAG}" \
     --set apps.fxmarketdatastub.image.repository="${DOCKER_REGISTRY}/fx-market-externals/market-data-stub" \
-    --set apps.fxmarketdatastub.image.repository="${DOCKER_REGISTRY}/fx-market-externals/market-data-stub-4-camel" \
     -f ../helm/services/values-externals.yaml fx-market-externals \
     ../helm/services
 
