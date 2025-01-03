@@ -15,12 +15,11 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 #TOOLS
-# does not work
-# kubectl port-forward -n ${NAMESPACE} svc/kafka 9092:9092 &
-kubectl port-forward -n ${NAMESPACE} svc/controlcenter 29021:9021 &
-kubectl port-forward -n ${NAMESPACE} svc/fx-flink-jobmanager 18081:8081 &
+kubectl port-forward -n ${NAMESPACE} svc/kafka 9092:9092 &
+kubectl port-forward -n ${NAMESPACE} svc/controlcenter 9021:9021 &
+kubectl port-forward -n ${NAMESPACE} svc/fx-flink-jobmanager 8081:8081 &
 
 #STUBS
-kubectl port-forward -n ${NAMESPACE} svc/fx-market-data-stub-svc 13080:3080 &
+kubectl port-forward -n ${NAMESPACE} svc/fx-market-data-stub-svc 3080:3080 &
 
 #SERVICES (Add only if needed i.e. by e2e tests)

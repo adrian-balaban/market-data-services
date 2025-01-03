@@ -8,6 +8,7 @@ import org.apache.kafka.streams.kstream.Grouped;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Materialized;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,10 +31,10 @@ public class FxMarketProcessorService {
         KStream<Integer, FxRateEventProto> stream = kStreamBuilder.stream(topic);
 
         KTable<String, FxRate> table = stream.flatMap(
-                (key, fxRateEventProto) ->
-                        fxRateEventProto.getRatesList().stream()
-                                .map(rate -> new KeyValue<>(key, rate))
-                                .collect(Collectors.toList()))
+                        (key, fxRateEventProto) ->
+                                fxRateEventProto.getRatesList().stream()
+                                        .map(rate -> new KeyValue<>(key, rate))
+                                        .collect(Collectors.toList()))
                 .map((key, fxRateProto) -> new KeyValue<>(key, fromFxRateProto(fxRateProto)))
                 .groupBy((key, rate) -> rate.getPair(), Grouped.with(Serdes.String(), new FxRateSerde()))
                 .reduce((aggValue, newValue) -> newValue, Materialized.with(Serdes.String(), new FxRateSerde()));

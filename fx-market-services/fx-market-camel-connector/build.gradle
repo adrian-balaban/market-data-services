@@ -17,6 +17,10 @@ dependencies {
 	implementation 'org.apache.camel:camel-stream:4.8.2'
 	implementation 'org.apache.camel.springboot:camel-spring-boot-starter:4.9.0'
 
+	// Jackson Camel
+	implementation 'org.apache.camel.springboot:camel-jackson-starter:4.9.0'
+	implementation 'org.apache.camel:camel-jackson:4.9.0'
+
 	// Kafka
 	implementation 'org.apache.camel:camel-kafka:4.9.0'
 	implementation 'org.apache.camel.springboot:camel-kafka-starter:4.9.0'

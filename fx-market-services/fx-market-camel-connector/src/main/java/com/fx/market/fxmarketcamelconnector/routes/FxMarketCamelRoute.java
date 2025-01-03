@@ -1,9 +1,9 @@
 package com.fx.market.fxmarketcamelconnector.routes;
 
-import com.fx.market.kafka.message.FxRateEventProto;
+import com.fx.market.fxmarketcamelconnector.routes.model.FxRateEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.kafka.KafkaConstants;
+import org.apache.camel.model.dataformat.JsonLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -14,15 +14,20 @@ public class FxMarketCamelRoute extends RouteBuilder {
 
     @Autowired
     private MarketDataStubProperties marketDataStubProperties;
+
+    @Autowired
+    private FxRateProtoMapper fxRateProtoMapper;
+
     private static final String FX_MARKET_DATA_PATH = "/forex/rates";
 
     @Value("${kafka.bootstrap-servers}")
     private String bootstrapServers;
+
     @Value("${kafka.topic}")
     private String topic;
 
     @Override
-    public void configure() throws Exception {
+    public void configure()  {
         log.info("Configuring Camel Route for FX Market Data");
         log.info("url: {} ", marketDataStubProperties.getUrl() + FX_MARKET_DATA_PATH);
         log.info("bootstrapServers: {} ", bootstrapServers);
@@ -30,21 +35,16 @@ public class FxMarketCamelRoute extends RouteBuilder {
 
         from("stream:http?httpUrl="+marketDataStubProperties.getUrl() + FX_MARKET_DATA_PATH)
                 .to("log:INFO")
-                .unmarshal()
-                .protobuf(FxRateEventProto.getDefaultInstance(), "json")
+                .bean(new SomeBean())
+                .unmarshal().json(JsonLibrary.Jackson, FxRateEvent.class)
+                .bean(fxRateProtoMapper, "toProto")
+                .to("log:INFO2")
                 .to("kafka:"+topic+"?brokers="+bootstrapServers);
-        /*
-        for processor
-        from("kafka:"+TOPIC+"?brokers="+bootstrapServers)
-                .unmarshal()
-                .protobuf(FxRateEventProto.getDefaultInstance())
-                .log("Message received from Kafka : ${body}")
-                .log("    on the topic ${headers[kafka.TOPIC]}")
-                .log("    on the partition ${headers[kafka.PARTITION]}")
-                .log("    with the offset ${headers[kafka.OFFSET]}")
-                .log("    with the key ${headers[kafka.KEY]}")
-                .to("log:INFO2");
-         */
+    }
+    public static class SomeBean {
+        public String doTransform(String body) {
+            return body.substring(6);
+        }
     }
 }
 
