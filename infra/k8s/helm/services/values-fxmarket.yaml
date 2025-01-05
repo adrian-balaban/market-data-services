@@ -65,7 +65,7 @@ apps:
   fxmarketcamelconnector:
     name: fx-market-camel-connector
     image:
-      repository: localhost:5001/fx-market-services/fx-market-camel-connector
+      repository: localhost:5001/fx-market-services/fx-market-connector
 #      tag: 0.0.1
 
     podAnnotations: {}
@@ -187,7 +187,7 @@ apps:
       - name: KAFKA_TOPIC
         value: "fx_rates_camel"
       - name: KAFKA_APPLICATION_ID_CONFIG
-        value: "fx-market-processor-stream-operator_camel"
+        value: "fx-market-processor-stream-operator-camel"
 
     resources:
       limits:
