@@ -8,6 +8,15 @@ services:
     networks:
       - docker_net
 
+  fx-market-camel-connector:
+    image: localhost:5001/fx-market-services/fx-market-connector:0.0.1
+    depends_on:
+      - broker
+    ports:
+      - 5080:5080
+    networks:
+      - docker_net
+
   fx-market-processor:
     image: localhost:5001/fx-market-services/fx-market-processor:0.0.1
     depends_on:
@@ -17,17 +26,8 @@ services:
     networks:
       - docker_net
 
-  fx-market-camel-connector:
-    image: localhost:5001/fx-market-services/fx-market-camel-connector:0.0.1
-    depends_on:
-      - broker
-    ports:
-      - 5080:5080
-    networks:
-      - docker_net
-
   fx-market-camel-processor:
-    image: localhost:5001/fx-market-services/fx-market-camel-processor:0.0.1
+    image: localhost:5001/fx-market-services/fx-market-processor:0.0.1
     depends_on:
       - broker
     ports:
