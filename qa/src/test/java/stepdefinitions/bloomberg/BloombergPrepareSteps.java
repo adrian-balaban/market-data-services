@@ -1,9 +1,8 @@
-package stepdefinitions;
+package stepdefinitions.bloomberg;
 
 import com.google.gson.Gson;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
-import io.cucumber.java.en.Then;
 import com.google.gson.JsonObject;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -21,12 +20,15 @@ import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.ConsumerFactory;
+import stepdefinitions.SharedScenarioContext;
+import stepdefinitions.TestSettings;
 import testvisa.KafkaTestConfig;
 
 @SpringBootTest(classes = KafkaTestConfig.class)
-public class ExecuteSteps {
+public class BloombergPrepareSteps {
+    TestSettings settings = TestSettings.getInstance();
 
-    private String endpoint = "http://localhost:3080/emitEvent";;
+    private String endpoint = settings.getProperty("stub.blomberg_url");
     private JsonObject requestBody;
     private HttpResponse<String> response;
     String timestamp;
