@@ -1,3 +1,4 @@
+package test.java;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.SelectClasspathResource;

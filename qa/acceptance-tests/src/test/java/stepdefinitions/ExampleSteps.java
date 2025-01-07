@@ -1,4 +1,4 @@
-package stepdefinitions;
+package test.java.stepdefinitions;
 
 import com.google.gson.Gson;
 import helpers.TestContext;

@@ -1,4 +1,4 @@
-package testvisa;
+package test.java.testvisa;
 
 import java.util.List;
 

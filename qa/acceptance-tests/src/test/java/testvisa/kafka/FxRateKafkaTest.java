@@ -1,4 +1,4 @@
-package testvisa.kafka;
+package test.java.testvisa.kafka;
 import static org.awaitility.Awaitility.await;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import testvisa.TestsPluginFunctionalTest;
+import test.java.testvisa.TestsPluginFunctionalTest;
 
 import java.time.Duration;
 import java.util.Collections;

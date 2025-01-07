@@ -4,7 +4,7 @@
 *.gradle
 qa/.gradle/
 # ignore all
-.idea/*
+.idea/.name
 qa/target/*
 # except
 !.idea/workspace.xml

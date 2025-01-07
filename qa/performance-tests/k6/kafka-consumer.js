@@ -35,7 +35,7 @@ async function run() {
   let verifiedEventsCount = 0;
 
   await consumer.connect();
-  await consumer.subscribe({ topic: 'test-topic', fromBeginning: false }); // Only new messages
+  await consumer.subscribe({ topic: 'test-topic1', fromBeginning: false }); // Only new messages
 
   console.log('🚀 Consumer connected. Checking received events...');
 
@@ -95,7 +95,7 @@ async function run() {
     await consumer.stop();
     await consumer.disconnect();
     process.exit(0);
-  }, 5000); // 5-second timeout
+  }, 10000); // 5-second timeout
 }
 
 run().catch(async (err) => {

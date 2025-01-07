@@ -1,7 +1,7 @@
 import http from 'k6/http';
 import { check } from 'k6';
 
-const kafkaEndpoint = 'http://localhost:8082/topics/test-topic';
+const kafkaEndpoint = 'http://localhost:8082/topics/test-topic1';
 const filePath = 'expected-events.txt'; // Укажите путь к вашему файлу
 
 export let options = {

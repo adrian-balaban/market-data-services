@@ -1,4 +1,4 @@
-package testvisa;
+package test.java.testvisa;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
