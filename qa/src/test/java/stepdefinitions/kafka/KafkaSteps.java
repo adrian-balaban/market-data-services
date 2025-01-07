@@ -1,4 +1,4 @@
-package stepdefinitions;
+package stepdefinitions.kafka;
 
 import helpers.kafka.KafkaTestConsumer;
 import io.cucumber.java.en.Then;
@@ -6,34 +6,35 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.ConsumerFactory;
+import stepdefinitions.SharedScenarioContext;
 import testvisa.KafkaTestConfig;
 
 import java.time.Duration;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Properties;
+import stepdefinitions.TestSettings;
 
 @SpringBootTest(classes = KafkaTestConfig.class)
 public class KafkaSteps {
+    TestSettings settings = TestSettings.getInstance();
 
     @Autowired
     private ConsumerFactory<String, String> consumerFactory;
 
     @Test
     public void testReadFromFxRateTopic() {
+
         Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092"); // Замените на реальный адрес Kafka
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, settings.getProperty("kafka.broker")); // Замените на реальный адрес Kafka
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "test-group");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
