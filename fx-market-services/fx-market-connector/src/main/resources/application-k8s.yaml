@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: fxMarketDataConnector
+
+server:
+  port: 8080
+
+kafka:
+  bootstrap-servers: PLAINTEXT://kafka:9092
+
+vendor:
+  market:
+    data:
+      stub:
+        url: "http://fx-market-data-stub-svc:3080"
