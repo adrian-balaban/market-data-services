@@ -6,6 +6,7 @@ import com.fx.flink.model.JarRunResponseBody;
 import com.fx.flink.model.JarUploadResponseBody;
 import com.fx.market.flinkorchestrator.helpers.JavaFileToMultipartFile;
 import com.fx.market.flinkorchestrator.vendor.flink.client.FlinkClient;
+import com.fx.market.flinkorchestrator.vendor.flink.client.FlinkProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,9 @@ public class FlinkJarService {
 
     @Autowired
     private FlinkClient flinkClient;
+
+    @Autowired
+    private FlinkProperties flinkProperties;
 
     public void uploadNewJar(File flinkJar) {
         log.info("Uploading started: {}",
@@ -58,6 +62,11 @@ public class FlinkJarService {
 
     public JarRunResponseBody runNewJarById(String jarId) {
         JarRunRequestBody jarRunRequestBody = new JarRunRequestBody();
+        flinkProperties.getJobArguments(jarId).forEach( (key, value) -> {
+                    jarRunRequestBody.addProgramArgsListItem("--" + key);
+                    jarRunRequestBody.addProgramArgsListItem(value);
+                }
+        );
         var response = flinkClient.submitJobFromJar(
                 jarId,
                 jarRunRequestBody

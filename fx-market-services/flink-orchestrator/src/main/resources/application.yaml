@@ -6,4 +6,9 @@ server:
   port: 4082
 
 flink:
-  url: http://jobmanager:8081
+  url: http://localhost:8081
+  jobs:
+    - name: fxmarketflinkproces
+      arguments:
+        topic: fx_rates
+        bootstrapServers: kafka:9092

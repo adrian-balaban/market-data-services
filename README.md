@@ -1,37 +1,28 @@
 # market-data-processor
-if you are MacOS user, before pushing changes to repo please do
-`git config --global core.fileMode false`
-(it prevents changing files permissions in repo)
 
-`git config --global core.autocrlf input`
-(set proper EOF)
-,
 
 ### Requirements:
 - java Graavlm v 21
 
-### To run everything locally:
-1) Infra
-    - `cd infra/kafka`
-    - Run compose (depends what you have installed):
-        - `docker-compose up`
+## To run everything locally:
 
-        - `podman compose up`
+1) Manual K8s installation
+   - Go to `/infra/k8s` and run `./deployAll.sh help`
+2) Hybrid K8s installation - Manual tools and solution via ArgoCD
+   - Go to `/infra/argo` and run `./deployAllWithArgo.sh help`
+3) Docker Compose - **Not fully maintained**
+   - Go to `/infra/local` and run `./runWithDockerCompose.sh`
 
-2) Run Externals
-    - `cd vendors/market-data-stub`
-    - Build and run container (depends what you have installed)::
+### HighLevel Architecture:
+![HLA](docs/HLA.png)
 
-        -   ```
-            docker build -t market-data-stub . --load
-            docker run -d -p 3080:3800 --name fx-market-stub market-data-stub
-            ```
+### Development Workflow:
+![DevelopmentWorkflow](docs/DevelopmentWorkflow.drawio.png)
 
-        -   ```
-            podman build -t market-data-stub . --load
-            podman run -d -p  3080:3080 --name fx-market-stub market-data-stub
-            ```
-3) Run fx-market-services
-    -  `cd fx-market-services`
-    
-    
+
+   
+### Additional DEV Notes:
+- if you are MacOS user, before pushing changes to repo please do
+  - `git config --global core.fileMode false` - (it prevents changing files permissions in repo) 
+  - `git config --global core.autocrlf input` - (set proper EOF)
+  - `git config --global core.autocrlf input`
