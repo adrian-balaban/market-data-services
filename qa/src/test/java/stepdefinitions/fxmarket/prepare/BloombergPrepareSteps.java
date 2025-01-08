@@ -1,4 +1,4 @@
-package stepdefinitions.bloomberg;
+package stepdefinitions.fxmarket.prepare;
 
 import com.google.gson.Gson;
 import io.cucumber.java.en.Given;
@@ -36,12 +36,6 @@ public class BloombergPrepareSteps {
     @Autowired
     private ConsumerFactory<String, String> consumerFactory;
 
-    @Given("Service is started")
-    public void i_have_an_example()  {
-        System.out.println("Given step");
-        FxRateEventProto proto = null;
-    }
-
     @When("the following rates data is prepared:")
     public void prepareRatesData(io.cucumber.datatable.DataTable dataTable) {
         requestBody = new JsonObject();
@@ -77,6 +71,7 @@ public class BloombergPrepareSteps {
         }
 
         // Add the "rates" array to the root JSON object
+        SharedScenarioContext.getInstance().set("requestBody", requestBody);
         requestBody.add("rates", new Gson().toJsonTree(ratesJsonArray));
     }
 
@@ -84,20 +79,6 @@ public class BloombergPrepareSteps {
         return 1.0 + (2.0 - 1.0) * random.nextDouble();
     }
 
-    @When("the rates are sent by Bloomberg")
-    public void sendRatesData() throws Exception {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(endpoint))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
-                .build();
-
-        response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        Assertions.assertNotNull(response, "Response should not be null");
-        Assertions.assertEquals(200, response.statusCode(), "Unexpected HTTP status code");
-
-    }
 
 
 }
