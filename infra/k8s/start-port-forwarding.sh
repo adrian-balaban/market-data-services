@@ -14,6 +14,9 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
+#CD
+kubectl port-forward -n ${NAMESPACE} svc/argocd-server 38080:443 &
+
 #TOOLS
 kubectl port-forward -n ${NAMESPACE} svc/kafka 9092:9092 &
 kubectl port-forward -n ${NAMESPACE} svc/controlcenter 9021:9021 &

@@ -57,36 +57,6 @@ spec:
     enabled: true
 ---
 apiVersion: platform.confluent.io/v1beta1
-kind: Connect
-metadata:
-  name: connect
-  namespace: ___CHANGE_ME_NAMESPACE___
-spec:
-  replicas: 1
-  image:
-    application: confluentinc/cp-server-connect:7.7.0
-    init: confluentinc/confluent-init-container:2.9.0
-  configOverrides:
-    server:
-      - config.storage.replication.factor=1
-      - offset.storage.replication.factor=1
-      - status.storage.replication.factor=1
-  podTemplate:
-    resources:
-      requests:
-        cpu: 100m
-        memory: 256Mi
-    probe:
-      liveness:
-        periodSeconds: 10
-        failureThreshold: 5
-        timeoutSeconds: 500
-    podSecurityContext:
-      fsGroup: 1000
-      runAsUser: 1000
-      runAsNonRoot: true
----
-apiVersion: platform.confluent.io/v1beta1
 kind: ControlCenter
 metadata:
   name: controlcenter
@@ -123,12 +93,3 @@ spec:
       fsGroup: 1000
       runAsUser: 1000
       runAsNonRoot: true
-  dependencies:
-    schemaRegistry:
-      url: http://schemaregistry:8081
-    ksqldb:
-      - name: ksql-dev
-        url: http://ksqldb:8088
-    connect:
-      - name: connect-dev
-        url:  http://connect:8083

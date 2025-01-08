@@ -9,10 +9,14 @@ BUILD_PHASE='true' # default if not provided
 TEST_MODE='false' # default if not provided
 DOCKER_REGISTRY="localhost:5001" # default if not provided
 NAMESPACE="fxmarket" # default if not provided
-TAG='0.1.0' # default if not provided
+TAG='1.0.0' # default if not provided
+ENV='dev' # default if not provided
+BRANCH='master' # default if not provided
 
 print_usage() {
   echo "Usage:"
+  echo "-branch <branch_name>         <- to specify branch name to build - default: master"
+  echo "-env <env_name>               <- to specify env name for and take relevant manifests - default: env"
   echo "-build <true|false>           <- to build with test mode - default: true"
   echo "-test <true|false>            <- to build with test mode - default: false"
   echo "-n <namespace>                <- to specify namespace"
@@ -60,6 +64,8 @@ wait_for_pod() {
 # Parse command-line options
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
+    -branch) BRANCH="$2"; shift ;;
+    -env) ENV="$2"; shift ;;
     -test) TEST_MODE="$2"; shift ;;
     -build) BUILD_PHASE="$2"; shift ;;
     -n) NAMESPACE="$2"; shift ;;
@@ -71,11 +77,13 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 echo "$SEPARATOR"
-echo "TAG: ${TAG}" # default if not provided
-echo "NAMESPACE: ${NAMESPACE}" # default if not provided
-echo "TEST_MODE: ${TEST_MODE}" # default if not provided
-echo "BUILD_PHASE: ${BUILD_PHASE}" # default if not provided
-echo "DOCKER_REGISTRY: ${DOCKER_REGISTRY}" # default if not provided
+echo "BRANCH: ${BRANCH}"
+echo "ENV: ${ENV}"
+echo "TAG: ${TAG}"
+echo "NAMESPACE: ${NAMESPACE}"
+echo "TEST_MODE: ${TEST_MODE}"
+echo "BUILD_PHASE: ${BUILD_PHASE}"
+echo "DOCKER_REGISTRY: ${DOCKER_REGISTRY}"
 echo "$SEPARATOR"
 sleep 5
 
@@ -85,7 +93,7 @@ if [ "$BUILD_PHASE" == "true" ]; then
   echo "$SEPARATOR"
   echo "BUILD PHASE - START"
   echo "$SEPARATOR"
-  pushd ./scripts
+  pushd ../k8s/scripts
     ./buildExternals.sh -test ${TEST_MODE} -tag ${TAG} -registry ${DOCKER_REGISTRY}
     if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
@@ -105,40 +113,76 @@ fi
 sleep 5
 
 echo "$SEPARATOR"
-echo "DEPLOY PHASE - START"
+echo "DEPLOY INFRA PHASE - START"
 echo "$SEPARATOR"
 
 ### Deploy firstly all independent components
-pushd ./scripts
+pushd ../k8s/scripts
 
   ./deployKafka.sh -n ${NAMESPACE}
   if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
-  #./deployFlink.sh -n ${NAMESPACE}
+  ./deployFlink.sh -n ${NAMESPACE}
   if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
-  ./deployExternals.sh -tag ${TAG} -registry ${DOCKER_REGISTRY} -n ${NAMESPACE}
+  ./deployArgoCd.sh -n ${NAMESPACE}
   if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
 popd
 
 sleep 5
 
-#wait_for_pod "flink-jobmanager"
+wait_for_pod "flink-jobmanager"
 wait_for_pod "zookeeper-0"
 wait_for_pod "kafka-0"
-wait_for_pod "fx-market-data-stub"
-
-pushd ./scripts && ./deploySolution.sh -tag ${TAG} -registry ${DOCKER_REGISTRY} -n ${NAMESPACE} && popd
-
-#wait_for_pod "fx-market-connector"
-wait_for_pod "fx-market-camel-connector"
-#wait_for_pod "fx-market-processor"
-#wait_for_pod "flink-orchestrator"
-
+wait_for_pod "connect-0"
+## Argo
+wait_for_pod "argocd-redis"
+wait_for_pod "argocd-server"
+wait_for_pod "argocd-dex-server"
+wait_for_pod "argocd-repo-server"
+wait_for_pod "argocd-application-controller"
+wait_for_pod "argocd-notifications-controller"
+wait_for_pod "argocd-applicationset-controller"
 
 echo "$SEPARATOR"
-echo "DEPLOY PHASE - END"
+echo "DEPLOY INFRA PHASE - END"
+echo "$SEPARATOR"
+
+echo "$SEPARATOR"
+echo "DEPLOY ARGOCD MANIFESTS- START"
+echo "$SEPARATOR"
+
+
+sed -i "s/___CHANGE_ME_NAMESPACE___/${NAMESPACE}/g" ./gihubSecret.yaml ## Set proper namespace
+kubectl apply -f gihubSecret.yaml ## Setup Github Repo connection
+sed -i "s/${NAMESPACE}/___CHANGE_ME_NAMESPACE___/g" ./gihubSecret.yaml ## Revert
+sleep 10
+
+pushd ./externals
+    sed -i "s/___CHANGE_ME_ENV___/${ENV}/g" ./application.yaml ## Set proper namespace
+    sed -i "s/___CHANGE_ME_BRANCH___/${BRANCH}/g" ./application.yaml ## Set proper namespace
+    sed -i "s/___CHANGE_ME_NAMESPACE___/${NAMESPACE}/g" ./application.yaml ## Set proper namespace
+    kubectl apply -f application.yaml
+    sed -i "s/${ENV}/___CHANGE_ME_ENV___/g" ./application.yaml ## Revert
+    sed -i "s/${BRANCH}/___CHANGE_ME_BRANCH___/g" ./application.yaml ## Revert
+    sed -i "s/${NAMESPACE}/___CHANGE_ME_NAMESPACE___/g" ./application.yaml ## Revert
+popd
+
+wait_for_pod "fx-market-data-stub"
+
+pushd ./solution
+    sed -i "s/___CHANGE_ME_ENV___/${ENV}/g" ./application.yaml ## Set proper namespace
+    sed -i "s/___CHANGE_ME_BRANCH___/${BRANCH}/g" ./application.yaml ## Set proper namespace
+    sed -i "s/___CHANGE_ME_NAMESPACE___/${NAMESPACE}/g" ./application.yaml ## Set proper namespace
+    kubectl apply -f application.yaml
+    sed -i "s/${ENV}/___CHANGE_ME_ENV___/g" ./application.yaml ## Revert
+    sed -i "s/${BRANCH}/___CHANGE_ME_BRANCH___/g" ./application.yaml ## Revert
+    sed -i "s/${NAMESPACE}/___CHANGE_ME_NAMESPACE___/g" ./application.yaml ## Revert
+popd
+
+echo "$SEPARATOR"
+echo "DEPLOY ARGOCD MANIFESTS- END"
 echo "$SEPARATOR"
 
 sleep 5

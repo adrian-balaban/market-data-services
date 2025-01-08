@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-set -e # exit immediately if any command within the script returns a non-zero exit status
-set -o xtrace
-
 separator="==============="
 #NAMESPACE=fxmarket
 NAMESPACE=fxmarket
@@ -33,6 +30,8 @@ helm uninstall confluent-operator -n ${NAMESPACE}
 helm uninstall fx-market-services -n ${NAMESPACE}
 
 helm uninstall fx-market-externals -n ${NAMESPACE}
+
+kubectl delete -n ${NAMESPACE} -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 kubectl delete all --all -n ${NAMESPACE}
 

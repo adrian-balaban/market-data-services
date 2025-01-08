@@ -2,8 +2,6 @@
 
 trap "exit 1" TERM
 export TOP_PID=$$
-set -e # exit immediately if any command within the script returns a non-zero exit status
-set -o xtrace
 
 SEPARATOR="==================================="
 
