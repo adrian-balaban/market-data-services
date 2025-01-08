@@ -21,9 +21,9 @@ echo "BUILDING SERVICES"
 echo "$separator"
 sleep 2
 
-pushd ../services/docker/fx-market-connector && ./build-image.sh -registry localhost:5001 && popd
-pushd ../services/docker/fx-market-processor && ./build-image.sh -registry localhost:5001 && popd
-pushd ../services/docker/flink-orchestrator && ./build-image.sh -registry localhost:5001 && popd
+pushd ../services/docker/fx-market-connector && ./build-image.sh -registry localhost:5001 -profile docker && popd
+pushd ../services/docker/fx-market-processor && ./build-image.sh -registry localhost:5001 -profile docker && popd
+pushd ../services/docker/flink-orchestrator && ./build-image.sh -registry localhost:5001 -profile docker && popd
 
 echo "$separator"
 echo "BUILDING STUBS"
