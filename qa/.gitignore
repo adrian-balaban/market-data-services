@@ -5,7 +5,7 @@
 qa/.gradle/
 # ignore all
 .idea/*
-qa/target/*
+target/
 # except
 !.idea/workspace.xml
 !.idea/usage.statistics.xml
