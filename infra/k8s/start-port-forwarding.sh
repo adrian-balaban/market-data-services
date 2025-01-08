@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-set -e # exit immediately if any command within the script returns a non-zero exit status
-set -o xtrace
 
 NAMESPACE="fxmarket" # default if not provided
 
@@ -24,5 +22,6 @@ kubectl port-forward -n ${NAMESPACE} svc/fx-flink-jobmanager 8081:8081 &
 
 #STUBS
 kubectl port-forward -n ${NAMESPACE} svc/fx-market-data-stub-svc 3080:3080 &
+kubectl port-forward -n ${NAMESPACE} svc/fx-market-data-stub-4-camel-svc 13080:3080 &
 
 #SERVICES (Add only if needed i.e. by e2e tests)

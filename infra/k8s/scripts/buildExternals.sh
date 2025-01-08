@@ -36,16 +36,13 @@ echo "DOCKER_REGISTRY: ${DOCKER_REGISTRY}" # default if not provided
 echo "$SEPARATOR"
 sleep 2
 
+DOCKER_IMAGE_NAME=${DOCKER_REGISTRY}/fx-market-externals/market-data-stub:${TAG}
+
 pushd ../../../vendors/market-data-stub &&
-  DOCKER_IMAGE_NAME=fx-market-externals/market-data-stub:${TAG}
   docker build --build-arg TEST_MODE_ARG=$TEST_MODE -t ${DOCKER_IMAGE_NAME} . --load &&
-  docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}  &&
-  docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}
-  DOCKER_IMAGE_NAME=fx-market-externals/market-data-stub-4-camel:${TAG}
-  docker build --build-arg TEST_MODE_ARG=$TEST_MODE -t ${DOCKER_IMAGE_NAME} . --load &&
-  docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}  &&
-  docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}
-popd
+  docker push ${DOCKER_IMAGE_NAME} &&
+popd # --tls-verify=false
+
 
 echo "$SEPARATOR"
 echo "BUILDING STUBS - END"
