@@ -34,7 +34,7 @@ bootBuildImage {
 	imageName = "${registryVar}/${dockerRepositoryProperty}/${project.name}:${versionVar}"
 	publish = true
 	docker {
-		host = "unix:///var/run/docker.sock"
+		host = "unix:///run/docker.sock"
 		bindHostToBuilder = true
 		tlsVerify = false
 	}
