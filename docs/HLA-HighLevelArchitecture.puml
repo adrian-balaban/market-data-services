@@ -1,0 +1,72 @@
+@startuml
+!include <k8s/Common>
+!include <k8s/Context>
+!include <k8s/Simplified>
+!include <k8s/OSS/all>
+!include <kubernetes/k8s-sprites-unlabeled-25pct>
+
+title FX Market Data Team - High Level Architecture Diagram
+footer FX Market Data Team - High Level Architecture Diagram
+left to right direction
+
+'Real Bloomberg part
+package "Bloomberg" #DodgerBlue {
+    component [B-PIPE ?] #SteelBlue
+}
+
+'Bloomberg mock
+package "Bloomberg Mock" as BMExternal #DodgerBlue {
+   component "ServerSentEvent\n(SSE Stream)\n\nJavaScript" #grey
+}
+
+Bloomberg <|-- BMExternal : Simulates
+
+'Kafka
+node "Kafka Solution" as KafkaSolution {
+            package "FxMarketConnector" as KS_FxMarketConnector #IndianRed {
+                component "Java 21, SpringBoot" as KS_FxMarketConnectorTools #LightSteelBlue
+            }
+            package "Kafka / Confluent" as KafkaConfluent #LightSkyBlue {
+                   component "Topic:\nfx_rates" as KS_FX_RATES_TOPIC #grey
+            }
+            package "FxMarketProcessor" #IndianRed {
+                component "Java 21, SpringBoot" as KS_FxMarketProcessorTools #LightSteelBlue
+                component "KTable/GlobalKTable\nPAIR A/RATE A\nPAIR B/RATE B\nPAIR C/RATE C\n" as K_KT1 #grey
+            }
+
+            BMExternal --> KS_FxMarketConnector : Stream
+            KS_FxMarketConnector --> KS_FX_RATES_TOPIC : Stream\nProtobuf Serialized
+            KS_FX_RATES_TOPIC --> K_KT1 : KStream
+}
+
+'Flink
+node "Flink Solution" as Flink {
+           package "FxMarketConnector" as FS_FxMarketConnector #IndianRed {
+               component "Java 21, SpringBoot" as FS_FxMarketConnectorTools #LightSteelBlue
+           }
+           package "Kafka / Confluent" as FlinkKafkaConfluent #LightSkyBlue {
+                  component "Topic:\nfx_rates " as FS_FX_RATES_TOPIC #grey
+           }
+            package FlinkOrchestrator #IndianRed {
+                component "Java 21, SpringBoot" as FS_FlinkOrchestratorTools #LightSteelBlue
+                component "FxMarketFlinkProcessor - Jar" #DarkRed {
+                    component "Java 17" as FX_FxMarketFlinkProcessorTools #LightSteelBlue
+                }
+            }
+
+            package "Flink Cluster" as F_KC2 #LightGreen {
+            package "FxMarketFlinkProcessor - Flink Task" #IndianRed {
+                component "FlinkStream" as F_KS2 #grey
+                component "FlinkTable\nPAIR A/RATE A\nPAIR B/RATE B\nPAIR C/RATE C\n" as F_KT2 #grey
+                    F_KS2 --> F_KT2 : Stream
+                }
+            }
+
+            BMExternal --> FS_FxMarketConnector : Stream
+            FS_FxMarketConnector --> FS_FX_RATES_TOPIC : Stream\nProtobuf Serialized
+            FS_FX_RATES_TOPIC --> "F_KS2" : Stream
+            FlinkOrchestrator --> F_KC2 : Deploy Jar\nRun Task\nMonitor Task
+
+}
+
+@enduml
