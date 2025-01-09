@@ -43,7 +43,7 @@ public class FxRateKafkaTest {
        System.out.println("----------------------------"+ timestamp);
 
         emit.testEmitEventEndpoint(timestamp);
-        String topic = "fx_rates_kafka";
+        String topic = "fx_rates";
 
         Map<String, Object> consumerProps = new HashMap<>(consumerFactory.getConfigurationProperties());
         consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "test-group");

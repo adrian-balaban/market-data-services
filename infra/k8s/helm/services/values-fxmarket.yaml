@@ -24,7 +24,7 @@ apps:
       - name: VENDOR_MARKET_DATA_STUB_URL
         value: "http://fx-market-data-stub-svc:3080"
       - name: KAFKA_TOPIC
-        value: "fx_rates_kafka"
+        value: "fx_rates"
       - name: KAFKA_APPLICATION_ID_CONFIG
         value: "fx-market-processor-stream-operator"
 
@@ -120,7 +120,7 @@ apps:
       - name: KAFKA_BOOTSTRAP_SERVERS
         value: "PLAINTEXT://kafka:9092"
       - name: KAFKA_TOPIC
-        value: "fx_rates_kafka"
+        value: "fx_rates"
       - name: KAFKA_APPLICATION_ID_CONFIG
         value: "fx-market-processor-stream-operator"
 

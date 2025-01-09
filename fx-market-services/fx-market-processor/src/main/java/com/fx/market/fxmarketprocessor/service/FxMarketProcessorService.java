@@ -34,7 +34,7 @@ public class FxMarketProcessorService {
                                 fxRateEventProto.getRatesList().stream()
                                         .map(rate -> new KeyValue<>(key, rate))
                                         .collect(Collectors.toList()))
-                .map((key, fxRateProto) -> new KeyValue<>(key, fromFxRateProto(fxRateProto)))
+                .mapValues((key, fxRateProto) -> new KeyValue<>(key, fromFxRateProto(fxRateProto)))
                 .groupBy((key, rate) -> rate.getPair(), Grouped.with(Serdes.String(), new FxRateSerde()))
                 .reduce((aggValue, newValue) -> newValue, Materialized.with(Serdes.String(), new FxRateSerde()));
 
