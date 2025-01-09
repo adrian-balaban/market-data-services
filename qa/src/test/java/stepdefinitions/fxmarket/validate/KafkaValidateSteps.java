@@ -27,7 +27,7 @@ public class KafkaValidateSteps {
 
     @Test
     @Then("FX Rates landed on kafka")
-    public void testReadFromFxRateTopic12() throws Exception {
+    public void kafkaSteps() throws Exception {
         var expectedTimestamp = SharedScenarioContext.getInstance().get("timestamp");
 
         Consumer<String, byte[]> consumer = KafkaTestConsumer.getTestKafkaConsumer();

@@ -78,9 +78,14 @@ configurations {
 
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        includeEngines 'cucumber' // Включение Cucumber Engine
+    }
+    outputs.upToDateWhen { false } // Перезапуск тестов каждый раз
     testLogging {
         events "passed", "failed", "skipped"
+        exceptionFormat "full" // Полный формат исключений
+        showStandardStreams = true // Показывать System.out и System.err
     }
 }
 
