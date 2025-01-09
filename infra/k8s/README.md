@@ -54,6 +54,9 @@
 ### Some helpful commands
 ```
 kubectl exec -ti kafka-0 -- bash
+```
+### in kafka:
+```
 kafka-console-consumer --bootstrap-server localhost:9092 --topic fx_rates
 kafka-topics --create -replication-factor 1 --partitions 1 --topic fx_rates -bootstrap-server localhost:9092
 ```
