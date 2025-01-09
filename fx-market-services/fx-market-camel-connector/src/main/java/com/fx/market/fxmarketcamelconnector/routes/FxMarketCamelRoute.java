@@ -18,7 +18,7 @@ public class FxMarketCamelRoute extends RouteBuilder {
     private com.fx.market.fxmarketcamelconnector.mappers.FxRateProtoMapper fxRateProtoMapper;
 
     @Autowired
-    private com.fx.market.fxmarketcamelconnector.camel.beans.ExtractSseData sseMapper;
+    private ExtractSseDataBean sseMapper;
 
     private static final String FX_MARKET_DATA_PATH = "/forex/rates";
 
@@ -37,11 +37,13 @@ public class FxMarketCamelRoute extends RouteBuilder {
 
         from("stream:http?httpUrl="+marketDataStubProperties.getUrl() + FX_MARKET_DATA_PATH)
                 .to("log:INFO_SSE_STREAM")
-                .bean(sseMapper, "extractSseData")
-                .unmarshal().json(JsonLibrary.Jackson, com.fx.model.FxRateEvent.class)
-                .bean(fxRateProtoMapper, "toProto")
-                .to("log:INFO_PROTOBUF")
-                .to("kafka:"+topic+"?brokers="+bootstrapServers);
+                .filter().method(sseMapper, "messageHasData")
+                    .bean(sseMapper, "extractSseData")
+                    .unmarshal().json(JsonLibrary.Jackson, com.fx.model.FxRateEvent.class)
+                    .bean(fxRateProtoMapper, "toProto")
+                    .to("log:INFO_PROTOBUF")
+                    .to("kafka:"+topic+"?brokers="+bootstrapServers)
+                    .end();
     }
 
 }

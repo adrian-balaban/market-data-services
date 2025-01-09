@@ -10,4 +10,4 @@ vendor:
   market:
     data:
       stub:
-        url: "http://fx-market-data-stub-4-camel-svc:3080"
+        url: "http://fx-market-data-stub-svc:3080"

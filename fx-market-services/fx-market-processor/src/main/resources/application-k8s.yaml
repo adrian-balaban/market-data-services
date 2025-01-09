@@ -7,5 +7,5 @@ server:
 
 kafka:
   bootstrap-servers: PLAINTEXT://kafka:9092
-  topic: fx-rates
+  topic: fx_rates_kafka
   application-id-config: fx-market-processor-stream-operator

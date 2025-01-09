@@ -34,7 +34,7 @@ public class FxRateProtoMapper {
 
     public FxRateEvent fromProto(FxRateEventProto fxRateEventProto) {
         FxRateEvent event = new FxRateEvent();
-        event.setTimestamp(LocalDateTime.parse(fxRateEventProto.getTimestamp()));
+        event.setTimestamp(fxRateEventProto.getTimestamp().toString());
         List<FxRate> list = new ArrayList<>();
         fxRateEventProto.getRatesList().forEach(protoRate -> {
                     FxRate fxRate = new FxRate();
