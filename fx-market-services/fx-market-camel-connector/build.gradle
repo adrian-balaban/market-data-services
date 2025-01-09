@@ -6,8 +6,11 @@ buildscript {
 
 apply plugin: 'org.springframework.boot'
 
+org.gradle.internal.os.OperatingSystem os = org.gradle.internal.os.OperatingSystem.current();
+
 dependencies {
 	implementation project(":model-fx-proto")
+	implementation project(":model-bloomberg-stub")
 
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
@@ -15,7 +18,7 @@ dependencies {
 
 	implementation 'org.apache.camel.springboot:camel-spring-boot-bom:4.9.0'
 	implementation 'org.apache.camel:camel-stream:4.8.2'
-	implementation 'org.apache.camel.springboot:camel-spring-boot-starter:4.9.0'
+	implementation "org.apache.camel.springboot:camel-spring-boot-starter:${CAMEL_SPRING_BOOT}"
 
 	// Jackson Camel
 	implementation 'org.apache.camel.springboot:camel-jackson-starter:4.9.0'
@@ -24,7 +27,7 @@ dependencies {
 	// Kafka
 	implementation 'org.apache.camel:camel-kafka:4.9.0'
 	implementation 'org.apache.camel.springboot:camel-kafka-starter:4.9.0'
-	implementation group: 'org.apache.camel', name: 'camel-debug', version: '4.9.0'
+	implementation 'org.apache.camel:camel-debug:4.9.0'
 
 	// Proto
 	implementation 'com.google.protobuf:protobuf-java:3.25.5' // version 4 breaks java compilation
@@ -46,7 +49,15 @@ bootBuildImage {
 	imageName = "${registryVar}/${dockerRepositoryProperty}/${project.name}:${versionVar}"
 	publish = true
 	docker {
-		host = "unix:///run/docker.sock"
+		if (os.isLinux()) {
+			host = "unix:///run/docker.sock"
+		} else if (os.isMacOsX()) {
+			host = "unix:///var/run/docker.sock"
+		} else {
+			println("Unsupported OS $os")
+			System.exit(1)
+		}
+
 		bindHostToBuilder = true
 		tlsVerify = false
 	}

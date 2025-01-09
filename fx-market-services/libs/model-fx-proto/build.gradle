@@ -26,6 +26,11 @@ protobuf {
     }
 }
 
+compileJava   {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
 compileJava.dependsOn generateProto
 
 sourceSets.main.java.srcDir "/build/generated/source/proto/main/java"

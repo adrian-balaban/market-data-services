@@ -1,12 +1,11 @@
 package com.fx.market.fxmarketconnector.mappers;
 
-import com.fx.market.fxmarketconnector.vendor.stub.model.FxRate;
-import com.fx.market.fxmarketconnector.vendor.stub.model.FxRateEvent;
-import org.springframework.stereotype.Component;
 import com.fx.market.kafka.message.FxRateEventProto;
-
+import com.fx.model.FxRate;
+import com.fx.model.FxRateEvent;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

@@ -1,11 +1,10 @@
 package com.fx.market.fxmarketconnector.service;
 
-import com.fx.market.fxmarketconnector.vendor.kafka.KafkaStreamProducer;
 import com.fx.market.fxmarketconnector.mappers.FxRateProtoMapper;
+import com.fx.market.fxmarketconnector.vendor.kafka.KafkaStreamProducer;
 import com.fx.market.fxmarketconnector.vendor.stub.MarketDataStubClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
 

@@ -5,9 +5,12 @@ buildscript {
 }
 
 apply plugin: 'org.springframework.boot'
+import org.gradle.internal.os.OperatingSystem
+OperatingSystem os = OperatingSystem.current();
 
 dependencies {
 	implementation project(":model-fx-proto")
+	implementation project(":model-bloomberg-stub")
 
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
@@ -36,7 +39,15 @@ bootBuildImage {
 	imageName = "${registryVar}/${dockerRepositoryProperty}/${project.name}:${versionVar}"
 	publish = true
 	docker {
-		host = "unix:///run/docker.sock"
+		if (os.isLinux()) {
+			host = "unix:///run/docker.sock"
+		} else if (os.isMacOsX()) {
+			host = "unix:///var/run/docker.sock"
+		} else {
+			println("Unsupported OS $os")
+			System.exit(1)
+		}
+
 		bindHostToBuilder = true
 		tlsVerify = false
 	}
