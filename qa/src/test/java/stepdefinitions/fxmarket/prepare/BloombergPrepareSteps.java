@@ -1,10 +1,8 @@
-package stepdefinitions;
+package stepdefinitions.fxmarket.prepare;
 
 import com.google.gson.Gson;
-import helpers.TestContext;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
-import io.cucumber.java.en.Then;
 import com.google.gson.JsonObject;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -13,37 +11,41 @@ import java.net.http.HttpResponse;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import com.fx.market.kafka.message.FxRateEventProto;
 import org.junit.jupiter.api.Assertions;
-import testvisa.kafka.FxRateKafkaTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.core.ConsumerFactory;
+import stepdefinitions.SharedScenarioContext;
+import stepdefinitions.TestSettings;
+import testvisa.KafkaTestConfig;
 
-public class ExampleSteps {
-    private TestContext context;
-    private String endpoint = "http://localhost:3080/emitEvent";;
+@SpringBootTest(classes = KafkaTestConfig.class)
+public class BloombergPrepareSteps {
+    TestSettings settings = TestSettings.getInstance();
+
+    private String endpoint = settings.getProperty("stub.blomberg_url");
     private JsonObject requestBody;
     private HttpResponse<String> response;
+    String timestamp;
 
-    public ExampleSteps() {
-        this.context = new TestContext();
-    }
+    @Autowired
+    private ConsumerFactory<String, String> consumerFactory;
 
-    @Given("Service is started")
-    public void i_have_an_example()  {
-        System.out.println("Given step");
-        FxRateEventProto proto = null;
-    }
-
-    @Given("the following rates data is prepared:")
+    @When("the following rates data is prepared:")
     public void prepareRatesData(io.cucumber.datatable.DataTable dataTable) {
-        // Create the root JSON object
         requestBody = new JsonObject();
-        context.set("timestamp",System.currentTimeMillis());
-        System.out.println("----------------------------" + context.get("timestamp"));
-        requestBody.addProperty("timestamp", context.get("timestamp").toString());
+        LocalDateTime now = LocalDateTime.ofInstant(Instant.now(), java.time.ZoneOffset.UTC);
+        timestamp =  DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").format(now);
 
-        // Create the "rates" array
+        SharedScenarioContext.getInstance().set("timestamp",timestamp);
+
+        requestBody.addProperty("timestamp", timestamp);
+
         List<Map<String, String>> ratesData = dataTable.asMaps();
         List<JsonObject> ratesJsonArray = new ArrayList<>();
 
@@ -69,6 +71,7 @@ public class ExampleSteps {
         }
 
         // Add the "rates" array to the root JSON object
+        SharedScenarioContext.getInstance().set("requestBody", requestBody);
         requestBody.add("rates", new Gson().toJsonTree(ratesJsonArray));
     }
 
@@ -76,38 +79,6 @@ public class ExampleSteps {
         return 1.0 + (2.0 - 1.0) * random.nextDouble();
     }
 
-    @When("the rates are sent by Bloomberg")
-    public void sendRatesData() throws Exception {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(endpoint))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
-                .build();
-
-        response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        Assertions.assertNotNull(response, "Response should not be null");
-        Assertions.assertEquals(200, response.statusCode(), "Unexpected HTTP status code");
-
-    }
-
-    @Then("the response status code should be {int}")
-    public void verifyStatusCode(int expectedStatusCode) {
-           }
-
-    @When("FX Rates landed on kafka")
-    public void i_run_the_example() throws Exception {
-        new FxRateKafkaTest(context).testReadFromFxRateTopic();
-    }
-
-    @Given("the API endpoint is {string}")
-    public void setApiEndpoint(String apiEndpoint) {
-        this.endpoint = apiEndpoint;
-    }
 
 
-    @Then("I should see the example result")
-    public void i_should_see_the_example_result() {
-        System.out.println("Then step");
-    }
 }

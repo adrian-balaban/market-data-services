@@ -1,5 +1,9 @@
 # market-data-processor
 
+
+### Requirements:
+- java Graavlm v 21
+
 ## To run everything locally:
 
 1) Manual K8s installation
@@ -19,6 +23,6 @@
    
 ### Additional DEV Notes:
 - if you are MacOS user, before pushing changes to repo please do
-  -  `git config --global core.fileMode false` - (it prevents changing files permissions in repo) 
+  - `git config --global core.fileMode false` - (it prevents changing files permissions in repo) 
   - `git config --global core.autocrlf input` - (set proper EOF)
-   
+  - `git config --global core.autocrlf input`
