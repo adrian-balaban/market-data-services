@@ -1,6 +1,5 @@
 package com.fx.market.fxmarketcamelconnector.routes;
 
-import com.fx.market.fxmarketcamelconnector.routes.model.FxRateEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
@@ -13,10 +12,13 @@ import org.springframework.stereotype.Component;
 public class FxMarketCamelRoute extends RouteBuilder {
 
     @Autowired
-    private MarketDataStubProperties marketDataStubProperties;
+    private com.fx.market.fxmarketcamelconnector.vendor.stub.MarketDataStubProperties marketDataStubProperties;
 
     @Autowired
-    private FxRateProtoMapper fxRateProtoMapper;
+    private com.fx.market.fxmarketcamelconnector.mappers.FxRateProtoMapper fxRateProtoMapper;
+
+    @Autowired
+    private com.fx.market.fxmarketcamelconnector.camel.beans.ExtractSseData sseMapper;
 
     private static final String FX_MARKET_DATA_PATH = "/forex/rates";
 
@@ -34,41 +36,12 @@ public class FxMarketCamelRoute extends RouteBuilder {
         log.info("topic: {} ", topic);
 
         from("stream:http?httpUrl="+marketDataStubProperties.getUrl() + FX_MARKET_DATA_PATH)
-                .to("log:INFO")
-                .bean(new SomeBean())
-                .unmarshal().json(JsonLibrary.Jackson, FxRateEvent.class)
+                .to("log:INFO_SSE_STREAM")
+                .bean(sseMapper, "extractSseData")
+                .unmarshal().json(JsonLibrary.Jackson, com.fx.model.FxRateEvent.class)
                 .bean(fxRateProtoMapper, "toProto")
-                .to("log:INFO2")
+                .to("log:INFO_PROTOBUF")
                 .to("kafka:"+topic+"?brokers="+bootstrapServers);
     }
-    public static class SomeBean {
-        public String doTransform(String body) {
-            return body.substring(6);
-        }
-    }
+
 }
-
-/// ////////////////////////////// FOR CURRENT SCENARIO
-/// JAVA - camelK java root
-// + Simplicity - One file
-// - Libs - Probably possible but may add additional complexity + needs time to learn how
-// = Runner? <- Managed by KNative that autoscales
-                            // we need 24/7 always 1 replica
-// - Prereq -> installed on k8s camel-k + knative?
-
-
-/// Spring Boot - Gradle as here
-// - Additional - more setup + new service, scripts, deployment
-// + Elasticity - Import libs and dependencies easily
-// = Runner? <- spring boot application -> pod
-                            // we need 24/7 always 1 replica
-// + Prereq -> No prerequisites?
-
-
-//////////////////////////////////////////////////////////////////
-// 1St solution: Stub -> Connector(json->proto) -> Kafka -> Processor over Kafka
-
-// 3rd solution: Stub -> Camel(json->proto) -> Kafka -> Same Processor over Kafka
-                                //do we need knative? -> No
-
-///////////////////////////////////////////////////////////////////

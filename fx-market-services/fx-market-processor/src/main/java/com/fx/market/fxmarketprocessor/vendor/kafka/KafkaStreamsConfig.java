@@ -14,7 +14,6 @@ import org.springframework.kafka.config.KafkaStreamsConfiguration;
 
 import java.util.Map;
 
-import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.*;
 
 @Configuration

@@ -8,4 +8,6 @@ ext { // Keep alphabetical order
     SPRING_CLOUD_STREAM = "4.1.3"
     SPRING_CLOUD_VERSION = "2023.0.3"
     SWAGGER_ANNOTATIONS_VERSION = "1.6.14"
+    KAFKA_REACTOR = "1.3.23"
+    CAMEL_SPRING_BOOT = "4.9.0"
 }

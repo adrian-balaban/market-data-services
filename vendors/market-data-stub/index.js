@@ -49,7 +49,7 @@ function sendDataToAllClients(record) {
     record['timestamp'] =  new Date().toISOString();
     clients.forEach((client) => {
             console.log("Client:" + client.id + " message:" + JSON.stringify(record));
-            client.response.write(`data: ${JSON.stringify(record)}\n`);
+            client.response.write(`data: ${JSON.stringify(record)}\n\n`);
         }
     );
 }

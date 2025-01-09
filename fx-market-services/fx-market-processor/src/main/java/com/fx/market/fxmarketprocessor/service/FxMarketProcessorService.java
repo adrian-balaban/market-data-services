@@ -1,5 +1,6 @@
 package com.fx.market.fxmarketprocessor.service;
 
+import com.fx.market.kafka.message.FxRateEventProto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
@@ -8,11 +9,9 @@ import org.apache.kafka.streams.kstream.Grouped;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Materialized;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.fx.market.kafka.message.FxRateEventProto;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
