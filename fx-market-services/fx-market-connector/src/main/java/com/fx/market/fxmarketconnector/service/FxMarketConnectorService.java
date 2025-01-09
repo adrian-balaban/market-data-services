@@ -5,14 +5,13 @@ import com.fx.market.fxmarketconnector.vendor.kafka.KafkaStreamProducer;
 import com.fx.market.fxmarketconnector.vendor.stub.MarketDataStubClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 public class FxMarketConnectorService {
-
-    private static final String TOPIC = "fx_rates";
 
     @Autowired
     private MarketDataStubClient marketDataStubClient;
@@ -23,11 +22,14 @@ public class FxMarketConnectorService {
     @Autowired
     FxRateProtoMapper fxRateProtoMapper;
 
+    @Value("${kafka.topic}")
+    private String topic;
+
     public void processFxMarketRates() {
         log.info("Processing of FX Market Rates started");
 
         try {
-            kafkaStreamProducer.produceStream(TOPIC,
+            kafkaStreamProducer.produceStream(topic,
                     marketDataStubClient.consumeServerSentEvent()
                             .map(ServerSentEvent::data)
                             .map(fxRateEvent -> fxRateProtoMapper.toProto(fxRateEvent)));

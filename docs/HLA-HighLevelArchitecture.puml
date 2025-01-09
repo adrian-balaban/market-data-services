@@ -27,7 +27,7 @@ node "Kafka Solution" as KafkaSolution {
                 component "Java 21, SpringBoot" as KS_FxMarketConnectorTools #LightSteelBlue
             }
             package "Kafka / Confluent" as KafkaConfluent #LightSkyBlue {
-                   component "Topic:\nfx_rates" as KS_FX_RATES_TOPIC #grey
+                   component "Topic:\nfx_rates_kafka" as KS_FX_RATES_KAFKA_TOPIC #grey
             }
             package "FxMarketProcessor" #IndianRed {
                 component "Java 21, SpringBoot" as KS_FxMarketProcessorTools #LightSteelBlue
@@ -35,8 +35,8 @@ node "Kafka Solution" as KafkaSolution {
             }
 
             BMExternal --> KS_FxMarketConnector : Stream
-            KS_FxMarketConnector --> KS_FX_RATES_TOPIC : Stream\nProtobuf Serialized
-            KS_FX_RATES_TOPIC --> K_KT1 : KStream
+            KS_FxMarketConnector --> KS_FX_RATES_KAFKA_TOPIC : Stream\nProtobuf Serialized
+            KS_FX_RATES_KAFKA_TOPIC --> K_KT1 : KStream
 }
 
 node "Kafka Solution with Camel" as KafkaSolutionCamel {
