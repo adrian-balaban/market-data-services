@@ -11,6 +11,7 @@ org.gradle.internal.os.OperatingSystem os = org.gradle.internal.os.OperatingSyst
 dependencies {
 	implementation project(":model-fx-proto")
 	implementation project(":model-bloomberg-stub")
+	implementation project(":common-utils")
 
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
@@ -28,6 +29,7 @@ dependencies {
 	implementation 'org.apache.camel:camel-kafka:4.9.0'
 	implementation 'org.apache.camel.springboot:camel-kafka-starter:4.9.0'
 	implementation 'org.apache.camel:camel-debug:4.9.0'
+	implementation 'org.apache.kafka:kafka-clients:3.9.0'
 
 	// Proto
 	implementation 'com.google.protobuf:protobuf-java:3.25.5' // version 4 breaks java compilation

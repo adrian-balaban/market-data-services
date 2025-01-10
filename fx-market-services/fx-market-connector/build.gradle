@@ -11,6 +11,7 @@ OperatingSystem os = OperatingSystem.current();
 dependencies {
 	implementation project(":model-fx-proto")
 	implementation project(":model-bloomberg-stub")
+	implementation project(":common-utils")
 
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
@@ -18,6 +19,7 @@ dependencies {
 
 	// Kafka
 	implementation "io.projectreactor.kafka:reactor-kafka:${KAFKA_REACTOR}"
+	implementation 'org.apache.kafka:kafka-clients:3.9.0'
 
 	// Proto
 	implementation 'com.google.protobuf:protobuf-java:3.25.5' // version 4 breaks java compilation
