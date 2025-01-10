@@ -41,7 +41,6 @@ public class KafkaValidateSteps {
             try {
                 com.fx.market.kafka.message.FxRateEventProto receivedEvent =
                         com.fx.market.kafka.message.FxRateEventProto.parseFrom(record.value());
-                System.out.println("Received message: " + receivedEvent);
 
                 if (expectedTimestamp.equals(receivedEvent.getTimestamp())) {
                     timestampMatched = true;
