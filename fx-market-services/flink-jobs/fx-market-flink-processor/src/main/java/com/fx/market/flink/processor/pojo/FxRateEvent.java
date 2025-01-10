@@ -1,14 +1,13 @@
 package com.fx.market.flink.processor.pojo;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class FxRateEvent {
 
-    public LocalDateTime timestamp;
+    public String timestamp;
     public List<FxRate> rates;
 
-    public LocalDateTime getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
@@ -16,7 +15,7 @@ public class FxRateEvent {
         return rates;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 
