@@ -11,10 +11,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-
-import static com.fx.utils.SafeMapper.nullSafe;
 
 @Slf4j
 @Service

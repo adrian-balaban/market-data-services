@@ -19,6 +19,11 @@ ext {
 	profileProperty = project.hasProperty('profile') ? project.getProperty('profile') : 'local' // default
 }
 
+java {
+	toolchain {
+		languageVersion.set(JavaLanguageVersion.of(21))
+	}
+}
 
 configurations {
 	compileOnly {
@@ -35,14 +40,14 @@ subprojects {
 	repositories {
 		mavenLocal()
 		mavenCentral()
-		maven { url 'https://plugins.gradle.org/m2/' }
-		maven { url 'https://packages.confluent.io/maven/' }
+		maven { url = 'https://plugins.gradle.org/m2/' }
+		maven { url = 'https://packages.confluent.io/maven/' }
 	}
 
 	buildscript {
 		repositories {
 			mavenCentral()
-			maven { url 'https://plugins.gradle.org/m2/' }
+			maven { url = 'https://plugins.gradle.org/m2/' }
 		}
 	}
 

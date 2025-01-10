@@ -1,6 +1,5 @@
 package com.fx.market.fxmarketconnector.vendor.kafka;
 
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
