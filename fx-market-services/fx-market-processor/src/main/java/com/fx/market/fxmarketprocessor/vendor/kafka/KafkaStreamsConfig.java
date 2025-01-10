@@ -14,7 +14,6 @@ import org.springframework.kafka.config.KafkaStreamsConfiguration;
 
 import java.util.Map;
 
-import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.*;
 
 @Configuration
@@ -24,12 +23,14 @@ public class KafkaStreamsConfig {
 
     @Value("${kafka.bootstrap-servers}")
     private String bootstrapServers;
+    @Value("${kafka.application-id-config}")
+    private String applicationIdConfig;
 
     @Bean(name =
             KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME)
     public KafkaStreamsConfiguration kStreamsConfigs() {
         return new KafkaStreamsConfiguration(Map.of(
-                APPLICATION_ID_CONFIG, "fx-market-processor-stream-operator",
+                APPLICATION_ID_CONFIG, applicationIdConfig,
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
                 DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Integer().getClass().getName(),
                 DEFAULT_VALUE_SERDE_CLASS_CONFIG, FxRateEventProtoSerde.class.getName(),

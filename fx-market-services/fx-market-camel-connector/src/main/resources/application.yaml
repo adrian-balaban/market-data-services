@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: fxMarketCamelDataConnector
+
+server:
+  port: 16080
+
+kafka:
+  bootstrap-servers: localhost:9092
+  topic: fx_rates_camel
+
+vendor:
+  market:
+    data:
+      stub:
+        url: "http://localhost:3080"

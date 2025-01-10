@@ -1,11 +1,9 @@
 package com.fx.market.flink.processor.helpers;
 
 import com.fx.market.flink.processor.model.FxRateEventProto;
-import com.fx.market.flink.processor.pojo.FxRate;
 import com.fx.market.flink.processor.pojo.FxRateEvent;
 import org.apache.flink.api.common.serialization.DeserializationSchema;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
-
 
 import java.io.IOException;
 import java.util.Arrays;

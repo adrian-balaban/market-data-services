@@ -1,7 +1,7 @@
 package com.fx.market.flink.processor;
 
-import com.fx.market.flink.processor.pojo.FxRate;
 import com.fx.market.flink.processor.helpers.FxRateEventProtoMessageDeserializer;
+import com.fx.market.flink.processor.pojo.FxRate;
 import com.fx.market.flink.processor.pojo.FxRateEvent;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.FlatMapFunction;
@@ -13,9 +13,6 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
-import static com.fx.market.flink.processor.pojo.FxRate.fromFxRateProto;
 
 public class FxMarketFlinkProcessor {
 

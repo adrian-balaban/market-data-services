@@ -7,7 +7,7 @@ import java.util.List;
 
 public class FxRateEventProto {
 
-    LocalDateTime timestamp;
+    String timestamp;
     List<FxRate> rates;
 
 }
