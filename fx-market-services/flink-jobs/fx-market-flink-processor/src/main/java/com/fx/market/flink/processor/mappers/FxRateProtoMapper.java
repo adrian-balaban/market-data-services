@@ -5,7 +5,6 @@ import com.fx.market.flink.processor.model.FxRateEventProto;
 import com.fx.market.flink.processor.pojo.FxRate;
 import com.fx.market.flink.processor.pojo.FxRateEvent;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

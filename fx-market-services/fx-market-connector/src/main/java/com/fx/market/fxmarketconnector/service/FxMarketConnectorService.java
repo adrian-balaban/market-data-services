@@ -5,18 +5,10 @@ import com.fx.market.fxmarketconnector.vendor.kafka.KafkaStreamProducer;
 import com.fx.market.fxmarketconnector.vendor.stub.MarketDataStubClient;
 import com.fx.utils.KafkaAdminCreateTopic;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.admin.Admin;
-import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.apache.kafka.clients.admin.CreateTopicsResult;
-import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.common.KafkaFuture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
-import java.util.Properties;
 
 @Slf4j
 @Service
