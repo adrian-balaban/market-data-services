@@ -62,6 +62,7 @@ dependencies {
     testImplementation "org.junit.platform:junit-platform-suite:1.10.0"
     testImplementation 'org.springframework.kafka:spring-kafka-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.cucumber:cucumber-spring:7.20.1'
 
 }
 
@@ -77,12 +78,43 @@ configurations {
 
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        includeEngines 'cucumber'
+    }
+    outputs.upToDateWhen { false }
     testLogging {
         events "passed", "failed", "skipped"
+        exceptionFormat "full"
+        showStandardStreams = true
+    }
+}
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
     }
 }
 
+
+task cucumber() {
+    dependsOn assemble, testClasses
+    doLast {
+        javaexec {
+            main = "io.cucumber.core.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = [
+                    '--plugin', 'pretty',
+                    '--glue', 'stepdefinitions',
+                    '--glue', 'helpers',
+                    '--glue', 'testvisa',
+                    'src/test/resources/features/sample-domain/'
+            ]
+        }
+    }
+}
+
+tasks.named('bootJar') {
+    enabled = false
+}
 
 subprojects {
     repositories {

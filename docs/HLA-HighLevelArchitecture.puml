@@ -39,6 +39,23 @@ node "Kafka Solution" as KafkaSolution {
             KS_FX_RATES_TOPIC --> K_KT1 : KStream
 }
 
+node "Kafka Solution with Camel" as KafkaSolutionCamel {
+    package "FxMarketConnector Camel" as KS_FxMarketConnectorCamel #IndianRed {
+        component "Camel Java Route" as KS_FxMarketConnectorToolsCamel #LightSteelBlue
+    }
+    package "Kafka / Confluent" as KafkaConfluentCamel #LightSkyBlue {
+           component "Topic:\nfx_rates_camel" as KS_FX_RATES_TOPIC_CAMEL #grey
+    }
+    package "FxMarketProcessor Camel" as FxMarketProcessorCamel #IndianRed {
+            component "Java 21, SpringBoot" as KS_FxMarketProcessorToolsCamel #LightSteelBlue
+            component "KTable/GlobalKTable\nPAIR A/RATE A\nPAIR B/RATE B\nPAIR C/RATE C\n" as K_KT1_Camel #grey
+    }
+
+    BMExternal --> KS_FxMarketConnectorCamel : Stream
+    KS_FxMarketConnectorCamel --> KS_FX_RATES_TOPIC_CAMEL : Stream\nProtobuf Serialized
+    KS_FX_RATES_TOPIC_CAMEL --> K_KT1_Camel : KStream
+}
+
 'Flink
 node "Flink Solution" as Flink {
            package "FxMarketConnector" as FS_FxMarketConnector #IndianRed {

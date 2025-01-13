@@ -41,7 +41,7 @@ spec:
     spec:
       containers:
         - name: fx-market-data-stub
-          image: "public.ecr.aws/q9l3g9o8/aws/sandbox/fx-market/externals/market-data-stub:0.1.0"
+          image: "192.168.192.96:5001/fx-market-externals/market-data-stub:0.3.0"
           imagePullPolicy: 
           env:
 
