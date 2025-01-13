@@ -31,6 +31,8 @@ helm uninstall fx-market-services -n ${NAMESPACE}
 
 helm uninstall fx-market-externals -n ${NAMESPACE}
 
+kubectl delete -n ${NAMESPACE} -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
 kubectl delete all --all -n ${NAMESPACE}
 
 kubectl delete namespace -n ${NAMESPACE}

@@ -39,6 +39,7 @@ helm upgrade --install \
     --namespace ${NAMESPACE} \
     --set tag="${TAG}" \
     --set apps.fxmarketconnector.image.repository="${DOCKER_REGISTRY}/fx-market-services/fx-market-connector" \
+    --set apps.fxmarketcamelconnector.image.repository="${DOCKER_REGISTRY}/fx-market-services/fx-market-camel-connector" \
     --set apps.fxmarketprocessor.image.repository="${DOCKER_REGISTRY}/fx-market-services/fx-market-processor" \
     --set apps.flinkorchestrator.image.repository="${DOCKER_REGISTRY}/fx-market-services/flink-orchestrator" \
     -f ../helm/services/values-common.yaml \

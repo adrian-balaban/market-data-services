@@ -1,4 +1,4 @@
 ext { // Keep alphabetical order
     CUCUMBER_VERSION = "7.20.1"
-    JUNIT_PLATFORM = "1.11.3"
+    JUNIT_PLATFORM = "1.10.0"
 }

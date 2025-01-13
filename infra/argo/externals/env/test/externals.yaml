@@ -1,0 +1,68 @@
+# Source: application/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: fx-market-data-stub-svc
+  labels:
+    managed-by: Helm
+    release: fx-market-externals
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3080
+      targetPort: 3080
+      protocol: TCP
+      name: http
+  selector:
+    app: fx-market-data-stub
+---
+# Source: application/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fx-market-data-stub
+  labels:
+    app: fx-market-data-stub
+    managed-by: Helm
+    release: fx-market-externals
+    version: 0.1.0
+spec:
+  replicas: 
+  selector:
+    matchLabels:
+      app: fx-market-data-stub
+      release: fx-market-externals
+  template:
+    metadata:
+      labels:
+        app: fx-market-data-stub
+        release: fx-market-externals
+        version: 0.1.0
+    spec:
+      containers:
+        - name: fx-market-data-stub
+          image: "192.168.192.96:5001/fx-market-externals/market-data-stub:0.3.0"
+          imagePullPolicy: 
+          env:
+
+          ports:
+            - name: http
+              containerPort: 3080
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 1
+              memory: 1024Mi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+      topologySpreadConstraints:
+      - maxSkew: 6
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            release: fx-market-externals
+      volumes:
+

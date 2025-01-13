@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: fxMarketCamelDataConnector
+
+kafka:
+  bootstrap-servers: PLAINTEXT://kafka:9092
+  topic: fx_rates_camel
+
+vendor:
+  market:
+    data:
+      stub:
+        url: "http://fx-market-data-stub-svc:3080"
