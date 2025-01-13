@@ -3,11 +3,6 @@ package com.fx.market.fxmarketprocessor.service;
 import com.fx.market.kafka.message.FxRateEventProto;
 import com.fx.utils.KafkaAdminCreateTopic;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.admin.Admin;
-import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.apache.kafka.clients.admin.CreateTopicsResult;
-import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -20,8 +15,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.Instant;
-import java.util.Collections;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
 import static com.fx.market.fxmarketprocessor.service.FxRate.fromFxRateProto;
