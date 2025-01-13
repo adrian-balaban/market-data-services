@@ -5,16 +5,21 @@ buildscript {
 }
 
 apply plugin: 'org.springframework.boot'
+import org.gradle.internal.os.OperatingSystem
+OperatingSystem os = OperatingSystem.current();
 
 dependencies {
 	implementation project(":model-fx-proto")
+	implementation project(":model-bloomberg-stub")
+	implementation project(":common-utils")
 
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation "org.springframework.cloud:spring-cloud-stream:${SPRING_CLOUD_STREAM}"
 
 	// Kafka
-	implementation 'io.projectreactor.kafka:reactor-kafka'
+	implementation "io.projectreactor.kafka:reactor-kafka:${KAFKA_REACTOR}"
+	implementation 'org.apache.kafka:kafka-clients:3.9.0'
 
 	// Proto
 	implementation 'com.google.protobuf:protobuf-java:3.25.5' // version 4 breaks java compilation
@@ -34,7 +39,15 @@ bootBuildImage {
 	imageName = "${registryVar}/${dockerRepositoryProperty}/${project.name}:${versionVar}"
 	publish = true
 	docker {
-		host = "unix:///run/podman/podman.sock"
+		if (os.isLinux()) {
+			host = "unix:///run/docker.sock"
+		} else if (os.isMacOsX()) {
+			host = "unix:///var/run/docker.sock"
+		} else {
+			println("Unsupported OS $os")
+			System.exit(1)
+		}
+
 		bindHostToBuilder = true
 		tlsVerify = false
 	}

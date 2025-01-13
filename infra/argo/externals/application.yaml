@@ -1,0 +1,21 @@
+#kubectl apply -f application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: market-data-externals
+  namespace: ___CHANGE_ME_NAMESPACE___
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/Jereczek/market-data-processor.git'
+    targetRevision: ___CHANGE_ME_BRANCH___ #master
+    path: 'infra/argo/externals/env/___CHANGE_ME_ENV___'
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: ___CHANGE_ME_NAMESPACE___
+  syncPolicy:
+    automated:
+      prune: true # Delete components if no longer used
+      selfHeal: true # Automatically Fetch and override any manual changes
+    syncOptions:
+      - CreateNamespace=true

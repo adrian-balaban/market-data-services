@@ -23,6 +23,10 @@ apps:
         value: "PLAINTEXT://kafka:9092"
       - name: VENDOR_MARKET_DATA_STUB_URL
         value: "http://fx-market-data-stub-svc:3080"
+      - name: KAFKA_TOPIC
+        value: "fx_rates"
+      - name: KAFKA_APPLICATION_ID_CONFIG
+        value: "fx-market-processor-stream-operator"
 
     resources:
       limits:
@@ -33,21 +37,60 @@ apps:
         memory: 3072Mi
 
     volumes: []
-      # - name: server-certs
-      #   secretName: api-fxmarketconnector
-      #   mountPath: /opt/certs/fxmarketconnector
-      #   optional: true
-      # - name: mtls-certs2
-      #   secretName: mtls-certs2
-      #   mountPath: /opt/certs/mtls2
-    #   optional: true
 
     autoscaling:
       enabled: false
       minReplicas: 1
       maxReplicas: 1
       targetCPUUtilizationPercentage: 80
-      # targetMemoryUtilizationPercentage: 80
+
+    initContainers: {}
+    imagePullSecrets: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+  ###################################
+  ##### FX MARKET CAMEL CONNECTOR APP #####
+  ###################################
+  fxmarketcamelconnector:
+    name: fx-market-camel-connector
+    image:
+      repository: localhost:5001/fx-market-services/fx-market-connector
+      #tag: 0.0.1
+    podAnnotations: {}
+
+    service:
+      type: NodePort
+      port: 8080
+
+    extraEnv:
+      - name: SERVER_PORT
+        value: "8080"
+      - name: KAFKA_BOOTSTRAP_SERVERS
+        value: "PLAINTEXT://kafka:9092"
+      - name: VENDOR_MARKET_DATA_STUB_URL
+        value: "http://fx-market-data-stub-svc:3080"
+      - name: KAFKA_TOPIC
+        value: "fx_rates_camel"
+      - name: JAVA_OPTS
+        value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
+
+    resources:
+      limits:
+        cpu: 1
+        memory: 3072Mi
+      requests:
+        cpu: 500m
+        memory: 3072Mi
+
+    volumes: []
+
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 1
+      targetCPUUtilizationPercentage: 80
 
     initContainers: {}
     imagePullSecrets: {}
@@ -76,6 +119,10 @@ apps:
         value: "8080"
       - name: KAFKA_BOOTSTRAP_SERVERS
         value: "PLAINTEXT://kafka:9092"
+      - name: KAFKA_TOPIC
+        value: "fx_rates"
+      - name: KAFKA_APPLICATION_ID_CONFIG
+        value: "fx-market-processor-stream-operator"
 
     resources:
       limits:
@@ -86,21 +133,60 @@ apps:
         memory: 3072Mi
 
     volumes: []
-      # - name: server-certs
-      #   secretName: api-fxmarketconnector
-      #   mountPath: /opt/certs/fxmarketconnector
-      #   optional: true
-      # - name: mtls-certs2
-      #   secretName: mtls-certs2
-    #   mountPath: /opt/certs/mtls2
-    #   optional: true
 
     autoscaling:
       enabled: false
       minReplicas: 1
       maxReplicas: 1
       targetCPUUtilizationPercentage: 80
-      # targetMemoryUtilizationPercentage: 80
+
+    initContainers: {}
+    imagePullSecrets: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+
+  ###################################
+  ##### FX MARKET CAMEL PROCESSOR APP #####
+  ###################################
+  fxmarketcamelprocessor:
+    name: fx-market-camel-processor
+    image:
+      repository: localhost:5001/fx-market-services/fx-market-processor
+    #      tag: 0.0.1
+
+    podAnnotations: {}
+
+    service:
+      type: ClusterIP
+      port: 8080
+
+    extraEnv:
+      - name: SERVER_PORT
+        value: "8080"
+      - name: KAFKA_BOOTSTRAP_SERVERS
+        value: "PLAINTEXT://kafka:9092"
+      - name: KAFKA_TOPIC
+        value: "fx_rates_camel"
+      - name: KAFKA_APPLICATION_ID_CONFIG
+        value: "fx-market-processor-stream-operator-camel"
+
+    resources:
+      limits:
+        cpu: 1
+        memory: 3072Mi
+      requests:
+        cpu: 500m
+        memory: 3072Mi
+
+    volumes: []
+
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 1
+      targetCPUUtilizationPercentage: 80
 
     initContainers: {}
     imagePullSecrets: {}
@@ -138,21 +224,12 @@ apps:
         memory: 3584Mi
 
     volumes: []
-      # - name: server-certs
-      #   secretName: api-fxmarketconnector
-      #   mountPath: /opt/certs/fxmarketconnector
-      #   optional: true
-      # - name: mtls-certs2
-    #   secretName: mtls-certs2
-    #   mountPath: /opt/certs/mtls2
-    #   optional: true
 
     autoscaling:
       enabled: false
       minReplicas: 1
       maxReplicas: 1
       targetCPUUtilizationPercentage: 80
-      # targetMemoryUtilizationPercentage: 80
 
     initContainers: {}
     imagePullSecrets: {}

@@ -8,6 +8,8 @@ final String FLINK_JOBS_JARS_PATH="src/main/resources/flink-jobs"
 
 apply plugin: 'org.springframework.boot'
 
+org.gradle.internal.os.OperatingSystem os = org.gradle.internal.os.OperatingSystem.current();
+
 dependencies {
     implementation project(':fx-market-flink-processor')
     implementation project(':model-flink-api')
@@ -63,7 +65,14 @@ bootBuildImage {
     imageName = "${registryVar}/${dockerRepositoryProperty}/${project.name}:${versionVar}"
     publish = true
     docker {
-        host = "unix:///run/podman/podman.sock"
+        if (os.isLinux()) {
+            host = "unix:///run/docker.sock"
+        } else if (os.isMacOsX()) {
+            host = "unix:///var/run/docker.sock"
+        } else {
+            println("Unsupported OS $os")
+            System.exit(1)
+        }
         bindHostToBuilder = true
         tlsVerify = false
     }

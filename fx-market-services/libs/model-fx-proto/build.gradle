@@ -1,14 +1,14 @@
 plugins {
+    id "java"
+    id "java-library"
     id "com.google.protobuf" version "0.9.4"
 }
-
-apply plugin: "java-library"
-
 
 dependencies {
     implementation 'org.apache.kafka:kafka-streams'
 
     // Proto
+    implementation 'org.apache.kafka:kafka-streams:3.6.0'
     implementation 'com.google.protobuf:protobuf-java:3.25.5' // version 4 breaks java compilation
     implementation 'org.modelmapper:modelmapper:3.2.1'
 }

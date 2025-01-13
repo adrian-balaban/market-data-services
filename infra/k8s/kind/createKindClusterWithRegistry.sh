@@ -1,12 +1,28 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -o errexit
+
+HOST='127.0.0.1' # default if not provided
+
+print_usage() {
+  echo "Usage:"
+  echo "-host <x.x.x.x>       <- to specify host for cluster and registry - default: 127.0.0.1"
+}
+
+# Parse command-line options
+while [[ "$#" -gt 0 ]]; do
+  case "$1" in
+    -host) HOST="$2"; shift ;;
+    *) print_usage; exit 1 ;;
+  esac
+  shift
+done
 
 # 1. Create registry container unless it already exists
 reg_name='kind-registry'
 reg_port='5001'
 if [ "$(docker inspect -f '{{.State.Running}}' "${reg_name}" 2>/dev/null || true)" != 'true' ]; then
   docker run \
-    -d --restart=always -p "127.0.0.1:${reg_port}:5000" --network bridge --name "${reg_name}" \
+    -d --restart=always -p "${HOST}:${reg_port}:5000" --network bridge --name "${reg_name}" \
     registry:2
 fi
 
@@ -21,6 +37,9 @@ fi
 cat <<EOF | systemd-run --scope --user -p "Delegate=yes" kind create cluster --config=-
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+  apiServerAddress: ${HOST}
+  apiServerPort: 6443
 containerdConfigPatches:
 - |-
   [plugins."io.containerd.grpc.v1.cri".registry]

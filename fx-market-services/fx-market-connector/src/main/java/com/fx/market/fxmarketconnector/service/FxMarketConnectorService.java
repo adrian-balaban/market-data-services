@@ -1,8 +1,9 @@
 package com.fx.market.fxmarketconnector.service;
 
-import com.fx.market.fxmarketconnector.vendor.kafka.KafkaStreamProducer;
 import com.fx.market.fxmarketconnector.mappers.FxRateProtoMapper;
+import com.fx.market.fxmarketconnector.vendor.kafka.KafkaStreamProducer;
 import com.fx.market.fxmarketconnector.vendor.stub.MarketDataStubClient;
+import com.fx.utils.KafkaAdminCreateTopic;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,8 +14,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class FxMarketConnectorService {
 
-    private static final String TOPIC = "fx_rates";
-
     @Autowired
     private MarketDataStubClient marketDataStubClient;
 
@@ -24,11 +23,22 @@ public class FxMarketConnectorService {
     @Autowired
     FxRateProtoMapper fxRateProtoMapper;
 
-    public void processFxMarketRates() {
-        log.info("Processing of FX Market Rates started");
+    @Value("${kafka.topic}")
+    private String topic;
 
+    @Value("${kafka.bootstrap-servers}")
+    private String bootstrapServers;
+
+    public void processFxMarketRates() {
+        try  {
+            KafkaAdminCreateTopic.createTopic(bootstrapServers, topic);
+        } catch (Exception ex) {
+            log.error("Error creating topic: ", ex);
+        }
+
+        log.info("Processing of FX Market Rates started");
         try {
-            kafkaStreamProducer.produceStream(TOPIC,
+            kafkaStreamProducer.produceStream(topic,
                     marketDataStubClient.consumeServerSentEvent()
                             .map(ServerSentEvent::data)
                             .map(fxRateEvent -> fxRateProtoMapper.toProto(fxRateEvent)));
