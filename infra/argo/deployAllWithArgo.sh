@@ -135,7 +135,7 @@ sleep 5
 wait_for_pod "flink-jobmanager"
 wait_for_pod "zookeeper-0"
 wait_for_pod "kafka-0"
-wait_for_pod "connect-0"
+#wait_for_pod "connect-0"
 ## Argo
 wait_for_pod "argocd-redis"
 wait_for_pod "argocd-server"
