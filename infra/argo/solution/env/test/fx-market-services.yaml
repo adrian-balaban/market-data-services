@@ -245,7 +245,7 @@ spec:
     spec:
       containers:
         - name: fx-market-camel-processor
-          image: "localhost:5001/fx-market-services/fx-market-processor:0.3.0"
+          image: "192.168.192.96:5001/fx-market-services/fx-market-processor:0.3.0"
           imagePullPolicy: IfNotPresent
           env:
           - name: SERVER_PORT
