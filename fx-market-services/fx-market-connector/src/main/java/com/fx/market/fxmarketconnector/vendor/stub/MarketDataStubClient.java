@@ -1,6 +1,6 @@
 package com.fx.market.fxmarketconnector.vendor.stub;
 
-import com.fx.market.fxmarketconnector.vendor.stub.model.FxRateEvent;
+import com.fx.model.FxRateEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
