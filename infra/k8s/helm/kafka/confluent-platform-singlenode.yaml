@@ -1,3 +1,5 @@
+#Kafka is accessible externally (externally to K8s) on localhost:9093
+#Kafka is accessible internally (within K8s) on PLAINTEXT://kafka:9071
 apiVersion: platform.confluent.io/v1beta1
 kind: Zookeeper
 metadata:
