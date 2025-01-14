@@ -16,7 +16,7 @@ done
 kubectl port-forward -n ${NAMESPACE} svc/argocd-server 38080:443 &
 
 #TOOLS
-#kubectl port-forward -n ${NAMESPACE} svc/kafka 9092:9092 &
+kubectl port-forward -n ${NAMESPACE} svc/kafka 9093:9092 &
 kubectl port-forward -n ${NAMESPACE} svc/controlcenter 9021:9021 &
 kubectl port-forward -n ${NAMESPACE} svc/fx-flink-jobmanager 8081:8081 &
 
@@ -24,7 +24,3 @@ kubectl port-forward -n ${NAMESPACE} svc/fx-flink-jobmanager 8081:8081 &
 kubectl port-forward -n ${NAMESPACE} svc/fx-market-data-stub-svc 3080:3080 &
 
 #SERVICES (Add only if needed i.e. by e2e tests)
-
-KAFKA_PORT=`kubectl get svc/kafka-0-np -n $NAMESPACE -o jsonpath="{..ports[0].nodePort}"`
-echo "KAFKA NODE PORT: $KAFKA_PORT"
-kubectl port-forward -n ${NAMESPACE} service/kafka-0-np $KAFKA_PORT:9092 &

@@ -34,9 +34,9 @@ spec:
   listeners:
     external:
       externalAccess:
-        type: nodePort
-        nodePort:
-          nodePortOffset: ___CHANGE_ME_KAFKA_NODEPORT___
+        type: staticForPortBasedRouting
+        staticForPortBasedRouting:
+          portOffset: 9093
           host: localhost
   configOverrides:
     server:
