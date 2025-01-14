@@ -20,7 +20,7 @@ apps:
       - name: SERVER_PORT
         value: "8080"
       - name: KAFKA_BOOTSTRAP_SERVERS
-        value: "PLAINTEXT://kafka:9092"
+        value: "PLAINTEXT://kafka:9071"
       - name: VENDOR_MARKET_DATA_STUB_URL
         value: "http://fx-market-data-stub-svc:3080"
       - name: KAFKA_TOPIC
@@ -68,7 +68,7 @@ apps:
       - name: SERVER_PORT
         value: "8080"
       - name: KAFKA_BOOTSTRAP_SERVERS
-        value: "PLAINTEXT://kafka:9092"
+        value: "PLAINTEXT://kafka:9071"
       - name: VENDOR_MARKET_DATA_STUB_URL
         value: "http://fx-market-data-stub-svc:3080"
       - name: KAFKA_TOPIC
@@ -118,7 +118,7 @@ apps:
       - name: SERVER_PORT
         value: "8080"
       - name: KAFKA_BOOTSTRAP_SERVERS
-        value: "PLAINTEXT://kafka:9092"
+        value: "PLAINTEXT://kafka:9071"
       - name: KAFKA_TOPIC
         value: "fx_rates"
       - name: KAFKA_APPLICATION_ID_CONFIG
@@ -166,7 +166,7 @@ apps:
       - name: SERVER_PORT
         value: "8080"
       - name: KAFKA_BOOTSTRAP_SERVERS
-        value: "PLAINTEXT://kafka:9092"
+        value: "PLAINTEXT://kafka:9071"
       - name: KAFKA_TOPIC
         value: "fx_rates_camel"
       - name: KAFKA_APPLICATION_ID_CONFIG

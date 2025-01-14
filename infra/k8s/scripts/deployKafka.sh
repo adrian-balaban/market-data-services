@@ -23,8 +23,8 @@ done
 ###############################################################
 
 kubectl get namespace ${NAMESPACE} || kubectl create namespace ${NAMESPACE}
-
 ###############################################################
+
 echo "$SEPARATOR"
 echo "DEPLOYING KAFKA - START"
 echo "$SEPARATOR"
