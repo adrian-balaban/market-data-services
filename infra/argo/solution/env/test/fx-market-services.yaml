@@ -120,6 +120,7 @@ spec:
             value: "8080"
           - name: FLINK_URL
             value: http://fx-flink-jobmanager:8081
+          - name: FLINK_JOBS_0_ARGUMENTS_BOOTSTRAPSERVERS=kafka:9071
           ports:
             - name: http
               containerPort: 8080
