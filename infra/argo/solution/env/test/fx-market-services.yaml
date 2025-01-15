@@ -120,6 +120,10 @@ spec:
             value: "8080"
           - name: FLINK_URL
             value: http://fx-flink-jobmanager:8081
+          - name: FLINK_JOBS_0_NAME
+            value: fxmarketflinkproces
+          - name: FLINK_JOBS_0_ARGUMENTS_TOPIC
+            value: fx_rates
           - name: FLINK_JOBS_0_ARGUMENTS_BOOTSTRAPSERVERS
             value: kafka:9071
           ports:
