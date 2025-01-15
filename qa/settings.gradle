@@ -1,0 +1,5 @@
+rootProject.name = 'e2e-tests'
+
+include ':model-fx-proto'
+
+project(':model-fx-proto').projectDir = new File('../fx-market-services/libs/model-fx-proto')
