@@ -11,11 +11,23 @@
             <option value="$PROJECT_DIR$/fx-market-services" />
             <option value="$PROJECT_DIR$/fx-market-services/flink-jobs/fx-market-flink-processor" />
             <option value="$PROJECT_DIR$/fx-market-services/flink-orchestrator" />
+            <option value="$PROJECT_DIR$/fx-market-services/fx-market-camel-connector" />
             <option value="$PROJECT_DIR$/fx-market-services/fx-market-connector" />
             <option value="$PROJECT_DIR$/fx-market-services/fx-market-processor" />
             <option value="$PROJECT_DIR$/fx-market-services/libs/common-utils" />
+            <option value="$PROJECT_DIR$/fx-market-services/libs/model-bloomberg-stub" />
             <option value="$PROJECT_DIR$/fx-market-services/libs/model-flink-api" />
             <option value="$PROJECT_DIR$/fx-market-services/libs/model-fx-proto" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/qa" />
+        <option name="gradleJvm" value="graalvm-jdk-21" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/fx-market-services/libs/model-fx-proto" />
+            <option value="$PROJECT_DIR$/qa" />
           </set>
         </option>
       </GradleProjectSettings>

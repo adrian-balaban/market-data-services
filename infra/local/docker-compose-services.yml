@@ -1,18 +1,24 @@
 services:
   fx-market-connector:
-    image: localhost:5001/fx-market-services/fx-market-connector:0.1.0
+    image: localhost:5001/fx-market-services/fx-market-connector:0.0.1
     depends_on:
       - broker
     ports:
      - 4080:4080
     networks:
       - docker_net
-    environment:
-      KAFKA_BOOTSTRAP_SERVERS: PLAINTEXT://broker:29092
-      VENDOR_MARKET_DATA_STUB_URL: http://fx-market-stub:3080
+
+  fx-market-camel-connector:
+    image: localhost:5001/fx-market-services/fx-market-connector:0.0.1
+    depends_on:
+      - broker
+    ports:
+      - 5080:5080
+    networks:
+      - docker_net
 
   fx-market-processor:
-    image: localhost:5001/fx-market-services/fx-market-processor:0.1.0
+    image: localhost:5001/fx-market-services/fx-market-processor:0.0.1
     depends_on:
       - broker
     ports:
@@ -20,13 +26,22 @@ services:
     networks:
       - docker_net
 
-#  flink-orchestrator:
-#    image: localhost:5001/fx-market-services/flink-orchestrator:0.1.0
-#    depends_on:
-#      - jobmanager
-#      - taskmanager
-#    restart: on-failure
-#    ports:
-#     - 4082:4082
-#    networks:
-#      - docker_net
+  fx-market-camel-processor:
+    image: localhost:5001/fx-market-services/fx-market-processor:0.0.1
+    depends_on:
+      - broker
+    ports:
+      - 5081:5081
+    networks:
+      - docker_net
+
+  flink-orchestrator:
+    image: localhost:5001/fx-market-services/flink-orchestrator:0.0.1
+    depends_on:
+      - jobmanager
+      - taskmanager
+    restart: on-failure
+    ports:
+     - 4082:4082
+    networks:
+      - docker_net

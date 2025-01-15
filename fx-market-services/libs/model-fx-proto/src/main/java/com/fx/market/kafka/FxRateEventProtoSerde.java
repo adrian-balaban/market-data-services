@@ -1,10 +1,10 @@
 package com.fx.market.kafka;
 
+import com.fx.market.kafka.message.FxRateEventProto;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serializer;
-import com.fx.market.kafka.message.FxRateEventProto;
 
 public class FxRateEventProtoSerde implements Serde<FxRateEventProto> {
     @Override
