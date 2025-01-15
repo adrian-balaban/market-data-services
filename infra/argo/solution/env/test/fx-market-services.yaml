@@ -113,19 +113,13 @@ spec:
     spec:
       containers:
         - name: flink-orchestrator
-          image: "192.168.192.96:5001/fx-market-services/flink-orchestrator:0.3.0"
+          image: "192.168.192.96:5001/fx-market-services/flink-orchestrator:0.3.1"
           imagePullPolicy: IfNotPresent
           env:
           - name: SERVER_PORT
             value: "8080"
           - name: FLINK_URL
             value: http://fx-flink-jobmanager:8081
-          - name: FLINK_JOBS_0_NAME
-            value: fxmarketflinkproces
-          - name: FLINK_JOBS_0__ARGUMENTS_TOPIC
-            value: fx_rates
-          - name: FLINK_JOBS_0__ARGUMENTS_BOOTSTRAP_SERVERS
-            value: kafka:9071
           ports:
             - name: http
               containerPort: 8080
