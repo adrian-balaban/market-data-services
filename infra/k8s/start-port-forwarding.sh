@@ -16,7 +16,7 @@ done
 kubectl port-forward -n ${NAMESPACE} svc/argocd-server 38080:443 &
 
 #TOOLS
-kubectl port-forward -n ${NAMESPACE} svc/kafka 9092:9092 &
+kubectl port-forward -n ${NAMESPACE} svc/kafka 9093:9092 &
 kubectl port-forward -n ${NAMESPACE} svc/controlcenter 9021:9021 &
 kubectl port-forward -n ${NAMESPACE} svc/fx-flink-jobmanager 8081:8081 &
 

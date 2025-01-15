@@ -33,7 +33,7 @@ public class KafkaValidateSteps {
         Consumer<String, byte[]> consumer = KafkaTestConsumer.getTestKafkaConsumer();
         consumer.subscribe(Collections.singletonList("fx_rates"));
 
-        ConsumerRecords<String, byte[]> records = consumer.poll(Duration.ofMillis(1000));
+        ConsumerRecords<String, byte[]> records = consumer.poll(Duration.ofMillis(10000));
         assertTrue(records.count() > 0, "No message from Kafka");
         boolean timestampMatched = false;
 
