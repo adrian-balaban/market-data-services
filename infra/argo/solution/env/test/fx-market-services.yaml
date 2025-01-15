@@ -124,7 +124,7 @@ spec:
             value: fxmarketflinkproces
           - name: FLINK_JOBS_0_ARGUMENTS_TOPIC
             value: fx_rates
-          - name: FLINK_JOBS_0_ARGUMENTS_BOOTSTRAPSERVERS
+          - name: FLINK_JOBS_0_ARGUMENTS_BOOTSTRAP_SERVERS
             value: kafka:9071
           ports:
             - name: http
