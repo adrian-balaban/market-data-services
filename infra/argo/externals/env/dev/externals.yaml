@@ -25,7 +25,7 @@ metadata:
     app: fx-market-data-stub
     managed-by: Helm
     release: fx-market-externals
-    version: 1.0.0
+    version: 0.0.1
 spec:
   replicas: 
   selector:
@@ -37,11 +37,11 @@ spec:
       labels:
         app: fx-market-data-stub
         release: fx-market-externals
-        version: 1.0.0
+        version: 0.0.1
     spec:
       containers:
         - name: fx-market-data-stub
-          image: "localhost:5001/fx-market-externals/market-data-stub:1.0.0"
+          image: "192.168.192.96:5001/fx-market-externals/market-data-stub:0.0.1-perf15ms"
           imagePullPolicy: 
           env:
 
