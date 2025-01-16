@@ -20,6 +20,42 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: fx-market-camel-connector-svc
+  labels:
+    managed-by: Helm
+    release: fx-market-services
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: fx-market-camel-connector
+---
+# Source: application/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: fx-market-camel-processor-svc
+  labels:
+    managed-by: Helm
+    release: fx-market-services
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: fx-market-camel-processor
+---
+# Source: application/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
   name: fx-market-connector-svc
   labels:
     managed-by: Helm
@@ -61,7 +97,7 @@ metadata:
     app: flink-orchestrator
     managed-by: Helm
     release: fx-market-services
-    version: 1.0.0
+    version: 0.3.0
 spec:
   replicas: 1
   selector:
@@ -73,11 +109,11 @@ spec:
       labels:
         app: flink-orchestrator
         release: fx-market-services
-        version: 1.0.0
+        version: 0.3.0
     spec:
       containers:
         - name: flink-orchestrator
-          image: "localhost:5001/fx-market-services/flink-orchestrator:1.0.0"
+          image: "192.168.192.96:5001/fx-market-services/flink-orchestrator:0.3.1"
           imagePullPolicy: IfNotPresent
           env:
           - name: SERVER_PORT
@@ -119,12 +155,148 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: fx-market-camel-connector
+  labels:
+    app: fx-market-camel-connector
+    managed-by: Helm
+    release: fx-market-services
+    version: 0.3.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fx-market-camel-connector
+      release: fx-market-services
+  template:
+    metadata:
+      labels:
+        app: fx-market-camel-connector
+        release: fx-market-services
+        version: 0.3.0
+    spec:
+      containers:
+        - name: fx-market-camel-connector
+          image: "192.168.192.96:5001/fx-market-services/fx-market-camel-connector:0.3.0"
+          imagePullPolicy: IfNotPresent
+          env:
+          - name: SERVER_PORT
+            value: "8080"
+          - name: KAFKA_BOOTSTRAP_SERVERS
+            value: PLAINTEXT://kafka:9071
+          - name: VENDOR_MARKET_DATA_STUB_URL
+            value: http://fx-market-data-stub-svc:3080
+          - name: KAFKA_TOPIC
+            value: fx_rates_camel
+          - name: JAVA_OPTS
+            value: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            failureThreshold: 3
+            initialDelaySeconds: 120
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 1
+              memory: 3072Mi
+            requests:
+              cpu: 500m
+              memory: 3072Mi
+          volumeMounts:
+      topologySpreadConstraints:
+      - maxSkew: 3
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            release: fx-market-services
+      volumes:
+---
+# Source: application/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fx-market-camel-processor
+  labels:
+    app: fx-market-camel-processor
+    managed-by: Helm
+    release: fx-market-services
+    version: 0.3.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fx-market-camel-processor
+      release: fx-market-services
+  template:
+    metadata:
+      labels:
+        app: fx-market-camel-processor
+        release: fx-market-services
+        version: 0.3.0
+    spec:
+      containers:
+        - name: fx-market-camel-processor
+          image: "192.168.192.96:5001/fx-market-services/fx-market-processor:0.3.0"
+          imagePullPolicy: IfNotPresent
+          env:
+          - name: SERVER_PORT
+            value: "8080"
+          - name: KAFKA_BOOTSTRAP_SERVERS
+            value: PLAINTEXT://kafka:9071
+          - name: KAFKA_TOPIC
+            value: fx_rates_camel
+          - name: KAFKA_APPLICATION_ID_CONFIG
+            value: fx-market-processor-stream-operator-camel
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            failureThreshold: 3
+            initialDelaySeconds: 120
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 1
+              memory: 3072Mi
+            requests:
+              cpu: 500m
+              memory: 3072Mi
+          volumeMounts:
+      topologySpreadConstraints:
+      - maxSkew: 3
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            release: fx-market-services
+      volumes:
+---
+# Source: application/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: fx-market-connector
   labels:
     app: fx-market-connector
     managed-by: Helm
     release: fx-market-services
-    version: 1.0.0
+    version: 0.3.0
 spec:
   replicas: 1
   selector:
@@ -136,19 +308,23 @@ spec:
       labels:
         app: fx-market-connector
         release: fx-market-services
-        version: 1.0.0
+        version: 0.3.0
     spec:
       containers:
         - name: fx-market-connector
-          image: "localhost:5001/fx-market-services/fx-market-connector:1.0.0"
+          image: "192.168.192.96:5001/fx-market-services/fx-market-connector:0.3.0"
           imagePullPolicy: IfNotPresent
           env:
           - name: SERVER_PORT
             value: "8080"
           - name: KAFKA_BOOTSTRAP_SERVERS
-            value: PLAINTEXT://kafka:9092
+            value: PLAINTEXT://kafka:9071
           - name: VENDOR_MARKET_DATA_STUB_URL
             value: http://fx-market-data-stub-svc:3080
+          - name: KAFKA_TOPIC
+            value: fx_rates
+          - name: KAFKA_APPLICATION_ID_CONFIG
+            value: fx-market-processor-stream-operator
           ports:
             - name: http
               containerPort: 8080
@@ -189,7 +365,7 @@ metadata:
     app: fx-market-processor
     managed-by: Helm
     release: fx-market-services
-    version: 1.0.0
+    version: 0.3.0
 spec:
   replicas: 1
   selector:
@@ -201,17 +377,21 @@ spec:
       labels:
         app: fx-market-processor
         release: fx-market-services
-        version: 1.0.0
+        version: 0.3.0
     spec:
       containers:
         - name: fx-market-processor
-          image: "localhost:5001/fx-market-services/fx-market-processor:1.0.0"
+          image: "192.168.192.96:5001/fx-market-services/fx-market-processor:0.3.0"
           imagePullPolicy: IfNotPresent
           env:
           - name: SERVER_PORT
             value: "8080"
           - name: KAFKA_BOOTSTRAP_SERVERS
-            value: PLAINTEXT://kafka:9092
+            value: PLAINTEXT://kafka:9071
+          - name: KAFKA_TOPIC
+            value: fx_rates
+          - name: KAFKA_APPLICATION_ID_CONFIG
+            value: fx-market-processor-stream-operator
           ports:
             - name: http
               containerPort: 8080

@@ -56,4 +56,7 @@
 kubectl exec -ti kafka-0 -- bash
 kafka-console-consumer --bootstrap-server localhost:9092 --topic fx_rates
 kafka-topics --create -replication-factor 1 --partitions 1 --topic fx_rates -bootstrap-server localhost:9092
+
+http://192.168.192.96:5001/v2/_catalog
+http://192.168.192.96:5001/v2/fx-market-externals/market-data-stub/tags/list
 ```
