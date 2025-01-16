@@ -63,6 +63,7 @@ dependencies {
     testImplementation 'org.springframework.kafka:spring-kafka-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.cucumber:cucumber-spring:7.20.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 
 }
 
@@ -79,7 +80,7 @@ configurations {
 
 test {
     useJUnitPlatform {
-        includeEngines 'cucumber'
+        includeEngines 'junit-jupiter', 'cucumber'
     }
     outputs.upToDateWhen { false }
     testLogging {
