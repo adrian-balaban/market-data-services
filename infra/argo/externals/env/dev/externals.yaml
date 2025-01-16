@@ -41,7 +41,7 @@ spec:
     spec:
       containers:
         - name: fx-market-data-stub
-          image: "192.168.192.96:5001/fx-market-externals/market-data-stub:0.0.1-perf15ms"
+          image: "192.168.192.96:5001/fx-market-externals/market-data-stub:0.3.0"
           imagePullPolicy: 
           env:
 
