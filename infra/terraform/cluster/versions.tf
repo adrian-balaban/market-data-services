@@ -20,9 +20,17 @@ terraform {
       source  = "tehcyx/kind"
       version = "0.7.0"
     }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "3.0.0-pre1"
+    }
   }
 }
 
+provider "kind" {}
+provider "null" {
+  alias = "null_kind"
+}
 provider "kubernetes" {
   alias                  = "kubernetes_kind"
   host                   = module.kind_cluster.host
@@ -38,10 +46,12 @@ provider "kubectl" {
   cluster_ca_certificate = module.kind_cluster.cluster_ca_certificate
   load_config_file       = false
 }
-provider "null" {
-  alias = "null_kind"
+provider "helm" {
+  alias = "helm_kind"
+  kubernetes = {
+    config_path = "~/.kube/config"
+  }
 }
-provider "kind" {}
 
 /*provider "kubernetes" {
   alias = "kubernetes_minikube"
