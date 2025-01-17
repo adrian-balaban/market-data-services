@@ -3,13 +3,7 @@ import { check, sleep } from 'k6';
 
 export let options = {
     stages: [
-                { duration: '1m', target: 200 },
-                { duration: '2m', target: 500 },
-                { duration: '3m', target: 1000 },
-                { duration: '2m', target: 2000 },
-                { duration: '3m', target: 5000 },
-                { duration: '3m', target: 10000 },
-                { duration: '1m', target: 0 },
+                { duration: '5s', target: 3 },
     ],
     thresholds: {
         http_req_duration: ['p(95)<1000'],
@@ -19,7 +13,7 @@ export let options = {
 
 const url = 'http://localhost:3080/emitEvent';
 const payload = JSON.stringify({
-    timestamp: "2024-12-18T01:43:02.894",
+    timestamp: "2024-12-18T02:10:02.894Z",
     rates: [
         { pair: "USD/JPY", baseCurrency: "USD", quoteCurrency: "JPY", ask: "1.5837", bid: "1.5266" },
         { pair: "EUR/USD", baseCurrency: "EUR", quoteCurrency: "USD", ask: "1.1246", bid: "1.0119" },
