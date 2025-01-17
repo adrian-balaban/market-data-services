@@ -86,4 +86,31 @@ node "Flink Solution" as Flink {
 
 }
 
+node "Knative + Camel-K Solution" as Knative {
+
+    package "FxMarketConnector Camel-K" as KS_FxMarketConnectorK #IndianRed {
+        component "Camel K" as KS_FxMarketConnectorToolsK #LightSteelBlue
+    }
+    package "FxMarket Event Extractor EURUSD" as EvSplitEURUSD #IndianRed {
+        component "Camel K" as KSEURUSD #LightSteelBlue
+    }
+    package "FxMarket Event Printer EURUSD" as EvPrintEURUSD #IndianRed {
+        component "Camel K" as KnEURUSD #LightSteelBlue
+    }
+
+    component "=Knative Broker" as EventMesh  #LightSkyBlue
+
+    note bottom of EventMesh
+        Receives/sends events of types:
+        "knative:event/fx-market.eurusd-usdjpy"
+        "knative:event/fx-market.eurusd"
+    end note
+
+    BMExternal --> KS_FxMarketConnectorK : SSE Stream
+    KS_FxMarketConnectorK --> EventMesh : "knative:event/fx-market.eurusd-usdjpy"
+    EventMesh --> KSEURUSD : "knative:event/fx-market.eurusd-usdjpy"
+    EventMesh <-- KSEURUSD : "knative:event/fx-market.eurusd"
+    EventMesh --> KnEURUSD : "knative:event/fx-market.eurusd"
+}
+
 @enduml
