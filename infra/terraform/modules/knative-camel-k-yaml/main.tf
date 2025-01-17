@@ -174,8 +174,6 @@ metadata:
 spec:
   build:
     registry:
-      #address: "${var.registry_svc_ip}:5000"
-      #insecure: true
       address: "docker.io"
       organization: "adriannbalaban"
       secret: "docker-registry-secret"

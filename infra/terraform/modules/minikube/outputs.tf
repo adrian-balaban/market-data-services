@@ -14,9 +14,6 @@ output "id" {
   value = minikube_cluster.minikube.id
 }
 
-output "registry_svc_ip" {
-  value = data.kubernetes_service.registry_svc.spec.0.cluster_ip
-}
 output "minikube_plugin_registry_svc_ip" {
   value = data.kubernetes_service.minikube_plugin_registry_svc.spec.0.cluster_ip
 }

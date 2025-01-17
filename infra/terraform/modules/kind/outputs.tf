@@ -14,6 +14,3 @@ output "id" {
   value = kind_cluster.kind.id
 }
 
-output "registry_svc_ip" {
-  value = data.kubernetes_service.registry_svc.spec.0.cluster_ip
-}

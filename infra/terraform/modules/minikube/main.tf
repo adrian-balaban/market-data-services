@@ -21,7 +21,6 @@ resource "minikube_cluster" "minikube" {
   disk_size    = local.minikube_disk_size
   nodes        = local.minikube_nodes
   cni          = local.minikube_cni
-  #insecure-registry = "10.0.0.0/24" #https://minikube.sigs.k8s.io/docs/handbook/registry/
   addons = [
     "dashboard",
     "storage-provisioner",
@@ -44,24 +43,5 @@ data "kubernetes_service" "minikube_plugin_registry_svc" {
   }
   depends_on = [
     minikube_cluster.minikube
-  ]
-}
-
-resource "terraform_data" "install_registry" {
-  provisioner "local-exec" {
-    command = "helm install docker-registry gmelillo/docker-registry -n kube-system"
-    #command = "helm repo add gmelillo https://helm.melillo.me && helm repo update && helm install docker-registry gmelillo/docker-registry -n kube-system"
-  }
-  depends_on = [
-    minikube_cluster.minikube
-  ]
-}
-data "kubernetes_service" "registry_svc" {
-  metadata {
-    name      = "docker-registry"
-    namespace = "kube-system"
-  }
-  depends_on = [
-    terraform_data.install_registry
   ]
 }
