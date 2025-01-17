@@ -161,7 +161,9 @@ resource "terraform_data" "create-secret-for-docker-registry" {
   }
   depends_on = [terraform_data.camel_k_verify]
 }
-
+# for minikube use:
+# address: "${var.registry_svc_ip}:5000"
+# insecure: true
 resource "kubectl_manifest" "camel_k_integration_platform" {
   yaml_body  = <<YAML
 apiVersion: camel.apache.org/v1
@@ -174,12 +176,9 @@ metadata:
 spec:
   build:
     registry:
-      #address: "${var.registry_svc_ip}:5000"
-      #insecure: true
       address: "docker.io"
       organization: "adriannbalaban"
       secret: "docker-registry-secret"
-
 YAML
   depends_on = [terraform_data.create-secret-for-docker-registry]
 }
