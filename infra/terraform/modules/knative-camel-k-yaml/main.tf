@@ -289,9 +289,16 @@ resource "terraform_data" "eurusd_extractor" {
   }
   depends_on = [terraform_data.sse_connector]
 }
-resource "terraform_data" "printer_of_events" {
+resource "terraform_data" "eurusd_printer_of_events" {
   provisioner "local-exec" {
     command = "kamel run ../camel-k/FxMarketLogEurUsd.java  -n ${var.namespace_camel_k_installation}"
   }
   depends_on = [terraform_data.eurusd_extractor]
 }
+resource "terraform_data" "kamel_get_integration_status" {
+  provisioner "local-exec" {
+    command = "kamel get -n ${var.namespace_camel_k_installation}"
+  }
+  depends_on = [terraform_data.eurusd_printer_of_events]
+}
+
