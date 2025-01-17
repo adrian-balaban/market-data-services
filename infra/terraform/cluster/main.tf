@@ -9,7 +9,6 @@ module "kind_camel-k" {
   source                         = "../modules/knative-camel-k-yaml"
   providers                      = { kubernetes = kubernetes.kubernetes_kind, kubectl = kubectl.kubectl_kind, null = null.null_kind }
   namespace_camel_k_installation = var.namespace_camel_k_installation
-  registry_svc_ip                = module.kind_cluster.registry_svc_ip
   depends_on                     = [module.kind_cluster]
 }
 /*module "kafka-confluent-minimal" {
