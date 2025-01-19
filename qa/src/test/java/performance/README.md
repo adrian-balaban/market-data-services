@@ -4,27 +4,14 @@ This documentation explains how to run performance tests for the `fx-market-data
 These tests include peak load and stress testing, to check system performance.
 
 ---
+## **How to Run Tests**
 
-## **Prerequisites**
+1. ![img.png](img.png)
+The Peak Load Test evaluates the system's performance under a high number of concurrent users for a short period.
 
-1. **Install k6**:
-    - **macOS**:
-      ```bash
-      brew install k6
-      ```
-    - **Windows**:
-      ```bash
-      choco install k6
-      ```
-    - **Linux**:
-      ```bash
-      sudo apt-get install k6
-      ```
-   Or follow the official guide: [k6 Installation](https://k6.io/docs/getting-started/installation/).
-
-2. **Ensure the application is running**:
-    - Start the `fx-market-data` application locally (on port `3080`) before running the tests.
-
+Just hit needed task:
+runPeakLoadTest - running only runPeakLoadTest.js
+runPeakLoadTestAndDelta - running runPeakLoadTest.js and calculate Delta timing between message timestamp and kafak timestamp in console
 ---
 
 ## **Test Files**
@@ -34,14 +21,7 @@ These tests include peak load and stress testing, to check system performance.
 
 ---
 
-## **How to Run Tests**
 
-### 1. Run Peak Load Test
-The Peak Load Test evaluates the system's performance under a high number of concurrent users for a short period.
-
-```bash
- K6_WEB_DASHBOARD=true k6 run peakLoadTest.js
-```
 
 ### 2. See the report
 

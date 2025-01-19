@@ -116,7 +116,7 @@ task cucumber() {
 
 
 tasks.register('runPeakLoadTest', Exec) {
-    group = 'performance'
+    group = 'performanceLocal'
 
     def osName = System.getProperty("os.name").toLowerCase()
     def isWindows = osName.contains("win")
@@ -144,7 +144,7 @@ tasks.register('runPeakLoadTest', Exec) {
 }
 
 tasks.register('runPeakLoadTestAndDelta') {
-    group = 'performance'
+    group = 'performanceLocal'
 
     dependsOn 'runPeakLoadTest'
     finalizedBy 'runDeltaCalculationTest'
@@ -162,6 +162,22 @@ tasks.register('runDeltaCalculationTest', Test) {
     }
 }
 
+tasks.register('runPeakLoadJob', Exec) {
+    group = 'performanceJob'
+
+    def isWindows = System.getProperty("os.name").toLowerCase().contains("win")
+    def shell = isWindows ? "cmd" : "bash"
+    def shellFlag = isWindows ? "/c" : "-c"
+
+    def scriptPath = "${projectDir}/src/test/java/performance/peakLoadTest.js"
+
+    commandLine shell, shellFlag, """
+        kubectl create configmap k6-performance --from-file=${scriptPath} -n test --dry-run=client -o yaml | kubectl apply -f - && \
+        kubectl delete job k6-performance-test -n test --ignore-not-found && \
+        kubectl apply -f src/test/java/k8s/k6_job.yaml
+    """
+
+}
 
 tasks.named('bootJar') {
     enabled = false
