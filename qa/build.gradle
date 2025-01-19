@@ -113,6 +113,56 @@ task cucumber() {
     }
 }
 
+
+
+tasks.register('runPeakLoadTest', Exec) {
+    group = 'performance'
+
+    def osName = System.getProperty("os.name").toLowerCase()
+    def isWindows = osName.contains("win")
+
+    def npxCommand = isWindows ? "npx.cmd" : "npx"
+
+    def npxPath = isWindows ? "where npx" : "which npx"
+    def process = npxPath.execute()
+    process.waitFor()
+
+    if (process.exitValue() != 0) {
+        throw new GradleException("`npx` and node.js not installed")
+    } else {
+        npxCommand = process.text.trim()
+    }
+
+    def scriptPath = "${projectDir}/src/test/java/performance/peakLoadTest.js"
+
+    if (!new File(scriptPath).exists()) {
+        throw new GradleException("File ${scriptPath} not found")
+    }
+
+    environment 'PATH', System.getenv('PATH')
+    commandLine npxCommand, 'k6', 'run', scriptPath
+}
+
+tasks.register('runPeakLoadTestAndDelta') {
+    group = 'performance'
+
+    dependsOn 'runPeakLoadTest'
+    finalizedBy 'runDeltaCalculationTest'
+}
+
+
+tasks.register('runDeltaCalculationTest', Test) {
+    useJUnitPlatform()
+    include '**/DeltaCalculationTest.class'
+    testLogging {
+        events "passed", "failed", "skipped"
+        exceptionFormat "full" // Показывает полный стектрейс
+        showStandardStreams = true
+        showStackTraces = true
+    }
+}
+
+
 tasks.named('bootJar') {
     enabled = false
 }
