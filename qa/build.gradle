@@ -150,6 +150,7 @@ tasks.register('runPeakLoadTestAndDelta') {
 
 
 tasks.register('runDeltaCalculationTest', Test) {
+    group = 'performanceLocal'
     useJUnitPlatform()
     include '**/DeltaCalculationTest.class'
     testLogging {
