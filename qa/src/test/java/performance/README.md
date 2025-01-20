@@ -6,7 +6,7 @@ These tests include peak load and stress testing, to check system performance.
 ---
 ## **How to Run Tests**
 
-1. ![img.png](img.png)
+1. ![img.png](../../resources/img.png)
 The Peak Load Test evaluates the system's performance under a high number of concurrent users for a short period.
 
 Just hit needed task:
