@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -22,6 +24,7 @@ public class DeltaCalculationTest {
     public void calculateDelta() throws Exception {
         Consumer<String, byte[]> consumer = KafkaTestConsumer.getTestKafkaConsumer();
         consumer.subscribe(Collections.singletonList(topic));
+        Map<Long, Long> summary = new HashMap<>();
 
         ConsumerRecords<String, byte[]> records = ConsumerRecords.empty();
 
@@ -47,16 +50,19 @@ public class DeltaCalculationTest {
                 long epochMillis = instant.toEpochMilli();
                 long recordTimestamp = record.timestamp();
                 long delta = Math.abs(recordTimestamp - epochMillis);
-
-                System.out.printf("Delta between Kafka timestamp and message timestamp: %d ms%n", delta);
+                summary.merge(delta, 1L, Long::sum);
 
             } catch (Exception e) {
                 throw new RuntimeException("Deserialization error", e);
             }
+            finally {
+                consumer.close();
+            }
         }
+        System.out.println("Results:");
+        System.out.println(summary.toString());
         System.out.printf("Count of records - %d%n", records.count());
         consumer.close();
     }
-
 
 }

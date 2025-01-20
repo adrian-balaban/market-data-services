@@ -42,11 +42,6 @@ dependencyManagement {
 }
 
 dependencies {
-  //  testImplementation "io.cucumber:cucumber-java:${CUCUMBER_VERSION}"
-   // testImplementation "io.cucumber:cucumber-junit-platform-engine:${CUCUMBER_VERSION}"
-    //testImplementation "org.junit.platform:junit-platform-suite:${JUNIT_PLATFORM}"
-    //testImplementation "org.junit.jupiter:junit-jupiter:5.10.0"
-    //implementation project(':model-fx-proto')
     // Core dependencies
     implementation project(':model-fx-proto')
     implementation 'com.google.code.gson:gson:2.10.1'
@@ -155,7 +150,9 @@ tasks.register('runPeakLoadTestAndDelta') {
 tasks.register('runDeltaCalculationTest', Test) {
     group = 'performanceLocal'
     useJUnitPlatform()
-    include '**/DeltaCalculationTest.class'
+    filter {
+        includeTestsMatching "performance.DeltaCalculationTest.calculateDelta"
+    }
     testLogging {
         events "passed", "failed", "skipped"
         exceptionFormat "full"
