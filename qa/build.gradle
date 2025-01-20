@@ -121,16 +121,14 @@ tasks.register('runPeakLoadTest', Exec) {
     def osName = System.getProperty("os.name").toLowerCase()
     def isWindows = osName.contains("win")
 
-    def npxCommand = isWindows ? "npx.cmd" : "npx"
-
-    def npxPath = isWindows ? "where npx" : "which npx"
-    def process = npxPath.execute()
+    def k6Command = isWindows ? "where k6" : "which k6"
+    def process = k6Command.execute()
     process.waitFor()
 
     if (process.exitValue() != 0) {
-        throw new GradleException("`npx` and node.js not installed")
+        throw new GradleException("`k6` not installed")
     } else {
-        npxCommand = process.text.trim()
+        k6Command = process.text.trim()
     }
 
     def scriptPath = "${projectDir}/src/test/java/performance/peakLoadTest.js"
@@ -140,7 +138,7 @@ tasks.register('runPeakLoadTest', Exec) {
     }
 
     environment 'PATH', System.getenv('PATH')
-    commandLine npxCommand, 'k6', 'run', scriptPath
+    commandLine k6Command, 'run', scriptPath
 }
 
 tasks.register('runPeakLoadTestAndDelta') {
