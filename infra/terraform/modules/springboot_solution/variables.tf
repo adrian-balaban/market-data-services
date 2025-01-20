@@ -14,8 +14,8 @@ variable "tag" {
   type = string
   default = "0.0.1"
 }
-variable "registry" {
+variable "registry_helm_operation" {
   type = string
-  default = "docker-registry.kube-system:5001"
+  default = "install"
+  description = "can be upgrade or install"
 }
-

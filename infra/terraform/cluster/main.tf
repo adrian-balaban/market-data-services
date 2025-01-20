@@ -10,6 +10,5 @@ module "kind_camel_k_solution" {
 module "kind_springboot_solution" {
   source                         = "../modules/springboot_solution"
   tag                            = "0.0.1"
-  registry                       = "docker-registry.kube-system:5000"
   depends_on                     = [module.kind_camel_k_solution]
 }

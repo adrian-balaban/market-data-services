@@ -14,8 +14,4 @@ output "id" {
   value = kind_cluster.kind.id
 }
 
-# used for springboot solution, does not work for knative-camel-k
-output "registry_svc_ip" {
-  value = data.kubernetes_service.registry_svc.spec.0.cluster_ip
-}
 
