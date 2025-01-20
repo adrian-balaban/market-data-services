@@ -136,9 +136,12 @@ tasks.register('runPeakLoadTest', Exec) {
     if (!new File(scriptPath).exists()) {
         throw new GradleException("File ${scriptPath} not found")
     }
+    environment 'PATH', System.getenv('PATH')
+    environment 'K6_WEB_DASHBOARD', 'true'
+    environment 'K6_WEB_DASHBOARD_EXPORT', 'html-report.html'
 
     environment 'PATH', System.getenv('PATH')
-    commandLine k6Command, 'run', scriptPath
+    commandLine k6Command, 'run',  scriptPath
 }
 
 tasks.register('runPeakLoadTestAndDelta') {

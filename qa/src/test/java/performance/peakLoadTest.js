@@ -47,13 +47,3 @@ export default function () {
     sleep(0.5);
 }
 
-// Custom Summary
-export function handleSummary(data) {
-    console.log("\n===== 🏆 Peak Load Test Summary 🏆 =====");
-    console.log(`Avg Response Time: ${data.metrics.http_req_duration.values.avg} ms`);
-    console.log(`Min Response Time: ${data.metrics.http_req_duration.values.min} ms`);
-    console.log(`Max Response Time: ${data.metrics.http_req_duration.values.max} ms`);
-    console.log(`95th Percentile: ${data.metrics.http_req_duration.values['p(95)']} ms`);
-    console.log(`Success Rate: ${(1 - data.metrics.http_req_failed.values.rate) * 100} %\n`);
-
-}
