@@ -149,7 +149,7 @@ resource "null_resource" "camel_k_install_helm_repo" {
 }
 resource "terraform_data" "camel_k" {
   provisioner "local-exec" {
-    command = "helm repo update && helm ${var.camelk_operation} camel-k camel-k/camel-k -n ${local.namespace_camel_k_installation} --set imagePullSecrets.name=docker-registry.kube-system && kubectl config set-context --current --namespace=${local.namespace_camel_k_installation}"
+    command = "helm repo update && helm ${var.camel_k_helm_operation} camel-k camel-k/camel-k -n ${local.namespace_camel_k_installation} --set imagePullSecrets.name=docker-registry.kube-system && kubectl config set-context --current --namespace=${local.namespace_camel_k_installation}"
   }
   depends_on = [null_resource.camel_k_install_helm_repo]
 }
