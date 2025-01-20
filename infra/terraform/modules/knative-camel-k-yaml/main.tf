@@ -3,8 +3,8 @@ locals {
   serving_kurier_version                    = "v1.16.0"
   eventing_version                          = "v1.16.3"
   eventing_channel_broker_in_memory_version = "v1.16.3"
+  namespace_camel_k_installation            = "knative-eventing"
 }
-
 resource "terraform_data" "knserving" {
   provisioner "local-exec" {
     command = "kubectl apply -f https://github.com/knative/serving/releases/download/knative-${local.serving_version}/serving-crds.yaml && kubectl apply -f https://github.com/knative/serving/releases/download/knative-${local.serving_version}/serving-core.yaml  && kubectl wait pod --all -n knative-serving --for=condition=ready --timeout=600s"
@@ -136,28 +136,34 @@ YAML
 
 resource "terraform_data" "broker_verify" {
   provisioner "local-exec" {
-    command = "kubectl wait broker --all --for=condition=ready --timeout=600s -n ${var.namespace_camel_k_installation}"
+    command = "kubectl wait broker --all --for=condition=ready --timeout=600s -n ${local.namespace_camel_k_installation}"
   }
   depends_on = [kubectl_manifest.configure_broker_default]
 }
 
-resource "terraform_data" "camel_k" {
+resource "null_resource" "camel_k_install_helm_repo" {
   provisioner "local-exec" {
-    command = "helm repo add camel-k https://apache.github.io/camel-k/charts/ && helm repo update && helm install camel-k camel-k/camel-k -n ${var.namespace_camel_k_installation} --set imagePullSecrets.name=docker-registry.kube-system && kubectl config set-context --current --namespace=${var.namespace_camel_k_installation}"
+    command = "helm repo add camel-k https://apache.github.io/camel-k/charts/"
   }
   depends_on = [terraform_data.broker_verify]
+}
+resource "terraform_data" "camel_k" {
+  provisioner "local-exec" {
+    command = "helm repo update && helm ${var.camelk_operation} camel-k camel-k/camel-k -n ${local.namespace_camel_k_installation} --set imagePullSecrets.name=docker-registry.kube-system && kubectl config set-context --current --namespace=${local.namespace_camel_k_installation}"
+  }
+  depends_on = [null_resource.camel_k_install_helm_repo]
 }
 
 resource "terraform_data" "camel_k_verify" {
   provisioner "local-exec" {
-    command = "kubectl wait pod --all --for=condition=ready --timeout=600s -n ${var.namespace_camel_k_installation}"
+    command = "kubectl wait pod --all --for=condition=ready --timeout=600s -n ${local.namespace_camel_k_installation}"
   }
   depends_on = [terraform_data.camel_k]
 }
 
 resource "terraform_data" "create-secret-for-docker-registry" {
   provisioner "local-exec" {
-    command = "kubectl create secret docker-registry docker-registry-secret --docker-server=docker.io --docker-username=adriannbalaban --docker-password=dckr_pat_54LuHTnvrOLeneiZzEwxyC6zqMw --docker-email=adrian.n.balanban@gmail.com -n ${var.namespace_camel_k_installation} && kubectl get secret docker-registry-secret -n ${var.namespace_camel_k_installation}"
+    command = "kubectl create secret docker-registry docker-registry-secret --docker-server=docker.io --docker-username=adriannbalaban --docker-password=dckr_pat_54LuHTnvrOLeneiZzEwxyC6zqMw --docker-email=adrian.n.balanban@gmail.com -n ${local.namespace_camel_k_installation} || true && kubectl get secret docker-registry-secret -n ${local.namespace_camel_k_installation}"
   }
   depends_on = [terraform_data.camel_k_verify]
 }
@@ -171,7 +177,7 @@ kind: IntegrationPlatform
 metadata:
   labels:
     app: camel-k
-  namespace: ${var.namespace_camel_k_installation}
+  namespace: ${local.namespace_camel_k_installation}
   name: camel-k
 spec:
   build:
@@ -185,7 +191,7 @@ YAML
 
 resource "null_resource" "set_default_namespace" {
   provisioner "local-exec" {
-    command = "kubectl config set-context --current --namespace=${var.namespace_camel_k_installation}"
+    command = "kubectl config set-context --current --namespace=${local.namespace_camel_k_installation}"
   }
   depends_on = [
     kubectl_manifest.camel_k_integration_platform
@@ -194,7 +200,7 @@ resource "null_resource" "set_default_namespace" {
 
 resource "null_resource" "kamel_run_market_source" {
   provisioner "local-exec" {
-    command = "echo kamel run --dev market-source.yaml -n ${var.namespace_camel_k_installation}"
+    command = "echo kamel run --dev market-source.yaml -n ${local.namespace_camel_k_installation}"
   }
   depends_on = [
     null_resource.set_default_namespace
@@ -207,7 +213,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fx-market-data-stub
-  namespace: ${var.namespace_camel_k_installation}
+  namespace: ${local.namespace_camel_k_installation}
   labels:
     app: fx-market-data-stub
     release: fx-market-externals
@@ -260,7 +266,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: fx-market-data-stub-svc
-  namespace: ${var.namespace_camel_k_installation}
+  namespace: ${local.namespace_camel_k_installation}
   labels:
     release: fx-market-externals
 spec:
@@ -278,25 +284,25 @@ YAML
 
 resource "terraform_data" "sse_connector" {
   provisioner "local-exec" {
-    command = "kamel run ../camel-k/FxMarketConnector.java  -n ${var.namespace_camel_k_installation}"
+    command = "kamel run ../camel-k/FxMarketConnector.java  -n ${local.namespace_camel_k_installation}"
   }
   depends_on = [kubectl_manifest.fx_market_externals_stub]
 }
 resource "terraform_data" "eurusd_extractor" {
   provisioner "local-exec" {
-    command = "kamel run ../camel-k/FxMarketExtractorEurUsd.java  -n ${var.namespace_camel_k_installation}"
+    command = "kamel run ../camel-k/FxMarketExtractorEurUsd.java  -n ${local.namespace_camel_k_installation}"
   }
   depends_on = [terraform_data.sse_connector]
 }
 resource "terraform_data" "eurusd_printer_of_events" {
   provisioner "local-exec" {
-    command = "kamel run ../camel-k/FxMarketLogEurUsd.java  -n ${var.namespace_camel_k_installation}"
+    command = "kamel run ../camel-k/FxMarketOutputStream.java  -n ${local.namespace_camel_k_installation}"
   }
   depends_on = [terraform_data.eurusd_extractor]
 }
 resource "terraform_data" "kamel_get_integration_status" {
   provisioner "local-exec" {
-    command = "kamel get -n ${var.namespace_camel_k_installation}"
+    command = "kamel get -n ${local.namespace_camel_k_installation}"
   }
   depends_on = [terraform_data.eurusd_printer_of_events]
 }

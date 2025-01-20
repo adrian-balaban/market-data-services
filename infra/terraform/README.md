@@ -34,34 +34,13 @@
           - Kubernetes by Microsoft
       - If Local Cluster 
         - Kind : install kind
-        - Minikube : install Oracle Virtualbox and Minikube ( I tested only with minikube virtualbox driver)
+        - Minikube : install Oracle Virtualbox and Minikube (because I have tested only with minikube virtualbox driver)
    2. ### Cluster connection 
-      - `kubectl get nodes` returns properly list of nodes.
-      1. Local
-         1. Minikube - the cluster is instantiated by terraform using `minikube` provider, driver: "virtualbox".
-            All the settings of the used minikube cluster are in `modules/minikube/main.tf` file, here:
-            ```
-              locals {
-                 minikube_driver    = "virtualbox"
-                 minikube_cpus      = 5
-                 minikube_memory    = 20000
-                 minikube_disk_size = 25000
-                 minikube_nodes     = 1
-                 minikube_cni       = "bridge"
-             }
-            ```
-            TODO: add the uncomments to be done on actual code.  
-         2. Kind 
-            ```
-            cd kind
-            ./createKindClusterWithRegistry.sh
-            ```
-      2. Remote 
-         - Ensure you have `~./.kube/config` properly set
-   3. ### Docker Image Registry Connection  
-      1. Local 
-         1. Minikube - uses minikube plugin registry
-         2. Kind - uses Docker Hub personal registry
+          Ensure you have `~./.kube/config` properly set
+   3. ### Docker Image Registry Connection
+         Are used different registries for the two solutions:
+         - Springboot solution uses local cluster registry (named docker-registry in kube-system namespace using port 5000).
+         - Knative + Camel-K solution uses Docker Hub registry.
             address: "docker.io"
             organization: "adriannbalaban"
             secret: "docker-registry-secret"
@@ -76,17 +55,21 @@
               ```
               Camel-K imposes Docker standard registries, so it is not possible to use Kind registry.
               I've tested other solutions and this the only one that works.
+
    4. ## Deployment
-      1. Minikube: launch in 'cluster' directory these commands, to start the cluster and deploy Knative+Camel-K demo:
+      By default is used a Kind cluster.
+      Launch in 'cluster' directory these commands, to start the cluster and deploy the 2 solutions:
+      The name of the cluster can be changed in the command line for terraform as in the example below:
       ```bash
-        terraform init
-        terraform apply -auto-approve
-      ````
-      2. Kind: launch in 'cluster' directory these commands, to deploy Knative+Camel-K demo on already running Kind cluster:
+         rm -rf .terraform* terraform.tfstate* && terraform init && export TF_VAR_cluster_name=kind_with_both_solutions && terraform apply -auto-approve"
+      ```
+      Or using aliases:
       ```bash
-        terraform init
-        terraform apply -auto-approve
-      ````
+         tfr && tfi && export TF_VAR_cluster_name=kind_with_both_solutions && tfc
+      ```
+      After abt. 1 minute, when Kind cluster is running, 
+      start in another terminal: kubectl port-forward -n kube-system svc/docker-registry 5001:5000 &
+      
    5. Destroy the cluster:
       ```bash
           terraform destroy -auto-approve # or tfd (alias already set) 
