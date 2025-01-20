@@ -170,9 +170,11 @@ tasks.register('runPeakLoadJob', Exec) {
     def shellFlag = isWindows ? "/c" : "-c"
 
     def scriptPath = "${projectDir}/src/test/java/performance/peakLoadTest.js"
+    def testParam = "http://fx-market-data-stub-svc:3080"
 
     commandLine shell, shellFlag, """
         kubectl create configmap k6-performance --from-file=${scriptPath} -n test --dry-run=client -o yaml | kubectl apply -f - && \
+        sed -i 's|STUB_HOST_VALUE|${testParam}|g' src/test/java/k8s/k6_job.yaml && \\
         kubectl delete job k6-performance-test -n test --ignore-not-found && \
         kubectl apply -f src/test/java/k8s/k6_job.yaml
     """

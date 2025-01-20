@@ -9,6 +9,9 @@ spec:
       containers:
         - name: k6
           image: grafana/k6
+          env:
+            - name: STUB_HOST
+              value: "STUB_HOST_VALUE"
           command: ["k6", "run", "/performance/peakLoadTest.js"]
           volumeMounts:
             - name: performance

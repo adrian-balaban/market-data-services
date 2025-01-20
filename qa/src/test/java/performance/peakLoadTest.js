@@ -16,8 +16,10 @@ export let options = {
         http_req_failed: ['rate<0.05'],
     },
 };
+let testParam = __ENV.STUB_HOST || "http://localhost:3080";
 
-const url = 'http://localhost:3080/emitEvent';
+const url = `${testParam}/emitEvent`;
+
 const payload = JSON.stringify({
     timestamp: new Date().toISOString(),
     rates: [
