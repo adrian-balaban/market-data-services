@@ -156,7 +156,7 @@ tasks.register('runDeltaCalculationTest', Test) {
     include '**/DeltaCalculationTest.class'
     testLogging {
         events "passed", "failed", "skipped"
-        exceptionFormat "full" // Показывает полный стектрейс
+        exceptionFormat "full"
         showStandardStreams = true
         showStackTraces = true
     }
