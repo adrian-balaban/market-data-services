@@ -1,44 +1,105 @@
 locals {
-  registry = "docker-registry:5000"
+  registry_local = "localhost:5001"
+  registry = "${var.host}:${var.registry_port}"
 }
-resource "kubectl_manifest" "namespace" {
-  yaml_body = <<YAML
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: ${var.namespace}
-YAML
-}
-resource "null_resource" "install_helm_repo_registry" {
+resource "terraform_data" "set-default-namespace" {
   provisioner "local-exec" {
-    command = "helm repo add gmelillo https://helm.melillo.me && helm repo update || true"
+    command = "kubectl config set-context --current --namespace=${var.namespace}"
   }
-  depends_on = [kubectl_manifest.namespace]
 }
-resource "terraform_data" "install_registry" {
-  provisioner "local-exec" {
-    command = "helm ${var.registry_helm_operation} docker-registry gmelillo/docker-registry -n kube-system"
-  }
-  depends_on = [null_resource.install_helm_repo_registry]
-}
-data "kubernetes_service" "registry_svc" {
-  metadata {
-    name      = "docker-registry"
-    namespace = "kube-system"
-  }
-  depends_on = [
-    terraform_data.install_registry
-  ]
-}
+
+# to add use of var.build & var.test
 resource "terraform_data" "buildExternals" {
   provisioner "local-exec" {
-    command = "cd ../../k8s/scripts && ./buildExternals.sh -tag ${var.tag} -registry localhost:5001 && cd ../../terraform/cluster"
+    command = "cd ../../k8s/scripts && ./buildExternals.sh -tag ${var.tag} -registry ${local.registry} && cd ../../terraform/cluster"
   }
-  depends_on = [terraform_data.install_registry]
+  depends_on = [terraform_data.set-default-namespace]
 }
+/*resource "terraform_data" "deployExternals" {
+  provisioner "local-exec" {
+    command = "cd ../../k8s/scripts && ./deployExternals.sh -n ${var.namespace} -tag ${var.tag} -registry ${local.registry} && cd ../../terraform/cluster && kubectl wait pod --all -n ${var.namespace} --for=condition=ready --timeout=600s"
+  }
+  depends_on = [terraform_data.deployFlink]
+}*/
+resource "kubectl_manifest" "fx_market_externals_deployment" {
+  yaml_body  = <<YAML
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fx-market-data-stub
+  namespace: ${var.namespace}
+  labels:
+    app: fx-market-data-stub
+    release: fx-market-externals
+    version: "${var.tag}"
+spec:
+  replicas:
+  selector:
+    matchLabels:
+      app: fx-market-data-stub
+      release: fx-market-externals
+  template:
+    metadata:
+      labels:
+        app: fx-market-data-stub
+        release: fx-market-externals
+        version: "${var.tag}"
+    spec:
+      containers:
+        - name: fx-market-data-stub
+          image: "${local.registry}/fx-market-externals/market-data-stub:${var.tag}"
+          imagePullPolicy:
+          env:
+
+          ports:
+            - name: http
+              containerPort: 3080
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 1
+              memory: 1024Mi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+      topologySpreadConstraints:
+      - maxSkew: 6
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            release: fx-market-externals
+YAML
+  depends_on = [terraform_data.buildExternals]
+}
+
+resource "kubectl_manifest" "fx_market_externals_stub" {
+  yaml_body  = <<YAML
+apiVersion: v1
+kind: Service
+metadata:
+  name: fx-market-data-stub-svc
+  namespace: ${var.namespace}}
+  labels:
+    release: fx-market-externals
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3080
+      targetPort: 3080
+      protocol: TCP
+      name: http
+  selector:
+    app: fx-market-data-stub
+YAML
+  depends_on = [kubectl_manifest.fx_market_externals_deployment]
+}
+
+# to add use of var.build & var.test
 resource "terraform_data" "buildSolution" {
   provisioner "local-exec" {
-    command = "cd ../../k8s/scripts && ./buildSolution.sh -tag ${var.tag} -registry localhost:5001 && cd ../../terraform/cluster && sleep 5"
+    command = "cd ../../k8s/scripts && ./buildSolution.sh -tag ${var.tag} -registry ${local.registry} && cd ../../terraform/cluster && sleep 5"
   }
   depends_on = [terraform_data.buildExternals]
 }
@@ -54,21 +115,10 @@ resource "terraform_data" "deployFlink" {
   }
   depends_on = [terraform_data.deployKafka]
 }
-resource "terraform_data" "deployExternals" {
-  provisioner "local-exec" {
-    command = "cd ../../k8s/scripts && ./deployExternals.sh -n ${var.namespace} -tag ${var.tag} -registry ${local.registry} && cd ../../terraform/cluster && kubectl wait pod --all -n ${var.namespace} --for=condition=ready --timeout=600s"
-  }
-  depends_on = [terraform_data.deployFlink]
-}
+
 resource "terraform_data" "deploySolution" {
   provisioner "local-exec" {
     command = "cd ../../k8s/scripts && ./deploySolution.sh -n ${var.namespace} -tag ${var.tag} -registry ${local.registry} && cd ../../terraform/cluster && kubectl wait pod --all -n ${var.namespace} --for=condition=ready --timeout=600s"
   }
-  depends_on = [terraform_data.deployExternals]
-}
-resource "terraform_data" "set-default-namespace" {
-  provisioner "local-exec" {
-    command = "kubectl config set-context --current --namespace=${var.namespace}"
-  }
-  depends_on = [terraform_data.deploySolution]
+  depends_on = [terraform_data.deployFlink]
 }

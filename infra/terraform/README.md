@@ -61,14 +61,14 @@
       Launch in 'cluster' directory these commands, to start the cluster and deploy the 2 solutions:
       The name of the cluster can be changed in the command line for terraform as in the example below:
       ```bash
-         rm -rf .terraform* terraform.tfstate* && terraform init && export TF_VAR_cluster_name=kind_with_both_solutions && terraform apply -auto-approve"
+         rm -rf .terraform* terraform.tfstate* && terraform init && export TF_VAR_cluster_name=kind_2_solutions && terraform apply -auto-approve"
       ```
       Or using aliases:
       ```bash
-         tfr && tfi && export TF_VAR_cluster_name=kind_with_both_solutions && tfc
+         tfr && tfi && export TF_VAR_cluster_name=kind_2_solutions && tfc
       ```
       After abt. 1 minute, when Kind cluster is running, 
-      start in another terminal: kubectl port-forward -n kube-system svc/docker-registry 5001:5000 &
+      start in another terminal: kubectl port-forward -n fxmarket svc/docker-registry 5001:5000 &
       
    5. Destroy the cluster:
       ```bash

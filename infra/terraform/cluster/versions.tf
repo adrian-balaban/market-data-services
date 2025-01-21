@@ -27,18 +27,18 @@ provider "kind" {}
 provider "null" {}
 provider "kubernetes" {
   #alias                  = "kubernetes_kind"
-  host                   = module.kind_cluster.host
-  client_certificate     = module.kind_cluster.client_certificate
-  client_key             = module.kind_cluster.client_key
-  cluster_ca_certificate = module.kind_cluster.cluster_ca_certificate
+  #host                   = module.kind_cluster.host
+  #client_certificate     = module.kind_cluster.client_certificate
+  #client_key             = module.kind_cluster.client_key
+  #cluster_ca_certificate = module.kind_cluster.cluster_ca_certificate
 }
 provider "kubectl" {
   #alias                  = "kubectl_kind"
-  host                   = module.kind_cluster.host
-  client_certificate     = module.kind_cluster.client_certificate
-  client_key             = module.kind_cluster.client_key
-  cluster_ca_certificate = module.kind_cluster.cluster_ca_certificate
-  load_config_file       = false
+  #host                   = module.kind_cluster.host
+  #client_certificate     = module.kind_cluster.client_certificate
+  #client_key             = module.kind_cluster.client_key
+  #cluster_ca_certificate = module.kind_cluster.cluster_ca_certificate
+  #load_config_file       = false
 }
 
 provider "kubernetes" {
