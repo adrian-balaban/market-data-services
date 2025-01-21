@@ -25,5 +25,6 @@ runPeakLoadTestAndDelta - running runPeakLoadTest.js and calculate Delta timing 
 
 ### 2. See the report
 
-http://127.0.0.1:5665/ui/?endpoint=/
+Now it's generated as an artifact after performancelocal - Run task.
+qa/build/test-results
 
