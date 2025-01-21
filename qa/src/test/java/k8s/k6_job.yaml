@@ -11,7 +11,7 @@ spec:
           image: grafana/k6
           env:
             - name: STUB_HOST
-              value: "STUB_HOST_VALUE"
+              value: "http://fx-market-data-stub-svc:3080"
           command: ["k6", "run", "/performance/peakLoadTest.js"]
           volumeMounts:
             - name: performance
