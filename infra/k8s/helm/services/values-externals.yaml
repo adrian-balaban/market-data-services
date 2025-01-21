@@ -7,7 +7,7 @@ apps:
   fxmarketdatastub:
     name: fx-market-data-stub
     image:
-      repository: docker-registry:5000/fx-market-externals/market-data-stub
+      repository: localhost:5001/fx-market-externals/market-data-stub
 #      tag: 0.0.0
 
     podAnnotations: {}
