@@ -12,6 +12,11 @@ Usage:
 -registry <DOCKER_REGISTRY>   <- to specify docker registry
 ```
 
+Samples:
+- `./deployAllWithArgo.sh -branch master -env test -build false -n test`
+- `./deployAllWithArgo.sh -branch master -env dev -build false -n dev`
+- `./deployAllWithArgo.sh -branch <my_branch_with_changed_manifests> -env local -build true -n <my_namespace>`
+
 ## Developer notes, setup and maintenance
 ###   1. How to generate fresh solution manifests:
     - Solution: (WARNING! Remember that this command may be different over time, please adjust!) 

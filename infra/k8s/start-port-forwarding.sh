@@ -12,8 +12,12 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
-#CD
+###############################################################ARGO CD
 kubectl port-forward -n ${NAMESPACE} svc/argocd-server 38080:443 &
+PASSWD=$(kubectl get secrets/argocd-initial-admin-secret -n ${NAMESPACE}  --template={{.data.password}} | base64 -d)
+echo "ARGOCD USERNAME: admin"
+echo "ARGOCD PASSWORD: ${PASSWD}"
+###############################################################
 
 #TOOLS
 kubectl port-forward -n ${NAMESPACE} svc/kafka 9093:9092 &
