@@ -29,5 +29,5 @@ kubectl port-forward -n ${NAMESPACE} svc/fx-market-data-stub-svc 3080:3080 &
 
 #SERVICES
 # registry
-kubectl port-forward -n kube-system svc/docker-registry 5001:5000 &
+#kubectl port-forward -n ${NAMESPACE} svc/docker-registry 5001:5000 &
 # Add others only if needed i.e. by e2e tests
