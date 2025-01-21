@@ -207,86 +207,11 @@ resource "null_resource" "kamel_run_market_source" {
   ]
 }
 
-resource "kubectl_manifest" "fx_market_externals_deployment" {
-  yaml_body  = <<YAML
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: fx-market-data-stub
-  namespace: ${local.namespace_camel_k_installation}
-  labels:
-    app: fx-market-data-stub
-    release: fx-market-externals
-    version: 0.0.1
-spec:
-  replicas:
-  selector:
-    matchLabels:
-      app: fx-market-data-stub
-      release: fx-market-externals
-  template:
-    metadata:
-      labels:
-        app: fx-market-data-stub
-        release: fx-market-externals
-        version: 0.0.1
-    spec:
-      containers:
-        - name: fx-market-data-stub
-          image: "docker.io/adriannbalaban/market-data-stub:0.0.1"
-          imagePullPolicy:
-          env:
-
-          ports:
-            - name: http
-              containerPort: 3080
-              protocol: TCP
-          resources:
-            limits:
-              cpu: 1
-              memory: 1024Mi
-            requests:
-              cpu: 500m
-              memory: 512Mi
-          volumeMounts:
-      topologySpreadConstraints:
-      - maxSkew: 6
-        topologyKey: kubernetes.io/hostname
-        whenUnsatisfiable: DoNotSchedule
-        labelSelector:
-          matchLabels:
-            release: fx-market-externals
-YAML
-  depends_on = [null_resource.kamel_run_market_source]
-}
-
-resource "kubectl_manifest" "fx_market_externals_stub" {
-  yaml_body  = <<YAML
-apiVersion: v1
-kind: Service
-metadata:
-  name: fx-market-data-stub-svc
-  namespace: ${local.namespace_camel_k_installation}
-  labels:
-    release: fx-market-externals
-spec:
-  type: ClusterIP
-  ports:
-    - port: 3080
-      targetPort: 3080
-      protocol: TCP
-      name: http
-  selector:
-    app: fx-market-data-stub
-YAML
-  depends_on = [kubectl_manifest.fx_market_externals_deployment]
-}
-
 resource "terraform_data" "sse_connector" {
   provisioner "local-exec" {
     command = "kamel run ../camel-k/FxMarketConnector.java  -n ${local.namespace_camel_k_installation}"
   }
-  depends_on = [kubectl_manifest.fx_market_externals_stub]
+  depends_on = [null_resource.kamel_run_market_source]
 }
 resource "terraform_data" "eurusd_extractor" {
   provisioner "local-exec" {

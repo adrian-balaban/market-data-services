@@ -3,19 +3,25 @@ variable "namespace" {
   default = "fxmarket"
 }
 variable "build" {
-  type = bool
+  type = string
   default = true
+  description = "can be \"true\" or \"false\""
 }
 variable "test" {
-  type = bool
-  default = false
+  type = string
+  default = "false"
+  description = "can be \"true\" or \"false\""
 }
 variable "tag" {
   type = string
   default = "0.0.1"
 }
-variable "registry_helm_operation" {
+# host_for_docker_registry"
+variable "host" {
   type = string
-  default = "install"
-  description = "can be upgrade or install"
+  default = "localhost"
+}
+variable "registry_port" {
+  type = string
+  default = "5001"
 }

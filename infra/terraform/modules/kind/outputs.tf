@@ -1,4 +1,4 @@
-output "host" {
+/*output "host" {
   value = kind_cluster.kind.endpoint
 }
 output "client_certificate" {
@@ -13,5 +13,15 @@ output "cluster_ca_certificate" {
 output "id" {
   value = kind_cluster.kind.id
 }
-
-
+*/
+/*output "registry_host" {
+  value = "docker-registry"
+  description = "to be used by springboot solution"
+}
+output "registry_port" {
+  value = "5000"
+  description = "to be used by springboot solution"
+}
+output "namespace_springboot_solution" {
+  value = "fxmarket"
+}*/
