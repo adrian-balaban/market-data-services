@@ -11,4 +11,4 @@ flink:
     - name: fxmarketflinkproces
       arguments:
         topic: fx_rates
-        bootstrapServers: kafka:9092
+        bootstrapServers: kafka:9071
