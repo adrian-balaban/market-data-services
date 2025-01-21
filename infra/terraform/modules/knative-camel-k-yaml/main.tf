@@ -198,7 +198,7 @@ resource "null_resource" "set_default_namespace" {
   ]
 }
 
-resource "null_resource" "kamel_run_market_source" {
+/*resource "null_resource" "kamel_run_market_source" {
   provisioner "local-exec" {
     command = "echo kamel run --dev market-source.yaml -n ${local.namespace_camel_k_installation}"
   }
@@ -206,12 +206,12 @@ resource "null_resource" "kamel_run_market_source" {
     null_resource.set_default_namespace
   ]
 }
-
+*/
 resource "terraform_data" "sse_connector" {
   provisioner "local-exec" {
     command = "kamel run ../camel-k/FxMarketConnector.java  -n ${local.namespace_camel_k_installation}"
   }
-  depends_on = [null_resource.kamel_run_market_source]
+  depends_on = [null_resource.set_default_namespace]
 }
 resource "terraform_data" "eurusd_extractor" {
   provisioner "local-exec" {

@@ -16,7 +16,7 @@ public class FxMarketConnector extends RouteBuilder {
         ExtractSseDataBean sseMapper = new ExtractSseDataBean();
         System.out.println("Configuring Camel K Route for FX Market Data");
 
-        from("stream:http?httpUrl=http://fx-market-data-stub-svc:3080/forex/rates")
+        from("stream:http?httpUrl=http://fx-market-data-stub-svc.fxmarket:3080/forex/rates")
                 .filter().method(sseMapper, "messageHasData")
                   .bean(sseMapper, "extractSseData")
                 .to("log:INFO_SSE_STREAM")
