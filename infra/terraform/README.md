@@ -39,7 +39,7 @@
           Ensure you have `~./.kube/config` properly set
    3. ### Docker Image Registry Connection
          Are used different registries for the two solutions:
-         - Springboot solution uses local cluster registry (named docker-registry in kube-system namespace using port 5000).
+         - Springboot solution uses docker registry installed on the host and not on the cluster.
          - Knative + Camel-K solution uses Docker Hub registry.
             address: "docker.io"
             organization: "adriannbalaban"
@@ -53,23 +53,35 @@
                 ...
               }
               ```
-              Camel-K imposes Docker standard registries, so it is not possible to use Kind registry.
-              I've tested other solutions and this the only one that works.
+              Camel-K imposes Docker standard registries, so it was not possible to use Kind registry.
+              I've tested other solutions and this was the only one that worked.
 
-   4. ## Deployment
-      By default is used a Kind cluster.
-      Launch in 'cluster' directory these commands, to start the cluster and deploy the 2 solutions:
-      The name of the cluster can be changed in the command line for terraform as in the example below:
-      ```bash
-         rm -rf .terraform* terraform.tfstate* && terraform init && export TF_VAR_cluster_name=kind_2_solutions && terraform apply -auto-approve"
-      ```
-      Or using aliases:
-      ```bash
-         tfr && tfi && export TF_VAR_cluster_name=kind_2_solutions && tfc
-      ```
-      After abt. 1 minute, when Kind cluster is running, 
-      start in another terminal: kubectl port-forward -n fxmarket svc/docker-registry 5001:5000 &
+      4. ## Deployment
+         By default is used Kind cluster created with script k8s/kind/createKindClusterWithRegistry.sh.
+         Launch in 'terraform/cluster' directory these commands, to start the cluster and deploy the 2 solutions.
+         Using terraform variables some parameters can be changed, like in the example below, to skip the build:
+         ```bash
+            rm -rf .terraform* terraform.tfstate* && terraform init && export TF_VAR_build=false && terraform apply -auto-approve"
+         ```
+         Or using aliases:
+         ```bash
+            tfr && tfi && export TF_VAR_build=false && tfc
+         ```
+
+         Springboot solution is deployed by default in fxmarket namespace.
+         Knative + Camel-K solution is deployed in knative-eventing namespace.
       
+          Terraform variables that can be used to change the default behaviour: 
+         | Variable name                   | Default value | TF_VAR environment variable        |
+         |---------------------------------|---------------|------------------------------------|
+         |namespace_springboot_solution    | fxmarket      |TF_VAR_namespace_springboot_solution|
+         |build                            | false         |TF_VAR_build                        |
+         |test                             | false         |TF_VAR_test                         |
+         |tag                              | 0.0.1         |TF_VAR_tag                          |
+         |registry_host                    | localhost     |TF_VAR_registry_host                |
+         |registry_port                    | 5001          |TF_VAR_registry_port                |
+         |cluster_name (to be implemented) | kind          |TF_VAR_cluster_name                 |
+
    5. Destroy the cluster:
       ```bash
           terraform destroy -auto-approve # or tfd (alias already set) 

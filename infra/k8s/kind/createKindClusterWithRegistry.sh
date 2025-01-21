@@ -1,28 +1,11 @@
-#!/usr/bin/env bash
-set -o errexit
-
-HOST='127.0.0.1' # default if not provided
-
-print_usage() {
-  echo "Usage:"
-  echo "-host <x.x.x.x>       <- to specify host for cluster and registry - default: 127.0.0.1"
-}
-
-# Parse command-line options
-while [[ "$#" -gt 0 ]]; do
-  case "$1" in
-    -host) HOST="$2"; shift ;;
-    *) print_usage; exit 1 ;;
-  esac
-  shift
-done
+#!/bin/sh
 
 # 1. Create registry container unless it already exists
 reg_name='kind-registry'
 reg_port='5001'
 if [ "$(docker inspect -f '{{.State.Running}}' "${reg_name}" 2>/dev/null || true)" != 'true' ]; then
   docker run \
-    -d --restart=always -p "${HOST}:${reg_port}:5000" --network bridge --name "${reg_name}" \
+    -d --restart=always -p "127.0.0.1:${reg_port}:5000" --network bridge --name "${reg_name}" \
     registry:2
 fi
 
@@ -37,9 +20,6 @@ fi
 cat <<EOF | systemd-run --scope --user -p "Delegate=yes" kind create cluster --config=-
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
-networking:
-  apiServerAddress: ${HOST}
-  apiServerPort: 6443
 containerdConfigPatches:
 - |-
   [plugins."io.containerd.grpc.v1.cri".registry]
@@ -54,7 +34,7 @@ EOF
 #
 # We want a consistent name that works from both ends, so we tell containerd to
 # alias localhost:${reg_port} to the registry container when pulling images
-REGISTRY_DIR="/etc/containerd/certs.d/${HOST}:${reg_port}"
+REGISTRY_DIR="/etc/containerd/certs.d/localhost:${reg_port}"
 for node in $(kind get nodes); do
   docker exec "${node}" mkdir -p "${REGISTRY_DIR}"
   cat <<EOF | docker exec -i "${node}" cp /dev/stdin "${REGISTRY_DIR}/hosts.toml"
@@ -78,7 +58,7 @@ metadata:
   namespace: kube-public
 data:
   localRegistryHosting.v1: |
-    host: "${HOST}:${reg_port}"
+    host: "localhost:${reg_port}"
     help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
 EOF
 
