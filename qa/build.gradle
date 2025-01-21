@@ -133,7 +133,7 @@ tasks.register('runPeakLoadTest', Exec) {
     }
     environment 'PATH', System.getenv('PATH')
     environment 'K6_WEB_DASHBOARD', 'true'
-    environment 'K6_WEB_DASHBOARD_EXPORT', 'html-report.html'
+    environment 'K6_WEB_DASHBOARD_EXPORT', 'build/html-report.html'
 
     environment 'PATH', System.getenv('PATH')
     commandLine k6Command, 'run',  scriptPath
@@ -159,6 +159,7 @@ tasks.register('runDeltaCalculationTest', Test) {
         showStandardStreams = true
         showStackTraces = true
     }
+    testLogging.showStandardStreams = true
 }
 
 tasks.register('runPeakLoadJob', Exec) {
