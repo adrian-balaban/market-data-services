@@ -45,7 +45,7 @@ dependencies {
     // Core dependencies
     implementation project(':model-fx-proto')
     implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'org.apache.kafka:kafka-clients:3.5.1'
+    implementation 'org.apache.kafka:kafka-clients:3.7.1'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.springframework:spring-context'
     testImplementation 'com.google.protobuf:protobuf-java:3.25.5'
@@ -110,7 +110,7 @@ task cucumber() {
 
 
 
-tasks.register('runPeakLoadTest', Exec) {
+tasks.register('clear_Run', Exec) {
     group = 'performanceLocal'
 
     def osName = System.getProperty("os.name").toLowerCase()
@@ -126,32 +126,46 @@ tasks.register('runPeakLoadTest', Exec) {
         k6Command = process.text.trim()
     }
 
-    def scriptPath = "${projectDir}/src/test/java/performance/peakLoadTest.js"
+    def deleteScriptPath = "${projectDir}/src/test/java/performance/delete_kafka_records.sh"
+    def scriptPathTest = "${projectDir}/src/test/java/performance/peakLoadTest.js"
 
-    if (!new File(scriptPath).exists()) {
-        throw new GradleException("File ${scriptPath} not found")
+    // macOS/Linux setting:
+    if (!System.getProperty("os.name").toLowerCase().contains("win")) {
+        exec {
+            commandLine 'chmod', '+x', deleteScriptPath
+        }
     }
+
+        println "Copy delete_kafka_records.sh to kafka container, to run it .."
+        exec {
+            commandLine "sh", "-c", """
+                kubectl cp ${deleteScriptPath} test/kafka-0:/tmp/delete_kafka_records.sh && \
+                kubectl exec -n test kafka-0 -- bash -c 'chmod +x /tmp/delete_kafka_records.sh && /tmp/delete_kafka_records.sh'
+            """
+        }
+
     environment 'PATH', System.getenv('PATH')
     environment 'K6_WEB_DASHBOARD', 'true'
-    environment 'K6_WEB_DASHBOARD_EXPORT', 'build/html-report.html'
-
+    environment 'K6_WEB_DASHBOARD_EXPORT', 'build/test-results/html-report.html'
     environment 'PATH', System.getenv('PATH')
-    commandLine k6Command, 'run',  scriptPath
+
+    commandLine k6Command, 'run',  scriptPathTest
 }
 
-tasks.register('runPeakLoadTestAndDelta') {
+
+tasks.register('clear_Run_Calculate') {
     group = 'performanceLocal'
 
-    dependsOn 'runPeakLoadTest'
-    finalizedBy 'runDeltaCalculationTest'
+    dependsOn 'clear_Run'
+    finalizedBy 'Calculate'
 }
 
 
-tasks.register('runDeltaCalculationTest', Test) {
+tasks.register('Calculate', Test) {
     group = 'performanceLocal'
     useJUnitPlatform()
     filter {
-        includeTestsMatching "performance.DeltaCalculationTest.calculateDelta"
+        includeTestsMatching "performance.DeltaCalculationTest.deltaCalculation"
     }
     testLogging {
         events "passed", "failed", "skipped"
@@ -162,7 +176,7 @@ tasks.register('runDeltaCalculationTest', Test) {
     testLogging.showStandardStreams = true
 }
 
-tasks.register('runPeakLoadJob', Exec) {
+tasks.register('RunJob', Exec) {
     group = 'performanceJob'
 
     def isWindows = System.getProperty("os.name").toLowerCase().contains("win")
