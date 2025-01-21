@@ -197,7 +197,6 @@ resource "null_resource" "set_default_namespace" {
     kubectl_manifest.camel_k_integration_platform
   ]
 }
-
 /*resource "null_resource" "kamel_run_market_source" {
   provisioner "local-exec" {
     command = "echo kamel run --dev market-source.yaml -n ${local.namespace_camel_k_installation}"
@@ -207,11 +206,17 @@ resource "null_resource" "set_default_namespace" {
   ]
 }
 */
+resource "terraform_data" "sse_connector_to_kafka" {
+  provisioner "local-exec" {
+    command = "kamel run ../camel-k/FxMarketConnectorSinkToKafka.java  -n ${local.namespace_camel_k_installation}"
+  }
+  depends_on = [null_resource.set_default_namespace]
+}
 resource "terraform_data" "sse_connector" {
   provisioner "local-exec" {
     command = "kamel run ../camel-k/FxMarketConnector.java  -n ${local.namespace_camel_k_installation}"
   }
-  depends_on = [null_resource.set_default_namespace]
+  depends_on = [terraform_data.sse_connector_to_kafka]
 }
 resource "terraform_data" "eurusd_extractor" {
   provisioner "local-exec" {
@@ -219,7 +224,7 @@ resource "terraform_data" "eurusd_extractor" {
   }
   depends_on = [terraform_data.sse_connector]
 }
-resource "terraform_data" "eurusd_printer_of_events" {
+resource "terraform_data" "eurusd_output_events_eurusd" {
   provisioner "local-exec" {
     command = "kamel run ../camel-k/FxMarketOutputStream.java  -n ${local.namespace_camel_k_installation}"
   }
@@ -229,6 +234,6 @@ resource "terraform_data" "kamel_get_integration_status" {
   provisioner "local-exec" {
     command = "kamel get -n ${local.namespace_camel_k_installation}"
   }
-  depends_on = [terraform_data.eurusd_printer_of_events]
+  depends_on = [terraform_data.eurusd_output_events_eurusd]
 }
 

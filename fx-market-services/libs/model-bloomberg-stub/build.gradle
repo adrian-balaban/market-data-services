@@ -1,10 +1,28 @@
-apply plugin: "java-library"
+plugins {
+    id "java"
+    id "java-library"
+    id 'maven-publish'
+    id "com.jfrog.artifactory"
+}
+status = 'Integration'
 
 repositories {
     mavenCentral()
+    maven {
+        url "${artifactory_contextUrl}"
+    }
 }
 
 dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+}
+
+artifactory {
+    contextUrl = "${artifactory_contextUrl}"//'https://trial1bptrs.jfrog.io/artifactory'
+    publish {
+        defaults {
+            publishArtifacts = true
+        }
+    }
 }
