@@ -7,7 +7,7 @@ apps:
   fxmarketconnector:
     name: fx-market-connector
     image:
-      repository: docker-registry:5000/fx-market-services/fx-market-connector
+      repository: localhost:5001/fx-market-services/fx-market-connector
 #      tag: 0.0.0
 
     podAnnotations: {}
@@ -56,7 +56,7 @@ apps:
   fxmarketcamelconnector:
     name: fx-market-camel-connector
     image:
-      repository: docker-registry:5000/fx-market-services/fx-market-connector
+      repository: localhost:5001/fx-market-services/fx-market-connector
       #tag: 0.0.1
     podAnnotations: {}
 
@@ -105,7 +105,7 @@ apps:
   fxmarketprocessor:
     name: fx-market-processor
     image:
-      repository: docker-registry:5000/fx-market-services/fx-market-processor
+      repository: localhost:5001/fx-market-services/fx-market-processor
 #      tag: 0.0.0
 
     podAnnotations: {}
@@ -153,7 +153,7 @@ apps:
   fxmarketcamelprocessor:
     name: fx-market-camel-processor
     image:
-      repository: docker-registry:5000/fx-market-services/fx-market-processor
+      repository: localhost:5001/fx-market-services/fx-market-processor
     #      tag: 0.0.1
 
     podAnnotations: {}
@@ -200,7 +200,7 @@ apps:
   flinkorchestrator:
     name: flink-orchestrator
     image:
-      repository: docker-registry:5000/fx-market-services/flink-orchestrator
+      repository: localhost:5001/fx-market-services/flink-orchestrator
 #      tag: 0.0.0
 
     podAnnotations: {}
