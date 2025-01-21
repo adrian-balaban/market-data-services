@@ -15,7 +15,7 @@ public class KafkaEventVerifier {
     private static final String TOPIC = "test-topic";
     private static final String GROUP_ID = "test-group";
     private static final String BOOTSTRAP_SERVERS = "localhost:9092";
-    private static final String EXPECTED_EVENTS_FILE = "./expected-events.txt";
+    private static final String EXPECTED_EVENTS_FILE = "expected-events.txt";
 
     public static void main(String[] args) {
         KafkaConsumer<String, String> consumer = createConsumer();
