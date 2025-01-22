@@ -5,48 +5,44 @@
 // camel-k: dependency=camel:kafka
 // camel-k: dependency=camel:debug
 // camel-k: dependency=camel:protobuf
-// camel-k: dependency=mvn:org.apache.kafka:kafka-clients:3.9.0
-// camel-k: dependency=mvn:com.google.protobuf:protobuf-java:3.25.5
-// camel-k: dependency=mvn:org.projectlombok:lombok:1.18.22
-// camel-k: dependency=mvn:org.projectlombok:lombok:1.18.22
 
-//project(":model-fx-proto")
-//project(":model-bloomberg-stub")
-
+//import com.fx.market.fxmarketconnector.mappers.FxRateProtoMapper;
+//import com.fx.market.fxmarketconnector.vendor.kafka.KafkaStreamProducer;
+//import com.fx.utils.KafkaAdminCreateTopic;
+import lombok.extern.slf4j.Slf4j;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.List;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
-import com.fx.market.fxmarketcamelconnector.mappers.FxRateProtoMapper;
 
 // kamel run FxMarketConnectorSinkToKafka.java
 public class FxMarketConnectorSinkToKafka extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        com.fx.market.fxmarketcamelconnector.vendor.stub.MarketDataStubProperties marketDataStubProperties;
-        FxRateProtoMapper fxRateProtoMapper;
-        ExtractSseDataBean sseMapper;
+        String url = "http://fx-market-data-stub-svc.fxmarket:3080";
+        //FxRateProtoMapper fxRateProtoMapper;
+        //ExtractSseDataBean sseMapper;
         static final String FX_MARKET_DATA_PATH = "/forex/rates";
-        String bootstrapServers;
-        String topic;
+        String bootstrapServers = "PLAINTEXT://kafka.fxmarket:9071";
+        String topic = "fx_rates_camel_k";
 
-        ExtractSseDataBean sseMapper = new ExtractSseDataBean();
+        //ExtractSseDataBean sseMapper = new ExtractSseDataBean();
         System.out.println("Configuring Camel K Route for FX Market Data");
 
-        System.out.println("url: {} ", marketDataStubProperties.getUrl() + FX_MARKET_DATA_PATH);
-        System.out.println("bootstrapServers: {} ", bootstrapServers);
-        System.out.println("topic: {} ", topic);
+        System.out.println("url "+ url + FX_MARKET_DATA_PATH);
+        System.out.println("bootstrapServers "+bootstrapServers);
+        System.out.println("topic "+ topic);
 
-        try  {
+        /*try  {
             KafkaAdminCreateTopic.createTopic(bootstrapServers, topic);
         } catch (Exception ex) {
             log.error("Error creating topic: ", ex);
         }
 
-        from("stream:http?httpUrl="+marketDataStubProperties.getUrl() + FX_MARKET_DATA_PATH)
+        /*from("stream:http?httpUrl="+marketDataStubProperties.getUrl() + FX_MARKET_DATA_PATH)
                 .to("log:INFO_SSE_STREAM")
                 .filter().method(sseMapper, "messageHasData")
                     .bean(sseMapper, "extractSseData")
@@ -61,15 +57,15 @@ public class FxMarketConnectorSinkToKafka extends RouteBuilder {
                 .filter().method(sseMapper, "messageHasData")
                   .bean(sseMapper, "extractSseData")
                 .to("log:INFO_SSE_STREAM")
-                .to("knative:event/market.eurusd-usdjpy");
+                .to("knative:event/market.eurusd-usdjpy");*/
     }
 
-    public class ExtractSseDataBean {
+    /*public class ExtractSseDataBean {
         public String extractSseData(String body) {
             return body.substring(6);
         }
         public boolean messageHasData(String body) {
             return !body.isEmpty();
         }
-    }
+    }*/
 }
