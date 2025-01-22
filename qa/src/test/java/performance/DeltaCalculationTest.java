@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 
 public class DeltaCalculationTest {
@@ -61,8 +62,37 @@ public class DeltaCalculationTest {
             e.printStackTrace();
         } finally {
             System.out.printf("✅ Total records processed: %d%n", totalRecordsCount);
-            System.out.println("📊 Delta summary: " + summary);
+            System.out.println("📊 Delta summary: ");
+            prettyPrintSortedMap(summary);
+            calculateAverageProcessingTime(summary);
             consumer.close();
         }
 
-}}
+    }
+
+    public static void prettyPrintSortedMap(Map<Long, Long> map) {
+        // Use TreeMap to sort the HashMap by key
+        TreeMap<Long, Long> sortedMap = new TreeMap<>(map);
+
+        System.out.println("HashMap Contents (Sorted by Key):");
+        System.out.println("=================================");
+        for (Map.Entry<Long, Long> entry : sortedMap.entrySet()) {
+            System.out.printf("Key: %d, Value: %d%n", entry.getKey(), entry.getValue());
+        }
+    }
+
+    public static void calculateAverageProcessingTime(Map<Long, Long> map) {
+        Long totalProcessingTime = 0L;
+        Long totalEvents = 0L;
+
+        for (Map.Entry<Long, Long> entry : map.entrySet()) {
+            Long processingTime = entry.getKey();
+            Long numberOfEvents = entry.getValue();
+
+            totalProcessingTime += processingTime * numberOfEvents;
+            totalEvents += numberOfEvents;
+        }
+        double averageProcessingTime = (double) totalProcessingTime / totalEvents;
+        System.out.printf("%nAverage Processing Time per Message: %.2f ms%n", averageProcessingTime);
+    }
+}
