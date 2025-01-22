@@ -153,20 +153,28 @@ echo "$SEPARATOR"
 echo "DEPLOY ARGOCD MANIFESTS- START"
 echo "$SEPARATOR"
 
+sleep 10 ## Add additional few seconds for Argo
 
 sed -i "s/___CHANGE_ME_NAMESPACE___/${NAMESPACE}/g" ./gihubSecret.yaml ## Set proper namespace
 kubectl apply -f gihubSecret.yaml ## Setup Github Repo connection
 sed -i "s/${NAMESPACE}/___CHANGE_ME_NAMESPACE___/g" ./gihubSecret.yaml ## Revert
+
+sed -i "s/___CHANGE_ME_ENV___/${ENV}/g" ./argoProject.yaml ## Set proper env
+sed -i "s/___CHANGE_ME_NAMESPACE___/${NAMESPACE}/g" ./argoProject.yaml ## Set proper namespace
+kubectl apply -f argoProject.yaml ## Setup Github Repo connection
+sed -i "s/${NAMESPACE}/___CHANGE_ME_NAMESPACE___/g" ./argoProject.yaml ## Revert
+sed -i "s/${ENV}/___CHANGE_ME_ENV___/g" ./argoProject.yaml ## Revert
+
 sleep 10
 
 pushd ./externals
-    sed -i "s/___CHANGE_ME_ENV___/${ENV}/g" ./application.yaml ## Set proper namespace
+    sed -i "s/___CHANGE_ME_ENV___/${ENV}/g" ./application.yaml ## Set proper env
     sed -i "s/___CHANGE_ME_BRANCH___/${BRANCH}/g" ./application.yaml ## Set proper namespace
     sed -i "s/___CHANGE_ME_NAMESPACE___/${NAMESPACE}/g" ./application.yaml ## Set proper namespace
     kubectl apply -f application.yaml
-    sed -i "s/${ENV}/___CHANGE_ME_ENV___/g" ./application.yaml ## Revert
-    sed -i "s/${BRANCH}/___CHANGE_ME_BRANCH___/g" ./application.yaml ## Revert
     sed -i "s/${NAMESPACE}/___CHANGE_ME_NAMESPACE___/g" ./application.yaml ## Revert
+    sed -i "s/${BRANCH}/___CHANGE_ME_BRANCH___/g" ./application.yaml ## Revert
+    sed -i "s/${ENV}/___CHANGE_ME_ENV___/g" ./application.yaml ## Revert
 popd
 
 wait_for_pod "fx-market-data-stub"
@@ -176,9 +184,9 @@ pushd ./solution
     sed -i "s/___CHANGE_ME_BRANCH___/${BRANCH}/g" ./application.yaml ## Set proper namespace
     sed -i "s/___CHANGE_ME_NAMESPACE___/${NAMESPACE}/g" ./application.yaml ## Set proper namespace
     kubectl apply -f application.yaml
-    sed -i "s/${ENV}/___CHANGE_ME_ENV___/g" ./application.yaml ## Revert
-    sed -i "s/${BRANCH}/___CHANGE_ME_BRANCH___/g" ./application.yaml ## Revert
     sed -i "s/${NAMESPACE}/___CHANGE_ME_NAMESPACE___/g" ./application.yaml ## Revert
+    sed -i "s/${BRANCH}/___CHANGE_ME_BRANCH___/g" ./application.yaml ## Revert
+    sed -i "s/${ENV}/___CHANGE_ME_ENV___/g" ./application.yaml ## Revert
 popd
 
 echo "$SEPARATOR"
