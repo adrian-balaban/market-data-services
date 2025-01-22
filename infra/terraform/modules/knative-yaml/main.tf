@@ -136,7 +136,7 @@ YAML
 
 resource "terraform_data" "broker_verify" {
   provisioner "local-exec" {
-    command = "kubectl wait broker --all --for=condition=ready --timeout=600s " #-n ${local.namespace_camel_k_installation}"
+    command = "kubectl wait broker --all --for=condition=ready --timeout=600s -n knative-eventing" #-n ${local.namespace_camel_k_installation}"
   }
   depends_on = [kubectl_manifest.configure_broker_default]
 }
