@@ -1,51 +1,25 @@
 plugins {
 	id 'java'
+	id 'maven-publish'
 	id 'org.springframework.boot' version '3.3.5' apply false
 	id 'io.spring.dependency-management' version '1.1.6'
 	id 'org.graalvm.buildtools.native' version '0.10.3'
-	id("com.jfrog.artifactory") version "5.2.4" apply false
 }
 
 apply from: "versions.gradle"
 
-group = 'com.fx.market'
-version = '0.0.1'
-
+/*
 allprojects {
-	apply plugin: 'com.jfrog.artifactory'
 	group = 'com.fx.market'
 	version = '0.0.1'
-	status = 'Integration'
+	//apply from: 'maven-publish'
 	repositories {
 		maven {
-			url = "${artifactory_contextUrl}"//'https://trial1bptrs.jfrog.io/artifactory'
+			url "${myMavenRepoReadUrl}"
 		}
 	}
 }
-
-artifactory {
-	contextUrl = "${artifactory_contextUrl}"//'https://trial1bptrs.jfrog.io/artifactory'
-	publish {
-		repository {
-			repoKey = 'fx-libs-snapshots'
-			username = "${artifactory_user}" //'adrian.n.balaban@gmail.com'
-			password = "${artifactory_password}"//'cmVmdGtuOjAxOjE3NjkwMDI5NDQ6OVdXSkJ1V3J2ajRZQkRxN3U3am11Wkk5bFJP'
-			//maven = true
-		}
-		defaults {
-			//publications('mavenJava')
-			publishArtifacts = false
-		}
-	}
-}
-
-project('model-fx-proto') {artifactoryPublish.skip = false}
-project('model-bloomberg-stub') {artifactoryPublish.skip = false}
-project('flink-orchestrator') {artifactoryPublish.skip = true}
-project('fx-market-connector') {artifactoryPublish.skip = true}
-project('fx-market-camel-connector') {artifactoryPublish.skip = true}
-project('fx-market-processor') {artifactoryPublish.skip = true}
-
+*/
 
 ext {
 	//sample: ./gradlew fx-market-connector:bootBuildImage -Pversion=${TAG} -Pregistry=${DOCKER_REGISTRY}

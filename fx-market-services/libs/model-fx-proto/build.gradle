@@ -3,15 +3,27 @@ plugins {
     id "java-library"
     id 'maven-publish'
     id "com.google.protobuf" version "0.9.4"
-    id "com.jfrog.artifactory"
 }
-
-status = 'Integration'
-
+group = 'com.fx.market'
+version = '0.0.1'
+def myMavenRepoReadUrl='https://mymavenrepo.com/repo/rIk45lIri9cFQ1lMsZiO/'
+def myMavenRepoWriteUrl='https://mymavenrepo.com/repo/PoCjiZIA1UdXENDnjKNA/'
 repositories {
-    mavenCentral()
-    maven {
-        url "${artifactory_contextUrl}"
+		maven {
+			url = 'https://mymavenrepo.com/repo/rIk45lIri9cFQ1lMsZiO/'
+		}
+	}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url = 'https://mymavenrepo.com/repo/PoCjiZIA1UdXENDnjKNA/'
+        }
     }
 }
 
@@ -46,12 +58,3 @@ compileJava   {
 compileJava.dependsOn generateProto
 
 sourceSets.main.java.srcDir "/build/generated/source/proto/main/java"
-
-artifactory {
-    contextUrl = "${artifactory_contextUrl}"//'https://trial1bptrs.jfrog.io/artifactory'
-    publish {
-        defaults {
-            publishArtifacts = true
-        }
-    }
-}
