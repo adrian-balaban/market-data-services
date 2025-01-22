@@ -1,3 +1,7 @@
+variable "deploy_test" {
+  type = bool
+  default = false
+}
 variable "build" {
   type = string
   default = "false"
