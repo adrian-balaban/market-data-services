@@ -128,11 +128,11 @@ resource "null_resource" "set_default_namespace" {
 
 resource "terraform_data" "sse_connector_direct_to_kafka" {
   provisioner "local-exec" {
-    command = "kamel run --dev -d github:adrian-n-balaban/market-data-services-lib ../camel-k/FxMarketConnectorSinkToKafka.java -n ${var.namespace}"
+    command = "kamel run --dev -d github:adrian-n-balaban/market-data-services-lib/58d863f ../camel-k/FxMarketConnectorSinkToKafka.java -n ${var.namespace}"
   }
   depends_on = [null_resource.set_default_namespace]
 }
-/*resource "terraform_data" "sse_connector" {
+resource "terraform_data" "sse_connector" {
   provisioner "local-exec" {
     command = "kamel run ../camel-k/FxMarketConnector.java -n ${var.namespace}"
   }
@@ -150,7 +150,7 @@ resource "terraform_data" "eurusd_output_events_eurusd" {
   }
   depends_on = [terraform_data.eurusd_extractor]
 }
-*/resource "terraform_data" "kamel_get_integration_status" {
+resource "terraform_data" "kamel_get_integration_status" {
   provisioner "local-exec" {
     command = "kamel get -n ${var.namespace}"
   }
