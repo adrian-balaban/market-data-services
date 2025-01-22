@@ -35,37 +35,6 @@
       - If Local Cluster 
         - Kind : install kind
         - Minikube : install Oracle Virtualbox and Minikube (because I have tested only with minikube virtualbox driver)
-        - Setup Maven registry, using https://reposilite.com/guide/jar
-          - launch with jar the standalone version
-          ```bash
-          cd terraform/cluster
-          java -Xmx32M -jar ../jars/reposilite-3.5.20-all.jar
-          ```
-          - within the console, launch commands to generate token and route
-          ```
-          token-generate root m
-          ```
-          Returns a message like 
-          Generated new access token for root with 'm' permissions. Secret:
-          q0UPfEdPDl6MTQJq1L4VG+lgWu/SOlfjJgBwIlDXlsTX7yiC3aB8H49Lg8412R8n
-          ```
-          route-add root / rw
-          ```
-          Returns a message like
-          Route / has been added to token root
-          - add into ~/.gradle/gradle.properties these 2 lines:
-myDomainRepositoryUsername=root
-myDomainRepositoryPassword=<the token value returned>
-          - Publish the libs to maven repo
-          ```bash
-            cd market-data-services/libs/model-bloomberg-stub && gradle publish
-            cd ../model-fx-proto && gradle publish
-            cd ../common-utils && gradle publish
-          ```
-          - Check the libs in the browser at 
-            - http://localhost:8080/#/snapshots/com/fx/market/model-bloomberg-stub
-            - http://localhost:8080/#/snapshots/com/fx/market/model-fx-proto
-            - http://localhost:8080/#/snapshots/com/fx/market/common-utils
 
         - Launch Kind with k8s/kind/create....sh script
 
@@ -90,7 +59,7 @@ myDomainRepositoryPassword=<the token value returned>
               Camel-K imposes Docker standard registries, so it was not possible to use Kind registry.
               I've tested other solutions and this was the only one that worked.
 
-      4. ## Deployment
+      4. ### Deployment
          By default is used Kind cluster created with script k8s/kind/createKindClusterWithRegistry.sh.
          Launch in 'terraform/cluster' directory these commands, to start the cluster and deploy the 2 solutions.
          Using terraform variables some parameters can be changed, like in the example below, to skip the build:

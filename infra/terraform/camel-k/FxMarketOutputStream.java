@@ -19,5 +19,3 @@ public class FxMarketOutputStream extends RouteBuilder {
                 // template.sendBody("direct:in", "Hello Bytes World".getBytes());
     }
 }
-
-
