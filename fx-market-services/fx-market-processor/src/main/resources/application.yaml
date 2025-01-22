@@ -6,6 +6,8 @@ server:
   port: 4081
 
 kafka:
-  bootstrap-servers: PLAINTEXT://localhost:9092
+  bootstrap-servers: PLAINTEXT://localhost:9093
   topic: fx_rates
   application-id-config: fx-market-processor-stream-operator
+  application-server-config: localhost:4081
+  application-state-dir-config: /tmp/kafka-streams/fxrates
