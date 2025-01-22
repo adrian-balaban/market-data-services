@@ -59,9 +59,12 @@ myDomainRepositoryPassword=<the token value returned>
           - Publish the libs to maven repo
           ```bash
             cd .../libs/model-bloomberg-stub && gradle publish
-            cd .../libs//model-fx-proto && gradle publish
+            cd .../libs/model-fx-proto && gradle publish
           ```
-
+          - Check the libs in the browser at 
+            - http://localhost:8080/#/snapshots/com/fx/market/model-bloomberg-stub
+            - http://localhost:8080/#/snapshots/com/fx/market/model-fx-proto
+          
         - Launch Kind with k8s/kind/create....sh script
 
    2. ### Cluster connection 
