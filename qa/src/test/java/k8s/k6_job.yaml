@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: k6-performance-test
+  namespace: test
+spec:
+  template:
+    spec:
+      containers:
+        - name: k6
+          image: grafana/k6
+          env:
+            - name: STUB_HOST
+              value: "http://fx-market-data-stub-svc:3080"
+          command: ["k6", "run", "/performance/peakLoadTest.js"]
+          volumeMounts:
+            - name: performance
+              mountPath: /performance
+      volumes:
+        - name: performance
+          configMap:
+            name: k6-performance
+      restartPolicy: Never

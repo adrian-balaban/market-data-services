@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/fx-market-connector/fx-market-services.fx-market-connector.main.iml" filepath="$PROJECT_DIR$/.idea/modules/fx-market-connector/fx-market-services.fx-market-connector.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/fx-market-processor/fx-market-services.fx-market-processor.main.iml" filepath="$PROJECT_DIR$/.idea/modules/fx-market-processor/fx-market-services.fx-market-processor.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/libs/model-bloomberg-stub/fx-market-services.model-bloomberg-stub.main.iml" filepath="$PROJECT_DIR$/.idea/modules/libs/model-bloomberg-stub/fx-market-services.model-bloomberg-stub.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/market-data-processor.iml" filepath="$PROJECT_DIR$/.idea/market-data-processor.iml" />
     </modules>
   </component>
 </project>
