@@ -1,4 +1,4 @@
-package com.fx.market.fxmarketprocessor.service;
+package com.fx.market.fxmarketprocessor.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
