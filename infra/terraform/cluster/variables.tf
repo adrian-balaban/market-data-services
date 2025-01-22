@@ -1,10 +1,11 @@
-variable "namespace_springboot_solution" {
-  type = string
-  default = "fxmarket"
-}
 variable "build" {
   type = string
   default = "false"
+  description = "can be \"true\" or \"false\""
+}
+variable "publish_libs_to_maven_repo" {
+  type = string
+  default = false
   description = "can be \"true\" or \"false\""
 }
 variable "test" {
@@ -27,5 +28,26 @@ variable "registry_port" {
   default = "5001"
 }
 
-
+variable "environments" {
+  type    = list(string)
+  default = ["dev", "test"]
+}
+variable "namespace_maven_repository" {
+  type    = string
+  default = "reposiline"
+}
+variable "namespaces_springboot_solution" {
+  type    = map(string)
+  default = {
+    "dev"  = "fxmarket"
+    "test" = "test"
+  }
+}
+variable "namespaces_camel_k_solution" {
+  type    = map(string)
+  default = {
+    "dev"  = "camel-k-dev"
+    "test" = "camel-k-test"
+  }
+}
 
