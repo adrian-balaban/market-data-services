@@ -36,10 +36,6 @@ variable "environments" {
   type    = list(string)
   default = ["dev", "test"]
 }
-variable "namespace_maven_repository" {
-  type    = string
-  default = "reposiline"
-}
 variable "namespaces_springboot_solution" {
   type = map(string)
   default = {
