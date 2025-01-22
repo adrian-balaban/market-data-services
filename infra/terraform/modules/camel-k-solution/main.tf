@@ -6,11 +6,74 @@ metadata:
   name: ${var.namespace}
 YAML
 }
+
+resource "kubectl_manifest" "configmap_imc_channel" {
+  yaml_body = <<YAML
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: imc-channel
+  namespace: "${var.namespace}"
+data:
+  channel-template-spec: |
+    apiVersion: messaging.knative.dev/v1
+    kind: InMemoryChannel
+YAML
+  depends_on = [
+    kubectl_manifest.namespace
+  ]
+}
+
+resource "kubectl_manifest" "configmap_config_br_defaults" {
+  yaml_body = <<YAML
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-br-defaults
+  namespace: "${var.namespace}"
+data:
+  # Configures the default for any Broker that does not specify a spec.config or Broker class. # This is the cluster-wide default broker channel.
+  default-br-config: |
+    clusterDefault:
+      brokerClass: MTChannelBasedBroker
+      apiVersion: v1
+      kind: ConfigMap
+      name: imc-channel
+      namespace: "${var.namespace}"
+YAML
+  depends_on = [
+    kubectl_manifest.configmap_imc_channel
+  ]
+}
+
+resource "kubectl_manifest" "configure_broker_default" {
+  yaml_body = <<YAML
+apiVersion: eventing.knative.dev/v1
+kind: Broker
+metadata:
+  annotations:
+    eventing.knative.dev/broker.class: MTChannelBasedBroker
+  name: default
+  namespace: "${var.namespace}"
+YAML
+  depends_on = [
+    kubectl_manifest.configmap_config_br_defaults
+  ]
+}
+
+resource "terraform_data" "broker_verify" {
+  provisioner "local-exec" {
+    command = "kubectl wait broker --all --for=condition=ready --timeout=600s -n ${var.namespace}"
+  }
+  depends_on = [kubectl_manifest.configure_broker_default]
+}
+
+
 resource "null_resource" "camel_k_install_helm_repo" {
   provisioner "local-exec" {
     command = "helm repo add camel-k https://apache.github.io/camel-k/charts/"
   }
-  depends_on = [kubectl_manifest.namespace]
+  depends_on = [terraform_data.broker_verify]
 }
 resource "terraform_data" "camel_k" {
   provisioner "local-exec" {

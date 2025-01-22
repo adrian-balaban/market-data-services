@@ -25,6 +25,7 @@ module "knative" {
   depends_on = [module.springboot_solution_test]
 }
 module "camel_k_solution_dev" {
+  count = 1
   source = "../modules/camel-k-solution"
   namespace = var.namespaces_camel_k_solution["dev"]
   depends_on = [module.knative, module.springboot_solution_dev]
