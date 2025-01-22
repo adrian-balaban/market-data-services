@@ -6,10 +6,7 @@ let successRate = new Rate('http_req_success');
 
 export let options = {
     stages: [
-        { duration: '5s', target: 1 },
-        { duration: '10s', target: 50 },
-        { duration: '10s', target: 50 },
-        { duration: '5s', target: 1 },
+        { duration: '10s', target: 1000 },
     ],
     thresholds: {
         http_req_duration: ['p(95)<1500'],
@@ -20,20 +17,47 @@ let testParam = __ENV.STUB_HOST || "http://localhost:3080";
 
 const url = `${testParam}/emitEvent`;
 
-const payload = JSON.stringify({
-    timestamp: new Date().toISOString(),
-    rates: [
-        { pair: "USD/JPY", baseCurrency: "USD", quoteCurrency: "JPY", ask: "1.5837", bid: "1.5266" },
-        { pair: "EUR/USD", baseCurrency: "EUR", quoteCurrency: "USD", ask: "1.1246", bid: "1.0119" },
-        { pair: "PLN/USD", baseCurrency: "PLN", quoteCurrency: "USD", ask: "1.9728", bid: "1.411" }
-    ]
-});
-
 const params = {
     headers: { 'Content-Type': 'application/json' },
 };
 
 export default function () {
+    
+    function getRandomCurrency() {
+        const currencies = [
+            "USD", "EUR", "JPY", "GBP", "AUD",
+            "CAD", "CHF", "CNY", "SEK", "NZD",
+            "MXN", "SGD", "HKD", "NOK", "KRW",
+            "TRY", "INR", "RUB", "BRL", "ZAR"
+        ];
+
+        const randomIndex = Math.floor(Math.random() * currencies.length);
+        return currencies[randomIndex];
+    }
+
+    function generateRecord() {
+        const baseCurrency = getRandomCurrency();
+        const quoteCurrency = getRandomCurrency();
+        return {
+            pair: baseCurrency + '/' + quoteCurrency,
+            baseCurrency: baseCurrency,
+            quoteCurrency: quoteCurrency,
+            ask: (Math.random() * 2).toFixed(4),
+            bid: (Math.random() * 2).toFixed(4)
+        }
+    }
+
+    const payload = JSON.stringify({
+        timestamp: new Date().toISOString(),
+        rates: [
+            generateRecord(),
+            generateRecord(),
+            generateRecord(),
+            generateRecord(),
+            generateRecord(),
+        ]
+    });
+
     let res = http.post(url, payload, params);
 
     // Track only success rate

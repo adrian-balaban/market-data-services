@@ -131,16 +131,16 @@ tasks.register('clear_Run', Exec) {
     def scriptPathTest = "${projectDir}/src/test/java/performance/peakLoadTest.js"
 
     // macOS/Linux setting:
-    if (!System.getProperty("os.name").toLowerCase().contains("win")) {
-        exec {
-            commandLine 'chmod', '+x', deleteScriptPath
-        }
-    }
+    //if (!System.getProperty("os.name").toLowerCase().contains("win")) {
+    //    exec {
+    //        commandLine 'chmod', '+x', deleteScriptPath
+    //    }
+    //}
 
         println "Copy delete_kafka_records.sh to kafka container, to run it .."
         exec {
             commandLine "sh", "-c", """
-                kubectl cp ${deleteScriptPath} test/kafka-0:/tmp/delete_kafka_records.sh && \
+                kubectl cp ${deleteScriptPath} ${K8S_NAMESPACE}/kafka-0:/tmp/delete_kafka_records.sh && \
                 kubectl exec -n ${K8S_NAMESPACE} kafka-0 -- bash -c 'chmod +x /tmp/delete_kafka_records.sh && /tmp/delete_kafka_records.sh'
             """
         }
@@ -164,6 +164,7 @@ tasks.register('clear_Run_Calculate') {
 
 tasks.register('Calculate', Test) {
     group = 'performanceLocal'
+    outputs.upToDateWhen { false }
     useJUnitPlatform()
     filter {
         includeTestsMatching "performance.DeltaCalculationTest.deltaCalculation"
