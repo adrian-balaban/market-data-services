@@ -7,11 +7,6 @@ variable "build" {
   default = true
   description = "can be \"true\" or \"false\""
 }
-variable "publish_libs_to_maven_repo" {
-  type = string
-  default = true
-  description = "can be \"true\" or \"false\""
-}
 variable "test" {
   type = string
   default = "false"

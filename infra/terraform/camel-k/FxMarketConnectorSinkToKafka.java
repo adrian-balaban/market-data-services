@@ -8,6 +8,8 @@
 // camel-k: dependency=mvn:org.apache.kafka:kafka-clients:3.9.0
 // camel-k: dependency=mvn:com.google.protobuf:protobuf-java:3.25.5
 // camel-k: dependency=mvn:org.projectlombok:lombok:1.18.22
+// camel-k: dependency=mvn:org.projectlombok:lombok:1.18.22
+
 //project(":model-fx-proto")
 //project(":model-bloomberg-stub")
 
@@ -38,7 +40,6 @@ public class FxMarketConnectorSinkToKafka extends RouteBuilder {
         System.out.println("bootstrapServers: {} ", bootstrapServers);
         System.out.println("topic: {} ", topic);
 
-/*
         try  {
             KafkaAdminCreateTopic.createTopic(bootstrapServers, topic);
         } catch (Exception ex) {
@@ -55,7 +56,7 @@ public class FxMarketConnectorSinkToKafka extends RouteBuilder {
                     .to("kafka:"+topic+"?brokers="+bootstrapServers)
                     .end();
 
- */
+
         from("stream:http?httpUrl=http://fx-market-data-stub-svc.fxmarket:3080/forex/rates")
                 .filter().method(sseMapper, "messageHasData")
                   .bean(sseMapper, "extractSseData")
