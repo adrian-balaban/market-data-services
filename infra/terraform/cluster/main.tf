@@ -1,13 +1,35 @@
-module "kind_springboot_solution" {
+module "springboot_solution_dev" {
   source                         = "../modules/springboot_solution"
   tag                            = var.tag
-  build = var.build
+  build = "true"
+  publish_libs_to_maven_repo = "false"
   test = var.test
-  namespace = var.namespace_springboot_solution
+  namespace = var.namespaces_springboot_solution["dev"]
   registry_host = var.registry_host
   registry_port = var.registry_port
 }
-module "kind_camel_k_solution" {
-  source = "../modules/knative-camel-k-yaml"
-  depends_on = [module.kind_springboot_solution]
+module "springboot_solution_test" {
+  source                         = "../modules/springboot_solution"
+  tag                            = var.tag
+  build = var.build
+  publish_libs_to_maven_repo = "false"
+  test = var.test
+  namespace = var.namespaces_springboot_solution["test"]
+  registry_host = var.registry_host
+  registry_port = var.registry_port
+  depends_on = [module.springboot_solution_dev]
+}
+module "knative" {
+  source = "../modules/knative-yaml"
+  depends_on = [module.springboot_solution_test]
+}
+module "camel_k_solution_dev" {
+  source = "../modules/camel-k-solution"
+  namespace = var.namespaces_camel_k_solution["dev"]
+  depends_on = [module.knative, module.springboot_solution_dev]
+}
+module "camel_k_solution_test" {
+  source = "../modules/camel-k-solution"
+  namespace = var.namespaces_camel_k_solution["test"]
+  depends_on = [module.knative, module.springboot_solution_test]
 }

@@ -35,6 +35,35 @@
       - If Local Cluster 
         - Kind : install kind
         - Minikube : install Oracle Virtualbox and Minikube (because I have tested only with minikube virtualbox driver)
+        - Setup Maven registry, using https://reposilite.com/guide/jar
+          - launch with jar the standalone version
+          ```bash
+          cd terraform/cluster
+          java -Xmx32M -jar ../jars/reposilite-3.5.20-all.jar
+          ```
+          - within the console, launch commands to generate token and route
+          ```
+          token-generate root m
+          ```
+          Returns a message like 
+          Generated new access token for root with 'm' permissions. Secret:
+          q0UPfEdPDl6MTQJq1L4VG+lgWu/SOlfjJgBwIlDXlsTX7yiC3aB8H49Lg8412R8n
+          ```
+          route-add root / rw
+          ```
+          Returns a message like
+          Route / has been added to token root
+          - add into ~/.gradle/gradle.properties these 2 lines:
+myDomainRepositoryUsername=root
+myDomainRepositoryPassword=<the token value returned>
+          - Publish the libs to maven repo
+          ```bash
+            cd .../libs/model-bloomberg-stub && gradle publish
+            cd .../libs//model-fx-proto && gradle publish
+          ```
+
+        - Launch Kind with k8s/kind/create....sh script
+
    2. ### Cluster connection 
           Ensure you have `~./.kube/config` properly set
    3. ### Docker Image Registry Connection
