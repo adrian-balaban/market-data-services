@@ -125,49 +125,35 @@ resource "null_resource" "set_default_namespace" {
     kubectl_manifest.camel_k_integration_platform
   ]
 }
-/*resource "null_resource" "kamel_run_market_source" {
+
+resource "terraform_data" "sse_connector_direct_to_kafka" {
   provisioner "local-exec" {
-    command = "echo kamel run --dev market-source.yaml -n ${var.namespace}"
-  }
-  depends_on = [
-    null_resource.set_default_namespace
-  ]
-}
-*/
-resource "terraform_data" "sse_connector_to_kafka" {
-  provisioner "local-exec" {
-    command = "kamel run ../camel-k/FxMarketConnectorSinkToKafka.java  -n ${var.namespace}"
+    command = "kamel run --dev -d github:adrian-n-balaban/market-data-services-lib ../camel-k/FxMarketConnectorSinkToKafka.java -n ${var.namespace}"
   }
   depends_on = [null_resource.set_default_namespace]
 }
-resource "terraform_data" "sse_connector" {
+/*resource "terraform_data" "sse_connector" {
   provisioner "local-exec" {
-    command = "kamel run ../camel-k/FxMarketConnector.java  -n ${var.namespace}"
+    command = "kamel run ../camel-k/FxMarketConnector.java -n ${var.namespace}"
   }
-  depends_on = [terraform_data.sse_connector_to_kafka]
+  depends_on = [terraform_data.sse_connector_direct_to_kafka]
 }
 resource "terraform_data" "eurusd_extractor" {
   provisioner "local-exec" {
-    command = "kamel run ../camel-k/FxMarketExtractorEurUsd.java  -n ${var.namespace}"
+    command = "kamel run ../camel-k/FxMarketExtractorEurUsd.java -n ${var.namespace}"
   }
   depends_on = [terraform_data.sse_connector]
 }
 resource "terraform_data" "eurusd_output_events_eurusd" {
   provisioner "local-exec" {
-    command = "kamel run ../camel-k/FxMarketOutputStream.java  -n ${var.namespace}"
+    command = "kamel run ../camel-k/FxMarketOutputStream.java -n ${var.namespace}"
   }
   depends_on = [terraform_data.eurusd_extractor]
 }
-resource "terraform_data" "FxMarketConnectorSinkToKafka" {
-  provisioner "local-exec" {
-    command = "kamel run ../camel-k/FxMarketConnectorSinkToKafka.java  -n ${var.namespace}"
-  }
-  depends_on = [terraform_data.eurusd_extractor]
-}
-resource "terraform_data" "kamel_get_integration_status" {
+*/resource "terraform_data" "kamel_get_integration_status" {
   provisioner "local-exec" {
     command = "kamel get -n ${var.namespace}"
   }
-  depends_on = [terraform_data.eurusd_output_events_eurusd]
+  depends_on = [terraform_data.sse_connector_direct_to_kafka]
 }
 

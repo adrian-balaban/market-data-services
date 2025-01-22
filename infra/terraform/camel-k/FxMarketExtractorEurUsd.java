@@ -20,6 +20,10 @@ public class FxMarketExtractorEurUsd extends RouteBuilder {
                 .bean(extractDataBean, "extractDataEurUsd")
                 .to("log:EURUSD")
                 .to("knative:event/market.eurusd");
+        /*
+         from("knative:event/market.eurusd")
+                .to("log:eurusd");
+         */
     }
 
     /**

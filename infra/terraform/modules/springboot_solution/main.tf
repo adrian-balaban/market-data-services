@@ -1,11 +1,6 @@
 locals {
   registry = "${var.registry_host}:${var.registry_port}"
 }
-resource "terraform_data" "set-default-namespace" {
-  provisioner "local-exec" {
-    command = "kubectl config set-context --current --namespace=${var.namespace}"
-  }
-}
 
 # to add use of var.build & var.test
 resource "terraform_data" "buildExternals" {
@@ -13,7 +8,6 @@ resource "terraform_data" "buildExternals" {
   provisioner "local-exec" {
     command = "cd ../../k8s/scripts && ./buildExternals.sh -tag ${var.tag} -registry ${local.registry} && cd ../../terraform/cluster"
   }
-  depends_on = [terraform_data.set-default-namespace]
 }
 # to add use of var.build & var.test
 resource "terraform_data" "buildSolution" {
@@ -46,4 +40,10 @@ resource "terraform_data" "deploySolution" {
     command = "cd ../../k8s/scripts && ./deploySolution.sh -n ${var.namespace} -tag ${var.tag} -registry ${local.registry} && cd ../../terraform/cluster && kubectl wait pod --all -n ${var.namespace} --for=condition=ready --timeout=600s"
   }
   depends_on = [terraform_data.deployFlink]
+}
+resource "terraform_data" "set-default-namespace" {
+  provisioner "local-exec" {
+    command = "kubectl config set-context --current --namespace=${var.namespace}"
+  }
+  depends_on = [terraform_data.deploySolution]
 }
