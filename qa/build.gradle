@@ -92,7 +92,9 @@ configurations {
 }
 
 
-task cucumber() {
+task cucumberFullRun() {
+    group = 'test_functionalLocal'
+
     dependsOn assemble, testClasses
     doLast {
         javaexec {
@@ -111,31 +113,10 @@ task cucumber() {
 
 
 
-tasks.register('clear_Run', Exec) {
-    group = 'performanceLocal'
-
-    def osName = System.getProperty("os.name").toLowerCase()
-    def isWindows = osName.contains("win")
-
-    def k6Command = isWindows ? "where k6" : "which k6"
-    def process = k6Command.execute()
-    process.waitFor()
-
-    if (process.exitValue() != 0) {
-        throw new GradleException("`k6` not installed")
-    } else {
-        k6Command = process.text.trim()
-    }
+tasks.register('connectorClear', Exec) {
+    group = 'test_performanceLocal'
 
     def deleteScriptPath = "${projectDir}/src/test/java/performance/delete_kafka_records.sh"
-    def scriptPathTest = "${projectDir}/src/test/java/performance/peakLoadTest.js"
-
-    // macOS/Linux setting:
-    //if (!System.getProperty("os.name").toLowerCase().contains("win")) {
-    //    exec {
-    //        commandLine 'chmod', '+x', deleteScriptPath
-    //    }
-    //}
 
         println "Copy delete_kafka_records.sh to kafka container, to run it .."
         exec {
@@ -150,20 +131,48 @@ tasks.register('clear_Run', Exec) {
     environment 'K6_WEB_DASHBOARD_EXPORT', 'build/test-results/html-report.html'
     environment 'PATH', System.getenv('PATH')
 
+    commandLine 'bash', '-c', "echo 'finished'"
+
+}
+
+
+tasks.register('connectorRun', Exec) {
+    group = 'test_performanceLocal'
+
+    def osName = System.getProperty("os.name").toLowerCase()
+    def isWindows = osName.contains("win")
+
+    def k6Command = isWindows ? "where k6" : "which k6"
+    def process = k6Command.execute()
+    process.waitFor()
+
+    if (process.exitValue() != 0) {
+        throw new GradleException("`k6` not installed")
+    } else {
+        k6Command = process.text.trim()
+    }
+
+    def scriptPathTest = "${projectDir}/src/test/java/performance/peakLoadTest.js"
+
+    environment 'PATH', System.getenv('PATH')
+    environment 'K6_WEB_DASHBOARD', 'true'
+    environment 'K6_WEB_DASHBOARD_EXPORT', 'build/test-results/html-report.html'
+    environment 'PATH', System.getenv('PATH')
+
     commandLine k6Command, 'run',  scriptPathTest
 }
 
+tasks.register('connectorFull') {
+    group = 'test_performanceLocal'
 
-tasks.register('clear_Run_Calculate') {
-    group = 'performanceLocal'
-
-    dependsOn 'clear_Run'
-    finalizedBy 'Calculate'
+    dependsOn 'connectorClear'
+    dependsOn 'connectorRun'
+    finalizedBy 'connectorCalculate'
 }
 
 
-tasks.register('Calculate', Test) {
-    group = 'performanceLocal'
+tasks.register('connectorCalculate', Test) {
+    group = 'test_performanceLocal'
     outputs.upToDateWhen { false }
     useJUnitPlatform()
     filter {
@@ -178,7 +187,7 @@ tasks.register('Calculate', Test) {
     testLogging.showStandardStreams = true
 }
 
-tasks.register('RunJob', Exec) {
+tasks.register('connectorRunJob', Exec) {
     group = 'performanceJob'
 
     def isWindows = System.getProperty("os.name").toLowerCase().contains("win")
