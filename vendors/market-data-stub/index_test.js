@@ -46,7 +46,7 @@ function updateData() {
 }
 //s
 updateData();
-app.listen(3081, () => {
-    console.log("Server is running on port 3081");
+app.listen(3080, () => {
+    console.log("Server is running on port 3080");
 });
 
