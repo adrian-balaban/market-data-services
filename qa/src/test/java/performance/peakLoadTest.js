@@ -60,7 +60,7 @@ const params = {
 export default function () {
 
     const payload = JSON.stringify({
-        timestamp: new Date().toISOString(),
+        //timestamp: new Date().toISOString(), // If missing stub adds timestamp; which is more accurate for performace test
         rates: [
             generateRecord(),
             generateRecord(),

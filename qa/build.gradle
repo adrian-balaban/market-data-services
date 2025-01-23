@@ -61,7 +61,7 @@ dependencies {
 
 }
 
-final String K8S_NAMESPACE="test-perf"
+final String K8S_NAMESPACE="test"
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
