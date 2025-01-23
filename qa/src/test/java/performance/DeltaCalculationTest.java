@@ -77,7 +77,7 @@ public class DeltaCalculationTest {
         System.out.println("HashMap Contents (Sorted by Key):");
         System.out.println("=================================");
         for (Map.Entry<Long, Long> entry : sortedMap.entrySet()) {
-            System.out.printf("Key: %d, Value: %d%n", entry.getKey(), entry.getValue());
+            System.out.printf("Processing Time [ms]: %d, Number of events: %d%n", entry.getKey(), entry.getValue());
         }
     }
 
