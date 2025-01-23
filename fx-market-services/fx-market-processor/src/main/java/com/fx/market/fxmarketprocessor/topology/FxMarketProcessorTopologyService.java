@@ -43,6 +43,7 @@ public class FxMarketProcessorTopologyService {
         KTable<String, FxRate> realtimeFxRateStream = stream.flatMapValues(
                         FxRateEventProto::getRatesList)
                 .mapValues(FxRate::fromFxRateProto)
+                .peek( (key, value) -> log.info("Processing: {}", value.toString()))
                 .groupBy((key, rate) -> rate.getPair().replace("/", ""), Grouped.with(Serdes.String(), new FxRateSerde())) // Triggers repartition and Pair is a new KEY
                 .reduce((aggValue, newValue) -> newValue,
                         Materialized.<String, FxRate, KeyValueStore<Bytes, byte[]>>as(FX_RATES_REALTIME_STORE)
