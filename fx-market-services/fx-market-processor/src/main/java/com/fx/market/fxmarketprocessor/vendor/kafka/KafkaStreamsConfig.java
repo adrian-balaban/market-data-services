@@ -1,9 +1,11 @@
 package com.fx.market.fxmarketprocessor.vendor.kafka;
 
 import com.fx.market.kafka.FxRateEventProtoSerde;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.processor.WallclockTimestampExtractor;
+import org.apache.kafka.streams.state.HostInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +19,7 @@ import java.util.Map;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG;
 import static org.apache.kafka.streams.StreamsConfig.*;
 
+@Slf4j
 @Configuration
 @EnableKafka
 @EnableKafkaStreams
@@ -46,5 +49,12 @@ public class KafkaStreamsConfig {
                 StreamsConfig.RESTORE_CONSUMER_PREFIX, 0,
                 AUTO_OFFSET_RESET_CONFIG, "latest"
         ));
+    }
+
+    @Bean
+    public HostInfo hostInfo() {
+        log.info("Creating host info: {}", applicationServerConfig);
+        var split = applicationServerConfig.split(":");
+        return new HostInfo(split[0], Integer.parseInt(split[1]));
     }
 }

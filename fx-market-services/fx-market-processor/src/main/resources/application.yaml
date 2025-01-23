@@ -8,6 +8,6 @@ server:
 kafka:
   bootstrap-servers: PLAINTEXT://localhost:9093
   topic: fx_rates
-  application-id-config: fx-market-processor-stream-operator
-  application-server-config: localhost:4081
-  application-state-dir-config: /tmp/kafka-streams/fxrates
+  application-id-config: fx-market-processor-stream-operator # Each instance needs to have the same value; to cooperate
+  application-server-config: localhost:4081 # Self host where any other instance can access and connect
+  application-state-dir-config: /tmp/kafka-streams/fxrates # Where state is stored
