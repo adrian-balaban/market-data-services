@@ -1,0 +1,45 @@
+{{- $outer := . -}}
+{{ range .Values.apps }}
+
+{{- if .statefulSet.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .name }}-set
+  labels:
+    managed-by: Helm
+    release: {{ $.Release.Name }}
+spec:
+  serviceName: {{ .name }}-svc
+  replicas: {{ .statefulSet.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .name }}
+      release: {{ $.Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .name }}
+        release: {{ $.Release.Name }}
+        version: {{ $.Values.tag }}
+    spec:
+      containers:
+        - name: {{ .name }}
+          image: "{{ .image.repository }}:{{ if .image.tag }}{{ .image.tag}}{{ else }}{{ $.Values.tag }}{{ end }}"
+          imagePullPolicy: {{ $.Values.pullPolicy }}
+          env:
+{{ if .extraEnv }}{{ toYaml .extraEnv | indent 10 }}{{ end }}
+          ports:
+            - name: http
+              containerPort: {{ .service.port }}
+              protocol: TCP
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ .name }}-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+{{- end }}
+{{ end }}
