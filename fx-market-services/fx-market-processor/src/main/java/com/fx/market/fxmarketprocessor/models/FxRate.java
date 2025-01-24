@@ -16,7 +16,7 @@ public class FxRate {
     String quoteCurrency;
     String ask; // keep as string to avoid conversion
     String bid; // keep as string to avoid conversion
-
+    String createdAt;
 
     public static FxRate fromFxRateProto(com.fx.market.kafka.message.FxRateProto fxRateProto) {
         return FxRate.builder()
@@ -25,6 +25,7 @@ public class FxRate {
                 .quoteCurrency(fxRateProto.getQuoteCurrency())
                 .ask(fxRateProto.getAsk())
                 .bid(fxRateProto.getBid())
+                .createdAt(fxRateProto.getCreatedAt())
                 .build();
     }
 }
