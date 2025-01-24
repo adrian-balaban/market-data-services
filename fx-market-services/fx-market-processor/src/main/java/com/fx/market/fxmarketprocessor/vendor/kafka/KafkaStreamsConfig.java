@@ -29,8 +29,10 @@ public class KafkaStreamsConfig {
     private String bootstrapServers;
     @Value("${kafka.application-id-config}")
     private String applicationIdConfig;
-    @Value("${kafka.application-server-config}")
-    private String applicationServerConfig;
+    @Value("${kafka.application-self-host}")
+    private String applicationSelfHost;
+    @Value("${kafka.application-self-port}")
+    private String getApplicationSelfPort;
     @Value("${kafka.application-state-dir-config}")
     private String applicationStateDirConfig;
 
@@ -39,7 +41,7 @@ public class KafkaStreamsConfig {
     public KafkaStreamsConfiguration kStreamsConfigs() {
         return new KafkaStreamsConfiguration(Map.of(
                 APPLICATION_ID_CONFIG, applicationIdConfig,
-                APPLICATION_SERVER_CONFIG, applicationServerConfig,
+                APPLICATION_SERVER_CONFIG, String.format("%s:%s", applicationSelfHost, getApplicationSelfPort),
                 STATE_DIR_CONFIG, applicationStateDirConfig,
                 BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
                 DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Integer().getClass().getName(),
@@ -53,8 +55,8 @@ public class KafkaStreamsConfig {
 
     @Bean
     public HostInfo hostInfo() {
-        log.info("Creating host info: {}", applicationServerConfig);
-        var split = applicationServerConfig.split(":");
-        return new HostInfo(split[0], Integer.parseInt(split[1]));
+        final String selfUrl = String.format("%s:%s", applicationSelfHost, getApplicationSelfPort);
+        log.info("Creating host info: {}", selfUrl);
+        return new HostInfo(applicationSelfHost, Integer.parseInt(getApplicationSelfPort));
     }
 }

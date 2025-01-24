@@ -38,6 +38,9 @@ apps:
 
     volumes: []
 
+    statefulSet:
+      enabled: false
+
     autoscaling:
       enabled: false
       minReplicas: 1
@@ -86,6 +89,9 @@ apps:
 
     volumes: []
 
+    statefulSet:
+      enabled: false
+
     autoscaling:
       enabled: false
       minReplicas: 1
@@ -123,7 +129,16 @@ apps:
         value: "fx_rates"
       - name: KAFKA_APPLICATION_ID_CONFIG
         value: "fx-market-processor-stream-operator"
-
+      - name: SELF_HOST
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+      - name: KAFKA_APPLICATION_SELF_HOST
+        value: "$(SELF_HOST).fx-market-processor-svc"
+      - name: KAFKA_APPLICATION_SELF_PORT
+        value: "8080"
+      - name: KAFKA_APPLICATION_STATE_DIR_CONFIG
+        value: "/tmp/kafka-streams/fxrates"
     resources:
       limits:
         cpu: 1
@@ -133,6 +148,10 @@ apps:
         memory: 3072Mi
 
     volumes: []
+
+    statefulSet:
+      enabled: true
+      replicas: 9
 
     autoscaling:
       enabled: false
@@ -182,6 +201,9 @@ apps:
 
     volumes: []
 
+    statefulSet:
+      enabled: false
+
     autoscaling:
       enabled: false
       minReplicas: 1
@@ -224,6 +246,9 @@ apps:
         memory: 3584Mi
 
     volumes: []
+
+    statefulSet:
+      enabled: false
 
     autoscaling:
       enabled: false
