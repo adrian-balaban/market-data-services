@@ -51,6 +51,4 @@ public class FxMarketProcessorTopologyService {
                                 .withValueSerde(new FxRateSerde())); // Triggers repartition tracks changelog
 
     }
-
-
 }
