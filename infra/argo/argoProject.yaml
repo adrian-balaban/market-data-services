@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: market-data-___CHANGE_ME_NAMESPACE___
+  namespace: ___CHANGE_ME_NAMESPACE___
+spec:
+  description: "Project for ___CHANGE_ME_ENV___ environment"
+  sourceRepos:
+    - '*'
+  destinations:
+    - namespace: '___CHANGE_ME_NAMESPACE___'
+      server: '*'
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
