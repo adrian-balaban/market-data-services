@@ -28,6 +28,9 @@ apps:
 
     volumes: []
 
+    statefulSet:
+      enabled: false
+
     autoscaling:
       enabled: false
       minReplicas: 1

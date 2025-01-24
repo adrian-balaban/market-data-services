@@ -6,44 +6,53 @@ let clients = [];
 app.use(express.json());
 app.use(express.static("./public"));
 
-let fxRates =[
-    { 
-        "pair": "USD/JPY",
-        "baseCurrency": "USD",
-        "quoteCurrency": "JPY",
-        "ask": 110.45,
-        "bid": 108.45
-    },
-    {
-        "pair": "EUR/USD",
-        "baseCurrency": "EUR",
-        "quoteCurrency": "USD",
-        "ask": 1.1357,
-        "bid": 1.1337
-    }
-];
-let record = { "timestamp": new Date().toISOString(), rates: [ ...fxRates ] }
+const ccyPairs = [ // Let's simulate similar list of CCY Pairs as Bloomberg publishes
+    "EUR/USD", "USD/JPY", "GBP/USD", "AUD/USD", "USD/CAD", "USD/CHF", "NZD/USD", "EUR/JPY",
+    "GBP/JPY", "EUR/GBP", "AUD/JPY", "EUR/AUD", "EUR/CHF", "AUD/NZD", "NZD/JPY", "GBP/AUD",
+    "GBP/CAD", "EUR/NZD", "AUD/CAD", "GBP/CHF", "AUD/CHF", "EUR/CAD", "CAD/JPY", "GBP/NZD",
+    "CAD/CHF", "CHF/JPY", "NZD/CAD", "NZD/CHF", "USD/SEK", "EUR/SEK", "GBP/SEK", "USD/NOK",
+    "EUR/NOK", "GBP/NOK", "USD/ZAR", "EUR/ZAR", "GBP/ZAR", "USD/MXN", "EUR/MXN", "GBP/MXN",
+    "USD/BRL", "EUR/BRL", "GBP/BRL", "USD/TRY", "EUR/TRY", "GBP/TRY", "USD/INR", "EUR/INR",
+    "EUR/INR", "USD/HKD", "EUR/HKD", "GBP/HKD", "USD/SGD", "EUR/SGD", "GBP/SGD", "USD/CNH",
+    "EUR/CNH", "GBP/CNH", "USD/KRW", "EUR/KRW", "GBP/KRW", "USD/THB", "EUR/THB", "GBP/THB",
+    "USD/IDR", "EUR/IDR", "GBP/IDR", "USD/MYR", "EUR/MYR", "GBP/MYR", "USD/ILS", "EUR/ILS",
+    "GBP/ILS", "USD/RUB", "EUR/RUB", "GBP/RUB", "USD/PLN", "EUR/PLN", "GBP/PLN", "USD/HUF",
+    "EUR/HUF", "GBP/HUF", "USD/CZK", "EUR/CZK", "GBP/CZK", "USD/DKK", "EUR/DKK", "GBP/DKK",
+    "USD/NZD", "EUR/NZD", "GBP/NZD", "USD/TRY", "EUR/TRY", "GBP/TRY", "USD/PKR", "EUR/PKR",
+    "GBP/PKR", "USD/ARS", "EUR/ARS", "GBP/ARS", "USD/PHP", "EUR/PHP", "GBP/PHP", "USD/SAR",
+    "EUR/SAR", "GBP/SAR", "USD/QAR", "EUR/QAR", "GBP/QAR", "USD/OMR", "EUR/OMR", "GBP/OMR",
+    "USD/BHD", "EUR/BHD", "GBP/BHD", "USD/KWD", "EUR/KWD", "GBP/KWD", "USD/AED", "EUR/AED"
+]
 
-function formatToFourDecimals(num) {
-  num = String(num);
-  let match = num.match(/^\d+\.0*\d{0,4}/);
-  if (match) {
-    return match[0];
-  }
-  return num;
+function getRandomCcyPair() {
+    const randomIndex = Math.floor(Math.random() * ccyPairs.length);
+    return ccyPairs[randomIndex];
+
+}
+
+function generateRecord() {
+    const randomCcyPair = getRandomCcyPair();
+    let [baseCurrency, quoteCurrency] = randomCcyPair.split('/');
+    return {
+        pair: randomCcyPair,
+        baseCurrency: baseCurrency,
+        quoteCurrency: quoteCurrency,
+        ask: (Math.random() * 2).toFixed(4),
+        bid: (Math.random() * 2).toFixed(4)
+    }
 }
 
 function updateFxRates() {
-    fxRates.forEach(
-        item => {
-            const newAsk = Number(item["ask"]) + (Math.random() - 0.5) * 0.001;
-            const newBid = Number(item["bid"]) + (Math.random() - 0.5) * 0.001;
-            item["ask"] = formatToFourDecimals(newAsk);
-            item["bid"] = formatToFourDecimals(newBid);
-        }
-    )
-}
+    let fxRates =[
+        generateRecord(),
+        generateRecord(),
+        generateRecord(),
+        generateRecord(),
+        generateRecord()
+    ];
+   return { "timestamp": new Date().toISOString(), rates: [ ...fxRates ] }
 
+}
 
 function sendDataToAllClients(record) {
     record['timestamp'] =  new Date().toISOString();
@@ -75,8 +84,8 @@ app.get("/forex/rates", async (req, res) => {
 
 
 function updateData() { 
+    const record = updateFxRates(); // Update data with a random number 
     sendDataToAllClients(record);
-    updateFxRates(); // Update data with a random number 
     setTimeout(updateData, 1000); // Schedule next update in 10ms 
 }
 
