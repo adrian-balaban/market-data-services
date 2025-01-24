@@ -10,7 +10,7 @@ so that I can state that the product is **production ready**.
 ## Scope of Testing
 
 ### What We Are Testing
-
+![test_image.png](images/test_image.png)
 
 The focus of this test plan is the **Stub → Connector → Kafka** data flow on the **Kubernetes cluster**.
 
@@ -25,16 +25,12 @@ All requests go through **`http://localhost:3080/emitEvent`**.
 
 ## Test Execution Strategy
 
-### Unit Tests *(N/A)*
-- Validate individual components (Stub, Connector, Kafka Consumer logic).
-
 ### Functional Tests *(using Cucumber)*
 - **Verify** data flow across **Stub → Connector → Kafka**.
 - **Validate** that messages are correctly published from Stub.
 - **Ensure** that Kafka receives and stores the messages as expected.
 
 ### Load & Performance Tests *(using k6)*
-- Simulate real-world traffic conditions.
 - Measure message **throughput** and **latency** between Stub and Kafka.
 - Stress testing under peak load conditions.
 
@@ -75,6 +71,7 @@ All requests go through **`http://localhost:3080/emitEvent`**.
 ---
 
 ## **How to Run Locally**
+![test_image2.png](images/test_image2.png)
 Run tests via **Gradle Tasks**:
 - `local` → Runs **Cucumber functional tests** locally.
 - `Full` → Runs all test stages: **calculate, clear, and run**.
@@ -82,14 +79,11 @@ Run tests via **Gradle Tasks**:
 ---
 
 ## **How to Run as a Kubernetes Job**
-```sh
-kubectl apply -f src/test/java/k8s/k6_job.yaml
-kubectl get jobs -n test
-kubectl logs job/k6-performance-test -n test -f
-```
+![test_image3.png](images/test_image3.png)
 ---
 
 
 ---
-
-This test plan ensures a **structured and automated approach** to validating the **Stub → Connector → Kafka** workflow.
+## **Next Steps**
+- Implement the performance tests as an k8s job
+- Automate performance testing within the pipeline
