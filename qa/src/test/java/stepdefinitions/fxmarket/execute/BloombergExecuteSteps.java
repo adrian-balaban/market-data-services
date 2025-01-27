@@ -34,17 +34,24 @@ public class BloombergExecuteSteps {
     @When("the rates are sent by Bloomberg")
     public void sendRatesData() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
+
+        Object ratesObj = SharedScenarioContext.getInstance().get("rates");
+
+        if (ratesObj == null) {
+            throw new IllegalStateException("rates is not set in SharedScenarioContext!");
+        }
+
+        String requestBody = new Gson().toJson(ratesObj);
+
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(endpoint))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                        .ofString(SharedScenarioContext.getInstance().get("requestBody").toString()))
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
         response = client.send(request, HttpResponse.BodyHandlers.ofString());
         Assertions.assertNotNull(response, "Response should not be null");
         Assertions.assertEquals(200, response.statusCode(), "Unexpected HTTP status code");
-
     }
 
 
