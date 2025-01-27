@@ -76,7 +76,6 @@ public class DeltaCalculationTest {
         // Use TreeMap to sort the HashMap by key
         TreeMap<Long, Long> sortedMap = new TreeMap<>(map);
 
-        System.out.println("HashMap Contents (Sorted by Key):");
         System.out.println("=================================");
         for (Map.Entry<Long, Long> entry : sortedMap.entrySet()) {
             System.out.printf("Processing Time [ms]: %d, Number of events: %d%n", entry.getKey(), entry.getValue());
