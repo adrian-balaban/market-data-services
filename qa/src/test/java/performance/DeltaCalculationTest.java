@@ -2,6 +2,7 @@ package performance;
 
 import com.fx.market.kafka.message.FxRateEventProto;
 import helpers.kafka.KafkaTestConsumer;
+import io.cucumber.java.en.Then;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -20,6 +21,7 @@ public class DeltaCalculationTest {
     String topic = "fx_rates";
 
     @Test
+    @Then("FX Rates landed on kafka")
     public void deltaCalculation() throws Exception {
 
         Consumer<String, byte[]> consumer = KafkaTestConsumer.getTestKafkaConsumer();
