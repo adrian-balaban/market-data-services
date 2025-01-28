@@ -11,7 +11,7 @@ Test Plan for Stub -> Connector -> Kafka in Kubernetes Cluster
 The focus of this test plan is the **Stub → Connector → Kafka** data flow on the **Kubernetes cluster**.
 
 - **Stub (`fx-market-data-stub`)**: Simulated data source publishing messages.
-- **Connector (`fx-market-connector`)**: Receives messages and sends them to Kafka.
+- **Connector (`fx-market-connector and camel-fx-market-connector`)**: Receives messages and sends them to Kafka.
 - **Kafka (`kafka-0`)**: Stores and processes the received messages.
 - **End-to-End Data Flow**: Ensuring messages are properly published, transferred, stored, and consumed.
 
@@ -28,6 +28,7 @@ All requests go through the technical endpoint to simulate events FX Market Data
 - **Ensure** that Kafka receives and stores the messages as expected.
 
 ### Load & Performance Tests *(using k6)*
+- Measure performance of fx-market-connector and camel-fx-market-connector
 - Measure message **throughput** and **latency** between Stub and Kafka.
 - Stress testing under peak load conditions.
 
