@@ -41,7 +41,7 @@ public abstract class GenericKafkaStreamsRepository<K, V> {
         var metadata = streamsBuilderFactoryBean.getKafkaStreams().queryMetadataForKey(
                 storeName, key, keySerde.serializer()
         );
-        log.info("MJDEBUG: Record is on : {}", metadata.activeHost());
+        log.info("Record is on : {}", metadata.activeHost());
         var recordHost = metadata.activeHost();
         if (hostInfo.equals(recordHost)) {
             log.info("Searching locally for key: {}", key);
