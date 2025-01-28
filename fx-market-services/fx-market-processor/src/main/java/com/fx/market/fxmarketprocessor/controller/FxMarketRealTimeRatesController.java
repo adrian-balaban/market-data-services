@@ -9,19 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
-
 @RestController
 @RequestMapping("/fx/rates")
 public class FxMarketRealTimeRatesController {
 
     @Autowired
     private FxMarketRealTimeRatesService fxMarketRealTimeRatesService;
-
-    @GetMapping
-    public HashMap<String, FxRate> getAllFxRate() {
-        return fxMarketRealTimeRatesService.getMostRecentFxRates();
-    }
 
     @GetMapping("/{ccyPair}")
     public Mono<FxRate> getFxRateByCcyPair(@PathVariable String ccyPair) {
