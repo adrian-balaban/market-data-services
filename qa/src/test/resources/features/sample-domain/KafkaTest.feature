@@ -5,9 +5,9 @@ Feature: Kafka test feature
      | pair      | baseCurrency | quoteCurrency | ask    | bid   |
      | USD/JPY   | USD          | JPY           | *      | *     |
      | EUR/USD   | EUR          | USD           | *      | *     |
-     | PLN/USD   | EUR          | USD           | *      | *     |
+     | PLN/USD   | PLN          | USD           | *      | *     |
 
     When the rates are sent by Bloomberg
     Then FX Rates landed on kafka
-    Then Rates available on endpoint
+    Then Rates successfully updated
 
