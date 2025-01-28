@@ -23,9 +23,11 @@ public class ProcessorValidateSteps {
 
     @Then("Rates successfully updated")
     public void ratesUpdated() throws Exception {
-        RatesRequest ratesRequest = (RatesRequest) SharedScenarioContext.getInstance().get("request");
+        var expectedTimestamp = SharedScenarioContext.getInstance().get("timestamp");
 
-        for (Rate expectedRate : ratesRequest.getRates()) {
+        RatesRequest expectedRates = (RatesRequest) SharedScenarioContext.getInstance().get("request");
+
+        for (Rate expectedRate : expectedRates.getRates()) {
 
             String url = endpoint + "/fx/rates/" + expectedRate.getBaseCurrency() + expectedRate.getQuoteCurrency();
             RateResponse actualRateResponse = sendGetRequest(url);
@@ -37,6 +39,9 @@ public class ProcessorValidateSteps {
             assertEquals(expectedRate.getQuoteCurrency(), actualRateResponse.getQuoteCurrency(), "Quote currency mismatch");
             assertEquals(expectedRate.getAsk(), actualRateResponse.getAsk(), "Ask price mismatch");
             assertEquals(expectedRate.getBid(), actualRateResponse.getBid(), "Bid price mismatch");
+            assertEquals(expectedRate.getBid(), actualRateResponse.getBid(), "Bid price mismatch");
+            assertEquals(expectedTimestamp, actualRateResponse.getCreatedAt(), "CreatedAtmismatch");
+
         }
     }
 
