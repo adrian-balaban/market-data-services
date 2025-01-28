@@ -1,9 +1,5 @@
-# Test Plan for Stub -> Connector -> Kafka in Kubernetes Cluster
-
-## Story
-As a project owner,  
-I want to ensure high quality of the product,  
-so that I can state that the product is **production ready**.
+# Test plan for injecting data into Kafka
+Test Plan for Stub -> Connector -> Kafka in Kubernetes Cluster
 
 ---
 
@@ -19,7 +15,8 @@ The focus of this test plan is the **Stub → Connector → Kafka** data flow on
 - **Kafka (`kafka-0`)**: Stores and processes the received messages.
 - **End-to-End Data Flow**: Ensuring messages are properly published, transferred, stored, and consumed.
 
-All requests go through **`http://localhost:3080/emitEvent`**.
+All requests go through the technical endpoint to simulate events FX Market Data provider 
+**`http://localhost:3080/emitEvent`**. 
 
 ---
 
