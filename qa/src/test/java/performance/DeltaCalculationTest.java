@@ -21,7 +21,6 @@ public class DeltaCalculationTest {
     String topic = "fx_rates";
 
     @Test
-    @Then("FX Rates landed on kafka")
     public void deltaCalculation() throws Exception {
 
         Consumer<String, byte[]> consumer = KafkaTestConsumer.getTestKafkaConsumer();
