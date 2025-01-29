@@ -1,34 +1,10 @@
-plugins {
-    id "java"
-    id "java-library"
-    id 'maven-publish'
+apply plugin: "java-library"
+
+repositories {
+    mavenCentral()
 }
 
 dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 }
-
-
-publishing {
-    repositories {
-        maven {
-            name = "myDomainRepository"
-            url = "http://localhost:8080/snapshots"
-            allowInsecureProtocol = true
-            credentials(PasswordCredentials)
-            authentication {
-                basic(BasicAuthentication)
-            }
-        }
-    }
-    publications {
-        maven(MavenPublication) {
-            groupId = 'com.fx.market'
-            version = '0.0.1'
-            artifactId = "model-bloomberg-stub"
-            from components.java
-        }
-    }
-}
-

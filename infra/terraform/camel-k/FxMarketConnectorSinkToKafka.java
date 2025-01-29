@@ -22,7 +22,7 @@ public class FxMarketConnectorSinkToKafka extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        String url = "http://fx-market-data-stub-svc.fxmarket:3080";
+        String url = "http://fx-market-data-stub-svc.adrian-fxmarket:3080";
         //FxRateProtoMapper fxRateProtoMapper;
         //ExtractSseDataBean sseMapper;
         String FX_MARKET_DATA_PATH = "/forex/rates";
