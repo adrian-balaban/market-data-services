@@ -2,3 +2,8 @@
 .idea/
 modules/*.iml
 *.xml
+
+/infra/terraform/cluster_kind/terraform.tfstate
+/infra/terraform/cluster_kind/.terraform.tfstate.lock.info
+/infra/terraform/cluster_kind/.terraform.lock.hcl
+/infra/terraform/cluster_kind/.terraform/*
