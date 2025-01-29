@@ -25,6 +25,7 @@ public class FxRateProtoMapper {
                             .setPair(fxRate.getPair())
                             .setBaseCurrency(fxRate.getBaseCurrency())
                             .setQuoteCurrency(fxRate.getQuoteCurrency())
+                            .setCreatedAt(fxRateEvent.getTimestamp())
                             .build());
         });
 
