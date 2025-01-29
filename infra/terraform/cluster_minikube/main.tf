@@ -4,7 +4,7 @@ module "minikube_cluster" {
 module "knative" {
   source     = "../modules/knative"
   depends_on = [module.minikube_cluster]
-}/*
+}
 module "springboot_solution_dev" {
   source                     = "../modules/springboot_solution"
   tag                        = var.tag
@@ -15,7 +15,7 @@ module "springboot_solution_dev" {
   registry_port              = var.registry_port
   kind_or_minikube           = "minikube"
   depends_on = [module.knative]
-}
+}/*
 module "springboot_solution_test" {
   count                      = var.deploy_test ? 1 : 0
   source                     = "../modules/springboot_solution"
@@ -31,7 +31,7 @@ module "camel_k_solution_dev" {
   count      = 1
   source     = "../modules/camel-k-solution"
   namespace  = var.namespaces_camel_k_solution["dev"]
-  depends_on = [module.knative]
+  depends_on = [module.knative,module.springboot_solution_dev]
 }/*
 module "camel_k_solution_test" {
   count      = var.deploy_test ? 1 : 0

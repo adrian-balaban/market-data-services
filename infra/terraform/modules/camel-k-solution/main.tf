@@ -133,19 +133,19 @@ resource "terraform_data" "sse_connector_direct_to_kafka" {
 }
 resource "terraform_data" "sse_connector" {
   provisioner "local-exec" {
-    command = "kamel run ../camel-k/FxMarketConnector.java -n ${var.namespace}"
+    command = "kamel delete fx-market-connector || true && kamel run ../camel-k/FxMarketConnector.java -n ${var.namespace}"
   }
   depends_on = [null_resource.set_default_namespace]
 }
 resource "terraform_data" "eurusd_extractor" {
   provisioner "local-exec" {
-    command = "kamel run ../camel-k/FxMarketExtractorEurUsd.java -n ${var.namespace}"
+    command = "kamel delete fx-market-extractor || true && kamel run ../camel-k/FxMarketExtractorEurUsd.java -n ${var.namespace}"
   }
   depends_on = [terraform_data.sse_connector]
 }
 resource "terraform_data" "eurusd_output_events_eurusd" {
   provisioner "local-exec" {
-    command = "kamel run ../camel-k/FxMarketOutputStream.java -n ${var.namespace}"
+    command = "kamel delete fx-market-output-stream || true && kamel run ../camel-k/FxMarketOutputStream.java -n ${var.namespace}"
   }
   depends_on = [terraform_data.eurusd_extractor]
 }
@@ -155,7 +155,7 @@ resource "terraform_data" "kamel_get_integration_status" {
   }
   depends_on = [terraform_data.sse_connector_direct_to_kafka]
 }
-/*resource "terraform_data" "trump_bitcoin_rm_integrations" {
+resource "terraform_data" "trump_bitcoin_rm_integrations" {
   provisioner "local-exec" {
     command = "kamel delete better-predictor || true && kamel delete cautious-investor-adapter-sink || true && kamel delete cautious-investor-service || true && kamel delete market-source || true && kamel delete silly-investor || true && kamel delete simple-predictor || true"
   }
@@ -168,4 +168,3 @@ resource "terraform_data" "trump_bitcoin_add_integrations" {
   depends_on = [terraform_data.trump_bitcoin_rm_integrations]
 }
 
-*/

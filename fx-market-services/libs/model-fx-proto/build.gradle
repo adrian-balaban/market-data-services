@@ -1,7 +1,6 @@
 plugins {
     id "java"
     id "java-library"
-    id 'maven-publish'
     id "com.google.protobuf" version "0.9.4"
 }
 
@@ -36,26 +35,3 @@ compileJava   {
 compileJava.dependsOn generateProto
 
 sourceSets.main.java.srcDir "/build/generated/source/proto/main/java"
-
-publishing {
-    repositories {
-        maven {
-            name = "myDomainRepository"
-            url = "http://localhost:8080/snapshots"
-            allowInsecureProtocol = true
-            credentials(PasswordCredentials)
-            authentication {
-                basic(BasicAuthentication)
-            }
-        }
-    }
-    publications {
-        maven(MavenPublication) {
-            groupId = 'com.fx.market'
-            version = '0.0.1'
-            artifactId = "model-fx-proto"
-            from components.java
-        }
-    }
-}
-
