@@ -2,13 +2,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: market-data-externals
+  name: market-data-externals-___CHANGE_ME_NAMESPACE___
   namespace: ___CHANGE_ME_NAMESPACE___
 spec:
-  project: default
+  project: market-data-___CHANGE_ME_NAMESPACE___
   source:
     repoURL: 'https://github.com/Jereczek/market-data-processor.git'
-    targetRevision: ___CHANGE_ME_BRANCH___ #master
+    targetRevision: ___CHANGE_ME_BRANCH___
     path: 'infra/argo/externals/env/___CHANGE_ME_ENV___'
   destination:
     server: 'https://kubernetes.default.svc'

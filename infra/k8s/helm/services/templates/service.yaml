@@ -9,7 +9,12 @@ metadata:
     managed-by: Helm
     release: {{ $.Release.Name }}
 spec:
+{{- if not .statefulSet.enabled }}
   type: {{ .service.type }}
+{{- end }}
+{{- if .statefulSet.enabled }}
+  clusterIP: None
+{{- end }}
   ports:
     - port: {{ .service.port }}
       targetPort: {{ .service.port }}
