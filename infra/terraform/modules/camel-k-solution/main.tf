@@ -125,18 +125,17 @@ resource "null_resource" "set_default_namespace" {
     kubectl_manifest.camel_k_integration_platform
   ]
 }
-
 resource "terraform_data" "sse_connector_direct_to_kafka" {
   provisioner "local-exec" {
-    command = "kamel run --dev -d github:adrian-n-balaban/market-data-services-lib/v0.0.1  ../camel-k/FxMarketConnectorSinkToKafka.java -n ${var.namespace}"
+    command = "kamel delete fx-market-connector-sink-to-kafka ||true && kamel run -d github:adrian-n-balaban/market-data-services-lib/master ../camel-k/FxMarketConnectorSinkToKafka.java -n ${var.namespace} ||true && kamel debug fx-market-connector-sink-to-kafka -n ${var.namespace} ||true"
   }
   depends_on = [null_resource.set_default_namespace]
 }
-/*resource "terraform_data" "sse_connector" {
+resource "terraform_data" "sse_connector" {
   provisioner "local-exec" {
     command = "kamel run ../camel-k/FxMarketConnector.java -n ${var.namespace}"
   }
-  depends_on = [terraform_data.sse_connector_direct_to_kafka]
+  depends_on = [null_resource.set_default_namespace]
 }
 resource "terraform_data" "eurusd_extractor" {
   provisioner "local-exec" {
@@ -155,6 +154,18 @@ resource "terraform_data" "kamel_get_integration_status" {
     command = "kamel get -n ${var.namespace}"
   }
   depends_on = [terraform_data.sse_connector_direct_to_kafka]
+}
+/*resource "terraform_data" "trump_bitcoin_rm_integrations" {
+  provisioner "local-exec" {
+    command = "kamel delete better-predictor || true && kamel delete cautious-investor-adapter-sink || true && kamel delete cautious-investor-service || true && kamel delete market-source || true && kamel delete silly-investor || true && kamel delete simple-predictor || true"
+  }
+  depends_on = [terraform_data.sse_connector_direct_to_kafka]
+}
+resource "terraform_data" "trump_bitcoin_add_integrations" {
+  provisioner "local-exec" {
+    command = "kamel run ../camel-k/crypto-trump/market-source.yaml -w && kamel run --name simple-predictor -p predictor.name=simple ../camel-k/crypto-trump/Predictor.java -t knative-service.max-scale=1 -w && kamel run --name better-predictor -p predictor.name=better -p algorithm.sensitivity=0.0005 ../camel-k/crypto-trump/Predictor.java -t knative-service.max-scale=1 -w && kamel run ../camel-k/crypto-trump/SillyInvestor.java -w && kamel run ../camel-k/crypto-trump/CautiousInvestorService.java -w && kamel run ../camel-k/crypto-trump/CautiousInvestorAdapterSink.java -w"
+  }
+  depends_on = [terraform_data.trump_bitcoin_rm_integrations]
 }
 
 */

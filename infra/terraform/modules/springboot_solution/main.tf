@@ -31,7 +31,7 @@ resource "terraform_data" "deployFlink" {
 }
 resource "terraform_data" "undeployExternals" {
   provisioner "local-exec" {
-    command = "helm uninstall --namespace ${var.namespace} fx-market-externals || true"
+    command = "helm uninstall --namespace ${var.namespace} fx-market-externals || true && sleep 5"
   }
   depends_on = [terraform_data.deployFlink]
 }
@@ -43,7 +43,7 @@ resource "terraform_data" "deployExternals" {
 }
 resource "terraform_data" "undeploySolution" {
   provisioner "local-exec" {
-    command = "helm uninstall --namespace ${var.namespace} fx-market-services || true"
+    command = "helm uninstall --namespace ${var.namespace} fx-market-services || true && sleep 5"
   }
   depends_on = [terraform_data.deployExternals]
 }

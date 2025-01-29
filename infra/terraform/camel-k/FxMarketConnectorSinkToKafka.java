@@ -25,7 +25,7 @@ public class FxMarketConnectorSinkToKafka extends RouteBuilder {
         String url = "http://fx-market-data-stub-svc.fxmarket:3080";
         //FxRateProtoMapper fxRateProtoMapper;
         //ExtractSseDataBean sseMapper;
-        static final String FX_MARKET_DATA_PATH = "/forex/rates";
+        String FX_MARKET_DATA_PATH = "/forex/rates";
         String bootstrapServers = "PLAINTEXT://kafka.fxmarket:9071";
         String topic = "fx_rates_camel_k";
 

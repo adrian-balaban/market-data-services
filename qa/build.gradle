@@ -1,4 +1,3 @@
-
 buildscript {
 
     ext {
@@ -42,15 +41,10 @@ dependencyManagement {
 }
 
 dependencies {
-  //  testImplementation "io.cucumber:cucumber-java:${CUCUMBER_VERSION}"
-   // testImplementation "io.cucumber:cucumber-junit-platform-engine:${CUCUMBER_VERSION}"
-    //testImplementation "org.junit.platform:junit-platform-suite:${JUNIT_PLATFORM}"
-    //testImplementation "org.junit.jupiter:junit-jupiter:5.10.0"
-    //implementation project(':model-fx-proto')
     // Core dependencies
     implementation project(':model-fx-proto')
     implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'org.apache.kafka:kafka-clients:3.5.1'
+    implementation 'org.apache.kafka:kafka-clients:3.7.1'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.springframework:spring-context'
     testImplementation 'com.google.protobuf:protobuf-java:3.25.5'
@@ -63,8 +57,11 @@ dependencies {
     testImplementation 'org.springframework.kafka:spring-kafka-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.cucumber:cucumber-spring:7.20.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 
 }
+
+final String K8S_NAMESPACE="dev"
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -79,7 +76,7 @@ configurations {
 
 test {
     useJUnitPlatform {
-        includeEngines 'cucumber'
+        includeEngines 'junit-jupiter', 'cucumber'
     }
     outputs.upToDateWhen { false }
     testLogging {
@@ -95,7 +92,9 @@ configurations {
 }
 
 
-task cucumber() {
+task cucumberFullRun() {
+    group = 'test_functionalLocal'
+
     dependsOn assemble, testClasses
     doLast {
         javaexec {
@@ -110,6 +109,99 @@ task cucumber() {
             ]
         }
     }
+}
+
+
+
+tasks.register('connectorClear', Exec) {
+    group = 'test_performanceLocal'
+
+    def deleteScriptPath = "${projectDir}/src/test/java/performance/delete_kafka_records.sh"
+
+        println "Copy delete_kafka_records.sh to kafka container, to run it .."
+        exec {
+            commandLine "sh", "-c", """
+                kubectl cp ${deleteScriptPath} ${K8S_NAMESPACE}/kafka-0:/tmp/delete_kafka_records.sh && \
+                kubectl exec -n ${K8S_NAMESPACE} kafka-0 -- bash -c 'chmod +x /tmp/delete_kafka_records.sh && /tmp/delete_kafka_records.sh'
+            """
+        }
+
+    environment 'PATH', System.getenv('PATH')
+    environment 'K6_WEB_DASHBOARD', 'true'
+    environment 'K6_WEB_DASHBOARD_EXPORT', 'build/test-results/html-report.html'
+    environment 'PATH', System.getenv('PATH')
+
+    commandLine 'bash', '-c', "echo 'finished'"
+
+}
+
+
+tasks.register('connectorRun', Exec) {
+    group = 'test_performanceLocal'
+
+    def osName = System.getProperty("os.name").toLowerCase()
+    def isWindows = osName.contains("win")
+
+    def k6Command = isWindows ? "where k6" : "which k6"
+    def process = k6Command.execute()
+    process.waitFor()
+
+    if (process.exitValue() != 0) {
+        throw new GradleException("`k6` not installed")
+    } else {
+        k6Command = process.text.trim()
+    }
+
+    def scriptPathTest = "${projectDir}/src/test/java/performance/peakLoadTest.js"
+
+    environment 'PATH', System.getenv('PATH')
+    environment 'K6_WEB_DASHBOARD', 'true'
+    environment 'K6_WEB_DASHBOARD_EXPORT', 'build/test-results/html-report.html'
+    environment 'PATH', System.getenv('PATH')
+
+    commandLine k6Command, 'run',  scriptPathTest
+}
+
+tasks.register('connectorFull') {
+    group = 'test_performanceLocal'
+
+    dependsOn 'connectorClear'
+    dependsOn 'connectorRun'
+    finalizedBy 'connectorCalculate'
+}
+
+
+tasks.register('connectorCalculate', Test) {
+    group = 'test_performanceLocal'
+    outputs.upToDateWhen { false }
+    useJUnitPlatform()
+    filter {
+        includeTestsMatching "performance.DeltaCalculationTest.deltaCalculation"
+    }
+    testLogging {
+        events "passed", "failed", "skipped"
+        exceptionFormat "full"
+        showStandardStreams = true
+        showStackTraces = true
+    }
+    testLogging.showStandardStreams = true
+}
+
+tasks.register('connectorRunJob', Exec) {
+    group = 'performanceJob'
+
+    def isWindows = System.getProperty("os.name").toLowerCase().contains("win")
+    def shell = isWindows ? "cmd" : "bash"
+    def shellFlag = isWindows ? "/c" : "-c"
+
+    def scriptPath = "${projectDir}/src/test/java/performance/peakLoadTest.js"
+
+    commandLine shell, shellFlag, """
+        kubectl create configmap k6-performance --from-file=${scriptPath} -n ${K8S_NAMESPACE} --dry-run=client -o yaml | kubectl apply -f - && \
+        kubectl delete job k6-performance-test -n ${K8S_NAMESPACE} --ignore-not-found && \
+        kubectl apply -f src/test/java/k8s/k6_job.yaml
+    """
+
 }
 
 tasks.named('bootJar') {

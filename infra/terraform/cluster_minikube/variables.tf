@@ -19,7 +19,7 @@ variable "test" {
 }
 variable "tag" {
   type    = string
-  default = "0.4.0"
+  default = "0.3.0"
 }
 variable "registry_host" {
   type    = string
@@ -36,14 +36,14 @@ variable "environments" {
 variable "namespaces_springboot_solution" {
   type = map(string)
   default = {
-    "dev"  = "fxmarket"
-    "test" = "test"
+    "dev"  = "adrian-fxmarket"
+    "test" = "adrian-test"
   }
 }
 variable "namespaces_camel_k_solution" {
   type = map(string)
   default = {
-    "dev"  = "camel-k-dev"
-    "test" = "camel-k-test"
+    "dev"  = "adrian-camel-k-dev"
+    "test" = "adrian-camel-k-test"
   }
 }

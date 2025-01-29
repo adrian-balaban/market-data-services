@@ -1,6 +1,7 @@
 {{- $outer := . -}}
 {{ range .Values.apps }}
 ---
+{{- if not .statefulSet.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -80,4 +81,5 @@ spec:
             secretName: {{ .secretName }}
             optional: {{ .optional | default "true" }}
       {{- end }}
+{{- end }}
 {{end }}
