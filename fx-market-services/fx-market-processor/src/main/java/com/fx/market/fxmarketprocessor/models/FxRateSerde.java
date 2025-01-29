@@ -1,4 +1,4 @@
-package com.fx.market.fxmarketprocessor.service;
+package com.fx.market.fxmarketprocessor.models;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.serialization.Deserializer;
