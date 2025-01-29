@@ -16,13 +16,15 @@ variable "tag" {
   type = string
   default = "0.0.1"
 }
-# host_for_docker_registry"
 variable "registry_host" {
   type = string
   default = "localhost"
 }
-# port_for_docker_registry"
 variable "registry_port" {
   type = string
   default = "5001"
+}
+variable "kind_or_minikube" {
+  type = string
+  default = "kind"
 }

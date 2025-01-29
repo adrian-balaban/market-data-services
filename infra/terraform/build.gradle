@@ -1,0 +1,44 @@
+import org.gradle.api.tasks.Exec
+
+/*plugins {
+    id 'org.ysb33r.terraform.base'                       version '1.2.1'
+    id 'org.ysb33r.terraform'                            version '1.2.1'
+    id 'org.ysb33r.terraform.rc'                         version '1.2.1'
+    id 'org.ysb33r.terraform.wrapper'                    version '1.2.1'
+    id 'org.ysb33r.terraform.remotestate.s3'             version '1.2.1'
+    id 'org.ysb33r.terraform.check'                      version '1.2.1'
+    id 'org.ysb33r.terraform.aws'                        version '1.2.1'
+    id 'org.ysb33r.terraform.gitlab'                     version '1.2.1'
+    //id 'org.ysb33r.terraform.remotestate.terraformcloud' version '1.2.1'
+}
+terraform {
+    executable version : '1.10.4'
+    executable path : '~/bin/terraform'
+}
+terraformSourceSets {
+    main {
+        remote {
+            local {
+                path 'cluster-kind/terraform-state/main.tfstate'
+            }
+        }
+        srcDir = 'cluster-kind'
+        secondarySources 'modules'
+    }
+}*/
+
+task formatCodeCluster(type: Exec) {
+    workingDir "cluster-kind"
+    commandLine 'terraform fmt'
+}
+task formatCodeModules(type: Exec) {
+    workingDir "modules"
+    commandLine 'terraform fmt -recursive'
+}
+
+task format() {
+    doLast {
+        formatCodeCluster
+        formatCodeModules
+    }
+}
