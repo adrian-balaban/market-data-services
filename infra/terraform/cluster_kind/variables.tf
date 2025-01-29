@@ -4,7 +4,7 @@ variable "deploy_test" {
 }
 variable "build" {
   type        = string
-  default     = "false"
+  default     = "true"
   description = "can be \"true\" or \"false\""
 }
 variable "publish_libs_to_maven_repo" {
@@ -19,11 +19,11 @@ variable "test" {
 }
 variable "tag" {
   type    = string
-  default = "0.4.0"
+  default = "0.0.1"
 }
 variable "registry_host" {
   type    = string
-  default = "192.168.192.96"
+  default = "localhost" # 192.168.192.96
 }
 variable "registry_port" {
   type    = string

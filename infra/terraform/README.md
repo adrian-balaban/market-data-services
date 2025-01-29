@@ -37,7 +37,7 @@
         - Minikube : install Oracle Virtualbox and Minikube (because I have tested only with minikube virtualbox driver)
 
         - Launch Kind with k8s/kind/create....sh script
-        - go into directory cluster-kind: cd infra/terraform/cluster-kind
+        - go into directory cluster-kind: cd infra/terraform/cluster_kind
 
    2. ### Cluster connection 
           Ensure you have `~./.kube/config` properly set
