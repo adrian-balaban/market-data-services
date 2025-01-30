@@ -79,7 +79,7 @@ export default function () {
     });
 
     // 5. wait 1 second before first get request
-    //sleep(1);
+   // sleep(1);
 
     let maxAttempts = 10;
     let attempts = 0;
@@ -122,30 +122,29 @@ export default function () {
 
                 // check if rates updated
                 if (responseBody.ask === sentRate.ask && responseBody.bid === sentRate.bid) {
-                    console.log(`✅ ${pair} Rates match! Sent: ask=${sentRate.ask}, bid=${sentRate.bid} | Received: ask=${responseBody.ask}, bid=${responseBody.bid}`);
 
                     // calculate delta between send and receive moment
                     let receivedAt = new Date().getTime();
                     let delta = receivedAt - sendTimestamps[pair];
-                    console.log(`⏳ ${pair} update time: ${(delta / 1000).toFixed(2)} seconds`);
+                    console.log(`${pair} update time: ${(delta / 1000).toFixed(2)} seconds`);
 
                     updatedRates[pair] = delta; // save delta
                 } else {
-                    console.log(`🔄 Attempt ${attempts + 1} for ${pair}: Rates do not match. Retrying...`);
+                    console.log(`Attempt ${attempts + 1} for ${pair}: Rates do not match. Retrying...`);
                 }
             }
         });
 
         attempts++;
-        sleep(0.5);  // wait 0.5 sec before next try
+   //     sleep(0.5);  // wait 0.5 sec before next try
     }
 
     // check if any pairs still not updated
     pairs.forEach(pair => {
         if (!(pair in updatedRates)) {
-            console.log(`❌ Failed to get updated rate for ${pair} after ${maxAttempts} attempts.`);
+            console.log(` Failed to get updated rate for ${pair} after ${maxAttempts} attempts.`);
         }
     });
 
-    sleep(0.5); // waiting before next iteration
+    sleep(1); // waiting before next iteration
 }
