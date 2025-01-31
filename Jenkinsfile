@@ -38,7 +38,7 @@ pipeline {
         stage('Build&Deploy') {
             steps {
                 //sh 'cd fx-market-services && ./gradlew --no-daemon clean build --refresh-dependencies '
-                sh "cd infra/k8s && ./deployAll.sh -build=${env.build} -test=${env.test} -n=${env.BRANCH_NAME} -tag ${env.tag} -registry ${env.registry}"
+                sh "cd infra/k8s && ./deployAll.sh -build ${env.build} -test ${env.test} -n ${env.BRANCH_NAME} -tag ${env.tag} -registry ${env.registry}"
             }
         }
         stage('Test') {
