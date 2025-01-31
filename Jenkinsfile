@@ -31,7 +31,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                cd fx-market-seervices && sh './gradlew --no-daemon clean build --refresh-dependencies '
+                cd fx-market-services && sh './gradlew --no-daemon clean build --refresh-dependencies '
             }
         }
         stage('Test') {
