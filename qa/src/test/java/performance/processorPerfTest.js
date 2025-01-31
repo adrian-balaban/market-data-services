@@ -5,7 +5,7 @@ import { Rate } from 'k6/metrics';
 let successRate = new Rate('http_req_success');
 
 export let options = {
-    iterations: 5,  // count of iterations
+    iterations: 5,
     thresholds: {
         http_req_duration: ['p(95)<1500'],
         http_req_failed: ['rate<0.05'],
@@ -20,7 +20,6 @@ const params = {
     headers: { 'Content-Type': 'application/json' },
 };
 
-// list of currency pairs
 
 const pairs = [
     "EUR/USD", "USD/JPY", "GBP/USD", "AUD/USD", "USD/CAD", "USD/CHF", "NZD/USD", "EUR/JPY",
@@ -40,8 +39,6 @@ const pairs = [
     "EUR/KWD", "GBP/KWD", "USD/AED", "EUR/AED"
 ];
 
-
-// function for generate random `ask` and `bid`
 function generateRateObject(pair) {
     let [baseCurrency, quoteCurrency] = pair.split('/');
     return {
@@ -58,14 +55,13 @@ export default function () {
     const rates = pairs.map(generateRateObject);
     const ratesObject = { rates: rates };
 
-    // 2. save moment of request send for each pair
+    // 2. save timestamp of request send for each pair
+    console.log(`\n--- ITERATION START ---`);
+
     const sendTimestamps = {};
     pairs.forEach(pair => sendTimestamps[pair] = new Date().getTime());
 
-    // 3. log data what we send
-    console.log(`🚀 Sending /emitEvent payload:\n${JSON.stringify(ratesObject, null, 2)}`);
-
-    // 4. send post request to /emitEvent (ALL PAIRS IN ONE REQUEST)
+    // 3. send post request to /emitEvent (ALL PAIRS IN ONE REQUEST)
     let resEmitEvent = http.post(urlEmitEvent, JSON.stringify(ratesObject), {
         headers: { 'Content-Type': 'application/json' },
         tags: { name: "emitEvent" }
@@ -78,14 +74,13 @@ export default function () {
         'emitEvent response time < 1500ms': (r) => r.timings.duration < 1500,
     });
 
-    // 5. wait 1 second before first get request
-   // sleep(1);
 
     let maxAttempts = 10;
     let attempts = 0;
     let updatedRates = {}; // store updated time for each pair
+    let responseTimes = [];
 
-    // 6. start parallel GET-requests with http.batch()
+   // 4. start parallel GET-requests with http.batch()
     while (attempts < maxAttempts) {
         let remainingPairs = pairs.filter(pair => !(pair in updatedRates));
 
@@ -126,8 +121,7 @@ export default function () {
                     // calculate delta between send and receive moment
                     let receivedAt = new Date().getTime();
                     let delta = receivedAt - sendTimestamps[pair];
-                    console.log(`${pair} update time: ${(delta / 1000).toFixed(2)} seconds`);
-
+                    responseTimes.push(delta);
                     updatedRates[pair] = delta; // save delta
                 } else {
                     console.log(`Attempt ${attempts + 1} for ${pair}: Rates do not match. Retrying...`);
@@ -136,15 +130,34 @@ export default function () {
         });
 
         attempts++;
-   //     sleep(0.5);  // wait 0.5 sec before next try
     }
 
     // check if any pairs still not updated
     pairs.forEach(pair => {
         if (!(pair in updatedRates)) {
-            console.log(` Failed to get updated rate for ${pair} after ${maxAttempts} attempts.`);
+            console.log(`Failed to get updated rate for ${pair} after ${maxAttempts} attempts.`);
         }
     });
 
-    sleep(1); // waiting before next iteration
+    // Stats to console
+    let totalResponses = responseTimes.length;
+    let counts = {};
+
+    responseTimes.forEach(time => {
+        if (!counts[time]) {
+            counts[time] = 0;
+        }
+        counts[time]++;
+    });
+
+    let sortedOutput = Object.entries(counts)
+        .map(([time, count]) => {
+            let percentage = Math.round((count / totalResponses) * 100);
+            return { time: Number(time), percentage: percentage };
+        })
+        .sort((a, b) => b.percentage - a.percentage)
+        .map(entry => `${entry.percentage}% - ${entry.time} ms`);
+
+    console.log("\n--- ITERATION RESULT ---");
+    sortedOutput.forEach(line => console.log(line));
 }
