@@ -28,7 +28,7 @@ pipeline {
             steps {
                 script {
                         sh 'chmod +x gradlew'
-                        sh 'rm -rf ~/.m2/repository/
+                        //sh 'rm -rf ~/.m2/repository/
                 }
             }
         }
