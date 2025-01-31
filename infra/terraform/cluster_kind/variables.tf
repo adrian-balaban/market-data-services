@@ -18,7 +18,7 @@ variable "tag" {
 }
 variable "registry" {
   type    = string
-  default = "localhost:5001" # 192.168.192.96
+  default = "192.168.192.96:5001" # localhost:5001 does not work !
 }
 variable "environments" {
   type    = list(string)
@@ -27,7 +27,7 @@ variable "environments" {
 variable "namespaces_springboot_solution" {
   type = map(string)
   default = {
-    "dev"  = "fxmarket"
+    "dev"  = "adrian-fxmarket-2"
     "test" = "test"
   }
 }
@@ -37,4 +37,4 @@ variable "namespaces_springboot_solution" {
     "dev"  = "camel-k-dev"
     "test" = "camel-k-test"
   }
-}
+}*/
