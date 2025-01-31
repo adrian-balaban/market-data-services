@@ -23,26 +23,25 @@ public class FxMarketConnectorSinkToKafka extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         String url = "http://fx-market-data-stub-svc.adrian-fxmarket:3080";
-        //FxRateProtoMapper fxRateProtoMapper;
-        //ExtractSseDataBean sseMapper;
+        ExtractSseDataBean sseMapper;
         String FX_MARKET_DATA_PATH = "/forex/rates";
         String bootstrapServers = "PLAINTEXT://kafka.fxmarket:9071";
         String topic = "fx_rates_camel_k";
 
-        //ExtractSseDataBean sseMapper = new ExtractSseDataBean();
+        ExtractSseDataBean sseMapper = new ExtractSseDataBean();
         System.out.println("Configuring Camel K Route for FX Market Data");
 
         System.out.println("url "+ url + FX_MARKET_DATA_PATH);
         System.out.println("bootstrapServers "+bootstrapServers);
         System.out.println("topic "+ topic);
 
-        /*try  {
+        try  {
             KafkaAdminCreateTopic.createTopic(bootstrapServers, topic);
         } catch (Exception ex) {
             log.error("Error creating topic: ", ex);
         }
 
-        /*from("stream:http?httpUrl="+marketDataStubProperties.getUrl() + FX_MARKET_DATA_PATH)
+        from("stream:http?httpUrl="+marketDataStubProperties.getUrl() + FX_MARKET_DATA_PATH)
                 .to("log:INFO_SSE_STREAM")
                 .filter().method(sseMapper, "messageHasData")
                     .bean(sseMapper, "extractSseData")

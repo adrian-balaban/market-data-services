@@ -16,13 +16,9 @@ variable "tag" {
   type = string
   default = "0.0.1"
 }
-variable "registry_host" {
+variable "registry" {
   type = string
-  default = "localhost"
-}
-variable "registry_port" {
-  type = string
-  default = "5001"
+  default = "docker.io/adriannbalaban" #localhost:5001"
 }
 variable "kind_or_minikube" {
   type = string

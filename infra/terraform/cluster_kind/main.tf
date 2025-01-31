@@ -1,15 +1,10 @@
-module "knative" {
-  source     = "../modules/knative"
-}
 module "springboot_solution_dev" {
   source                     = "../modules/springboot_solution"
   tag                        = var.tag
   build                      = var.build
   test                       = var.test
   namespace                  = var.namespaces_springboot_solution["dev"]
-  registry_host              = var.registry_host
-  registry_port              = var.registry_port
-  depends_on = [module.knative]
+  registry                   = var.registry
 }
 module "springboot_solution_test" {
   count                      = var.deploy_test ? 1 : 0
@@ -18,9 +13,11 @@ module "springboot_solution_test" {
   build                      = false
   test                       = var.test
   namespace                  = var.namespaces_springboot_solution["test"]
-  registry_host              = var.registry_host
-  registry_port              = var.registry_port
+  registry                   = var.registry
   depends_on                 = [module.springboot_solution_dev]
+}
+/*module "knative" {
+  source     = "../modules/knative"
 }
 module "camel_k_solution_dev" {
   count      = 1
@@ -33,4 +30,4 @@ module "camel_k_solution_test" {
   source     = "../modules/camel-k-solution"
   namespace  = var.namespaces_camel_k_solution["test"]
   depends_on = [module.knative, module.springboot_solution_test]
-}
+}*/

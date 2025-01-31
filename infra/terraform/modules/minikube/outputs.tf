@@ -14,7 +14,7 @@ output "id" {
   value = minikube_cluster.minikube.id
 }
 
-# used for knative-camel-k solution
+# can be used for knative-camel-k solution
 output "registry_svc_ip" {
   value = data.kubernetes_service.minikube_plugin_registry_svc.spec.0.cluster_ip
 }
