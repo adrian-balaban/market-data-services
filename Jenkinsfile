@@ -56,8 +56,4 @@ pipeline {
         }
     }
 
-    post {
-        success {
-        }
-    }
 }
