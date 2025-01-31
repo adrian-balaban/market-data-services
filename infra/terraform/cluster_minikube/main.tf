@@ -1,0 +1,44 @@
+module "minikube_cluster" {
+  source = "../modules/minikube"
+}
+module "springboot_solution_dev" {
+  source                     = "../modules/springboot_solution"
+  tag                        = var.tag
+  build                      = var.build
+  test                       = var.test
+  namespace                  = var.namespaces_springboot_solution["dev"]
+  registry                   = var.registry
+  kind_or_minikube           = "minikube"
+  depends_on = [module.minikube_cluster]
+}
+module "springboot_solution_test" {
+  count                      = var.deploy_test ? 1 : 0
+  source                     = "../modules/springboot_solution"
+  tag                        = var.tag
+  build                      = false
+  test                       = var.test
+  namespace                  = var.namespaces_springboot_solution["test"]
+  registry                   = var.registry
+  depends_on                 = [module.springboot_solution_dev]
+}
+/*module "knative" {
+  source     = "../modules/knative"
+  //depends_on = [module.springboot_solution_dev]
+}
+module "camel_k_solution_dev" {
+  count      = 1
+  source     = "../modules/camel-k-solution"
+  namespace  = var.namespaces_camel_k_solution["dev"]
+  depends_on = [module.knative]#,module.springboot_solution_dev]
+}
+module "camel_k_solution_test" {
+  count      = var.deploy_test ? 1 : 0
+  source     = "../modules/camel-k-solution"
+  namespace  = var.namespaces_camel_k_solution["test"]
+  depends_on = [module.knative]#, module.springboot_solution_dev]
+}
+module "jenkins" {
+  source     = "../modules/jenkins"
+  depends_on = [module.minikube_cluster]
+}
+*/
