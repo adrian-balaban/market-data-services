@@ -38,24 +38,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fx-market-camel-processor-svc
-  labels:
-    managed-by: Helm
-    release: fx-market-services
-spec:
-  type: ClusterIP
-  ports:
-    - port: 8080
-      targetPort: 8080
-      protocol: TCP
-      name: http
-  selector:
-    app: fx-market-camel-processor
----
-# Source: application/templates/service.yaml
-apiVersion: v1
-kind: Service
-metadata:
   name: fx-market-connector-svc
   labels:
     managed-by: Helm
@@ -189,73 +171,6 @@ spec:
             value: fx_rates_camel
           - name: JAVA_OPTS
             value: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
-          ports:
-            - name: http
-              containerPort: 8080
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /actuator/health
-              port: 8080
-              scheme: HTTP
-            failureThreshold: 3
-            initialDelaySeconds: 120
-            periodSeconds: 15
-            successThreshold: 1
-            timeoutSeconds: 5
-          resources:
-            limits:
-              cpu: 1
-              memory: 3072Mi
-            requests:
-              cpu: 500m
-              memory: 3072Mi
-          volumeMounts:
-      topologySpreadConstraints:
-      - maxSkew: 3
-        topologyKey: kubernetes.io/hostname
-        whenUnsatisfiable: DoNotSchedule
-        labelSelector:
-          matchLabels:
-            release: fx-market-services
-      volumes:
----
-# Source: application/templates/deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: fx-market-camel-processor
-  labels:
-    app: fx-market-camel-processor
-    managed-by: Helm
-    release: fx-market-services
-    version: 0.4.0
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: fx-market-camel-processor
-      release: fx-market-services
-  template:
-    metadata:
-      labels:
-        app: fx-market-camel-processor
-        release: fx-market-services
-        version: 0.4.0
-    spec:
-      containers:
-        - name: fx-market-camel-processor
-          image: "192.168.192.96:5001/fx-market-services/fx-market-processor:0.4.0"
-          imagePullPolicy: IfNotPresent
-          env:
-          - name: SERVER_PORT
-            value: "8080"
-          - name: KAFKA_BOOTSTRAP_SERVERS
-            value: PLAINTEXT://kafka:9071
-          - name: KAFKA_TOPIC
-            value: fx_rates_camel
-          - name: KAFKA_APPLICATION_ID_CONFIG
-            value: fx-market-processor-stream-operator-camel
           ports:
             - name: http
               containerPort: 8080
