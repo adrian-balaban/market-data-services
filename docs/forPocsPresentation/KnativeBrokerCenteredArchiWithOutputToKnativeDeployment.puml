@@ -1,0 +1,30 @@
+@startuml
+
+left to right direction
+skinparam linetype ortho #polyline
+
+node "Deployment in Prod with Canary of two releases in same time of all components, available to all consumers including QA" as Deployment #LightBlue {
+    node "v1 with 95% traffic" #LightBlue {
+          node "Data Provider Connectors" #Aqua {
+          }
+          node "Market Data Bloomberg Adapter" #Aqua {
+          }
+          node "Market Data 'Provider' Adapter" #Aqua {
+          }
+          node "Market Data 'Internal Feed' Adapter" #Aqua {
+          }
+    }
+    package "v2 with 5% traffic" #LightBlue {
+          node "Data Provider Connectors" #Aqua {
+          }
+          node "Market Data Bloomberg Adapter" #Aqua {
+          }
+          node "Market Data 'Provider' Adapter" #Aqua {
+          }
+          node "Market Data 'Internal Feed' Adapter" #Aqua {
+          }
+    }
+}
+
+@enduml
+

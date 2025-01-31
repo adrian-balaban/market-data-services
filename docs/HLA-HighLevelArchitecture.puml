@@ -123,12 +123,12 @@ node "Knative + Camel-K Solution" as Knative {
         "knative:event/fx-market.eurusd"
     end note
 
-    BMExternal --> KS_FxMarketConnectorK : Stream
+    BMExternal            --> KS_FxMarketConnectorK : Stream
     KS_FxMarketConnectorK --> EventMesh : "knative:event/fx-market.eurusd-usdjpy"
-    EventMesh --> EvSplitEURUSDK : "knative:event/fx-market.eurusd-usdjpy"
-    EventMesh <-- EvSplitEURUSDK : "knative:event/fx-market.eurusd"
-    EventMesh --> EvPrintEURUSDK : "knative:event/fx-market.eurusd"
-    EvPrintEURUSDK --> SystemOut : "send byte[]"
+    EventMesh             -up-> EvSplitEURUSDK : "knative:event/fx-market.eurusd-usdjpy"
+    EventMesh             <-down- EvSplitEURUSDK : "knative:event/fx-market.eurusd"
+    EventMesh             -> EvPrintEURUSDK : "knative:event/fx-market.eurusd"
+    EvPrintEURUSDK        -> SystemOut : "send byte[]"
 }
 
 @enduml

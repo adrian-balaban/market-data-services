@@ -16,13 +16,9 @@ variable "tag" {
   type    = string
   default = "0.3.0"
 }
-variable "registry_host" {
+variable "registry" {
   type    = string
-  default = "localhost" # 192.168.192.96"
-}
-variable "registry_port" {
-  type    = string
-  default = "5001"
+  default = "localhost:5001" # 192.168.192.96
 }
 variable "environments" {
   type    = list(string)
@@ -31,14 +27,14 @@ variable "environments" {
 variable "namespaces_springboot_solution" {
   type = map(string)
   default = {
-    "dev"  = "adrian-fxmarket"
-    "test" = "adrian-test"
+    "dev"  = "fxmarket"
+    "test" = "test"
   }
 }
-variable "namespaces_camel_k_solution" {
+/*variable "namespaces_camel_k_solution" {
   type = map(string)
   default = {
-    "dev"  = "adrian-camel-k-dev"
-    "test" = "adrian-camel-k-test"
+    "dev"  = "camel-k-dev"
+    "test" = "camel-k-test"
   }
 }

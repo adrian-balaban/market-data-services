@@ -1,0 +1,53 @@
+@startuml
+
+left to right direction
+skinparam linetype ortho #polyline
+
+cloud {
+  package "Bloomberg" {
+      node "BPIPE" #Aqua {
+      }
+  }
+  package "Calendar Provider" {
+      node "Calendar" #Aqua {
+      }
+  }
+}
+package "Visa Data providers" #LightBlue {
+      node "Internal Data Providers" #Aqua {
+    }
+}
+package "Visa Consumers of Data" {
+      node "Consumers of Data" as ConsumersProd #Aqua {
+       }
+}
+
+package "Visa Currency Cloud Only with Kafka" #LightBlue {
+      node "Data Provider Connectors" #Aqua {
+      }
+      node "Kafka internal used topics.." as KafkaInternal #Aqua {
+      }
+      node "Market Data Bloomberg Adapter" #Aqua {
+      }
+      node "Market Data 'Provider' Adapter" #Aqua {
+      }
+      node "Market Data 'Internal Feed' Adapter" #Aqua {
+      }
+      node "Kafka output topics" as KafkaOutput #Aqua {
+      }
+      "Data Provider Connectors" --> KafkaInternal
+      KafkaInternal -->"Market Data Bloomberg Adapter"
+      KafkaInternal -->"Market Data 'Provider' Adapter"
+      KafkaInternal -->"Market Data 'Internal Feed' Adapter"
+      "Market Data Bloomberg Adapter" --> KafkaOutput
+      "Market Data 'Provider' Adapter" --> KafkaOutput
+      "Market Data 'Internal Feed' Adapter" --> KafkaOutput
+}
+
+"BPIPE" --> "Data Provider Connectors"
+"Calendar" --> "Data Provider Connectors"
+"Internal Data Providers" --> "Data Provider Connectors"
+KafkaOutput --> "Visa Consumers of Data"
+
+@enduml
+

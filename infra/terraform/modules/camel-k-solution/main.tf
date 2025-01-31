@@ -7,6 +7,80 @@ metadata:
 YAML
 }
 
+resource "kubectl_manifest" "fx_market_externals_deployment" {
+  yaml_body  = <<YAML
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fx-market-data-stub
+  namespace: ${var.namespace}
+  labels:
+    app: fx-market-data-stub
+    release: fx-market-externals
+    version: 0.0.2
+spec:
+  replicas:
+  selector:
+    matchLabels:
+      app: fx-market-data-stub
+      release: fx-market-externals
+  template:
+    metadata:
+      labels:
+        app: fx-market-data-stub
+        release: fx-market-externals
+        version: 0.0.2
+    spec:
+      containers:
+        - name: fx-market-data-stub
+          image: "docker.io/adriannbalaban/market-data-stub:0.0.2"
+          imagePullPolicy:
+          env:
+
+          ports:
+            - name: http
+              containerPort: 3080
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 1
+              memory: 1024Mi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+      topologySpreadConstraints:
+      - maxSkew: 6
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            release: fx-market-externals
+YAML
+  depends_on = [kubectl_manifest.namespace]
+}
+
+resource "kubectl_manifest" "fx_market_externals_stub" {
+  yaml_body  = <<YAML
+apiVersion: v1
+kind: Service
+metadata:
+  name: fx-market-data-stub-svc
+  namespace: ${var.namespace}
+  labels:
+    release: fx-market-externals
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3080
+      targetPort: 3080
+      protocol: TCP
+      name: http
+  selector:
+    app: fx-market-data-stub
+YAML
+  depends_on = [kubectl_manifest.fx_market_externals_deployment]
+}
 resource "kubectl_manifest" "configmap_imc_channel" {
   yaml_body = <<YAML
 apiVersion: v1
@@ -19,9 +93,7 @@ data:
     apiVersion: messaging.knative.dev/v1
     kind: InMemoryChannel
 YAML
-  depends_on = [
-    kubectl_manifest.namespace
-  ]
+  depends_on = [kubectl_manifest.fx_market_externals_stub]
 }
 
 resource "kubectl_manifest" "configmap_config_br_defaults" {
@@ -127,7 +199,8 @@ resource "null_resource" "set_default_namespace" {
 }
 resource "terraform_data" "sse_connector_direct_to_kafka" {
   provisioner "local-exec" {
-    command = "kamel delete fx-market-connector-sink-to-kafka ||true && kamel run -d github:adrian-n-balaban/market-data-services-lib/master ../camel-k/FxMarketConnectorSinkToKafka.java -n ${var.namespace} ||true && kamel debug fx-market-connector-sink-to-kafka -n ${var.namespace} ||true"
+    command = "kamel delete fx-market-connector-sink-to-kafka ||true && kamel run -d github:adrian-n-balaban/market-data-services-lib/master ../camel-k/FxMarketConnectorSinkToKafka.java -n ${var.namespace} ||true"
+    #command = "kamel delete fx-market-connector-sink-to-kafka ||true && kamel run -d github:adrian-n-balaban/market-data-services-lib/master ../camel-k/FxMarketConnectorSinkToKafka.java -n ${var.namespace} ||true && kamel debug fx-market-connector-sink-to-kafka -n ${var.namespace} ||true"
   }
   depends_on = [null_resource.set_default_namespace]
 }
@@ -163,7 +236,7 @@ resource "terraform_data" "trump_bitcoin_rm_integrations" {
 }
 resource "terraform_data" "trump_bitcoin_add_integrations" {
   provisioner "local-exec" {
-    command = "kamel run ../camel-k/crypto-trump/market-source.yaml -w && kamel run --name simple-predictor -p predictor.name=simple ../camel-k/crypto-trump/Predictor.java -t knative-service.max-scale=1 -w && kamel run --name better-predictor -p predictor.name=better -p algorithm.sensitivity=0.0005 ../camel-k/crypto-trump/Predictor.java -t knative-service.max-scale=1 -w && kamel run ../camel-k/crypto-trump/SillyInvestor.java -w && kamel run ../camel-k/crypto-trump/CautiousInvestorService.java -w && kamel run ../camel-k/crypto-trump/CautiousInvestorAdapterSink.java -w"
+    command = "kamel run ../camel-k/crypto-example/market-source.yaml -w && kamel run --name simple-predictor -p predictor.name=simple ../camel-k/crypto-example/Predictor.java -t knative-service.max-scale=1 -w && kamel run --name better-predictor -p predictor.name=better -p algorithm.sensitivity=0.0005 ../camel-k/crypto-example/Predictor.java -t knative-service.max-scale=1 -w && kamel run ../camel-k/crypto-example/SillyInvestor.java -w && kamel run ../camel-k/crypto-example/CautiousInvestorService.java -w && kamel run ../camel-k/crypto-example/CautiousInvestorAdapterSink.java -w"
   }
   depends_on = [terraform_data.trump_bitcoin_rm_integrations]
 }

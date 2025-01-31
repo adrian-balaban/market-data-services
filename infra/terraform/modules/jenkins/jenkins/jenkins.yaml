@@ -1,0 +1,47 @@
+jenkins:
+  systemMessage: "Jenkins configured by Terraform"
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "admin"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+  jobs:
+    - script: >
+        pipelineJob('springboot-build') {
+            definition {
+                cps {
+                    script("""
+                        pipeline {
+                            agent any
+                            stages {
+                                stage('Checkout') {
+                                    steps {
+                                        git 'https://github.com/your-repo/springboot-project.git'
+                                    }
+                                }
+                                stage('Build') {
+                                    steps {
+                                        sh './mvnw clean package'
+                                    }
+                                }
+                                stage('Test') {
+                                    steps {
+                                        sh './mvnw test'
+                                    }
+                                }
+                                stage('Deploy') {
+                                    steps {
+                                        echo 'Deploying...'
+                                        // Add your deployment steps here
+                                    }
+                                }
+                            }
+                        }
+                    """)
+                }
+            }
+        }

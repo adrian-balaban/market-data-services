@@ -33,11 +33,13 @@
           - Extension Pack for Apache Camel by Red Hat
           - Kubernetes by Microsoft
       - If Local Cluster 
-        - Kind : install kind
-        - Minikube : install Oracle Virtualbox and Minikube (because I have tested only with minikube virtualbox driver)
-
-        - Launch Kind with k8s/kind/create....sh script
-        - go into directory cluster-kind: cd infra/terraform/cluster_kind
+        - Kind : 
+          - install kind
+          - launch Kind with k8s/kind/create....sh script
+        - Minikube : 
+          - install Minikube
+          - eval $(minikube docker-env) #Now any ‘docker’ command you run in this current terminal will run against the docker inside minikube cluster. 
+      - go into directory cluster-kind: cd infra/terraform/cluster_kind
 
    2. ### Cluster connection 
           Ensure you have `~./.kube/config` properly set
