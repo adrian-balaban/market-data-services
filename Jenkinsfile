@@ -3,6 +3,12 @@ pipeline {
     tools {
         jdk '21'
     }
+    environment {
+                build='true'
+                test='true'
+                tag='test'
+                registry='192.168.192.96:5001'
+    }
     options {
         buildDiscarder(logRotator(
             // number of builds to keep
@@ -32,12 +38,7 @@ pipeline {
         stage('Build&Deploy') {
             steps {
                 //sh 'cd fx-market-services && ./gradlew --no-daemon clean build --refresh-dependencies '
-                def build='true'
-                def test='true'
-                def n=env.BRANCH_NAME
-                def tag='test'
-                def registry='192.168.192.96:5001'
-                sh "cd infra/k8s && ./deployAll.sh -build=${build} -test=${test} -n=${} -tag ${tag} -registry ${registry}"
+                sh "cd infra/k8s && ./deployAll.sh -build=${env.build} -test=${env.test} -n=${env.BRANCH_NAME} -tag ${env.tag} -registry ${env.registry}"
             }
         }
         stage('Test') {
