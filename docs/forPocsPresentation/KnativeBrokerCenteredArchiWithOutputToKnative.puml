@@ -1,0 +1,50 @@
+@startuml
+
+left to right direction
+skinparam linetype ortho #polyline
+
+cloud {
+  package "Bloomberg" {
+      node "BPIPE" #Aqua {
+      }
+  }
+  package "Calendar Provider" {
+      node "Calendar" #Aqua {
+      }
+  }
+}
+package "Visa Data providers" #LightBlue {
+      node "Internal Data Providers" #Aqua {
+    }
+}
+package "Visa Consumers of Data" {
+      node "Consumers of Data" #Aqua {
+       }
+}
+
+package "Visa Currency Cloud With output to Knative using Knative Broker" #LightBlue {
+      node "Data Provider Connectors" #Aqua {
+      }
+      node "Knative Broker" as Knative #Aqua {
+      }
+      node "Market Data Bloomberg Adapter" #Aqua {
+      }
+      node "Market Data 'Provider' Adapter" #Aqua {
+      }
+      node "Market Data 'Internal Feed' Adapter" #Aqua {
+      }
+
+      "Data Provider Connectors" --> Knative
+      Knative <--> "Market Data Bloomberg Adapter"
+      Knative <--> "Market Data 'Provider' Adapter"
+      Knative <--> "Market Data 'Internal Feed' Adapter"
+}
+
+"BPIPE" --> "Data Provider Connectors"
+"Calendar" --> "Data Provider Connectors"
+"Internal Data Providers" --> "Data Provider Connectors"
+Knative -down-> "Consumers of Data"
+
+
+@enduml
+

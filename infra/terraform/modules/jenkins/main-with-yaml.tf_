@@ -1,0 +1,58 @@
+# used https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/installing-the-operator/
+locals {namespace = "jenkins"}
+resource "kubernetes_namespace" "jenkins" {
+  metadata {
+    name = local.namespace
+  }
+}
+resource "null_resource" "set_default_namespace" {
+  provisioner "local-exec" {
+    command = "kubectl config set-context --current --namespace=${local.namespace}"
+  }
+  depends_on = [
+    kubernetes_namespace.jenkins
+  ]
+}
+resource "kubectl_manifest" "secret_for_github" {
+  yaml_body = <<YAML
+apiVersion: v1
+kind: Secret
+metadata:
+    name: market-data-processor-private-repository
+    namespace: "${local.namespace}"
+    labels:
+      argocd.argoproj.io/secret-type: repository
+stringData:
+  type: git
+  url: https://github.com/Jereczek/market-data-processor.git
+  username: argocd-private-repo
+  password: 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
+YAML
+  depends_on = [null_resource.set_default_namespace
+  ]
+}
+resource "terraform_data" "operator" {
+  provisioner "local-exec" {
+    command = "kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/config/crd/bases/jenkins.io_jenkins.yaml"
+  }
+  depends_on = [kubectl_manifest.secret_for_github]
+}
+resource "terraform_data" "next" {
+  provisioner "local-exec" {
+    command = "kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/deploy/all-in-one-v1alpha2.yaml"
+  }
+  depends_on = [terraform_data.operator]
+}
+resource "terraform_data" "next_check" {
+  provisioner "local-exec" {
+    command = "kubectl wait pod --all -n ${local.namespace} --for=condition=ready --timeout=600s"
+  }
+  depends_on = [terraform_data.next]
+}
+
+resource "terraform_data" "instance" {
+  provisioner "local-exec" {
+    command = "kubectl apply -f ../jenkins/jenkins_instance.yaml -n ${local.namespace}"
+  }
+  depends_on = [terraform_data.next_check]
+}

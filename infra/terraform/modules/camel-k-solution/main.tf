@@ -1,0 +1,243 @@
+resource "kubectl_manifest" "namespace" {
+  yaml_body = <<YAML
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ${var.namespace}
+YAML
+}
+
+resource "kubectl_manifest" "fx_market_externals_deployment" {
+  yaml_body  = <<YAML
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fx-market-data-stub
+  namespace: ${var.namespace}
+  labels:
+    app: fx-market-data-stub
+    release: fx-market-externals
+    version: 0.0.2
+spec:
+  replicas:
+  selector:
+    matchLabels:
+      app: fx-market-data-stub
+      release: fx-market-externals
+  template:
+    metadata:
+      labels:
+        app: fx-market-data-stub
+        release: fx-market-externals
+        version: 0.0.2
+    spec:
+      containers:
+        - name: fx-market-data-stub
+          image: "docker.io/adriannbalaban/market-data-stub:0.0.2"
+          imagePullPolicy:
+          env:
+
+          ports:
+            - name: http
+              containerPort: 3080
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 1
+              memory: 1024Mi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+      topologySpreadConstraints:
+      - maxSkew: 6
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            release: fx-market-externals
+YAML
+  depends_on = [kubectl_manifest.namespace]
+}
+
+resource "kubectl_manifest" "fx_market_externals_stub" {
+  yaml_body  = <<YAML
+apiVersion: v1
+kind: Service
+metadata:
+  name: fx-market-data-stub-svc
+  namespace: ${var.namespace}
+  labels:
+    release: fx-market-externals
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3080
+      targetPort: 3080
+      protocol: TCP
+      name: http
+  selector:
+    app: fx-market-data-stub
+YAML
+  depends_on = [kubectl_manifest.fx_market_externals_deployment]
+}
+resource "kubectl_manifest" "configmap_imc_channel" {
+  yaml_body = <<YAML
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: imc-channel
+  namespace: "${var.namespace}"
+data:
+  channel-template-spec: |
+    apiVersion: messaging.knative.dev/v1
+    kind: InMemoryChannel
+YAML
+  depends_on = [kubectl_manifest.fx_market_externals_stub]
+}
+
+resource "kubectl_manifest" "configmap_config_br_defaults" {
+  yaml_body = <<YAML
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-br-defaults
+  namespace: "${var.namespace}"
+data:
+  # Configures the default for any Broker that does not specify a spec.config or Broker class. # This is the cluster-wide default broker channel.
+  default-br-config: |
+    clusterDefault:
+      brokerClass: MTChannelBasedBroker
+      apiVersion: v1
+      kind: ConfigMap
+      name: imc-channel
+      namespace: "${var.namespace}"
+YAML
+  depends_on = [
+    kubectl_manifest.configmap_imc_channel
+  ]
+}
+
+resource "kubectl_manifest" "configure_broker_default" {
+  yaml_body = <<YAML
+apiVersion: eventing.knative.dev/v1
+kind: Broker
+metadata:
+  annotations:
+    eventing.knative.dev/broker.class: MTChannelBasedBroker
+  name: default
+  namespace: "${var.namespace}"
+YAML
+  depends_on = [
+    kubectl_manifest.configmap_config_br_defaults
+  ]
+}
+
+resource "terraform_data" "broker_verify" {
+  provisioner "local-exec" {
+    command = "kubectl wait broker --all --for=condition=ready --timeout=600s -n ${var.namespace}"
+  }
+  depends_on = [kubectl_manifest.configure_broker_default]
+}
+
+
+resource "null_resource" "camel_k_install_helm_repo" {
+  provisioner "local-exec" {
+    command = "helm repo add camel-k https://apache.github.io/camel-k/charts/"
+  }
+  depends_on = [terraform_data.broker_verify]
+}
+resource "terraform_data" "camel_k" {
+  provisioner "local-exec" {
+    command = "helm repo update && helm ${var.helm_operation} camel-k camel-k/camel-k -n ${var.namespace} --set imagePullSecrets.name=docker-registry.kube-system && kubectl config set-context --current --namespace=${var.namespace}"
+  }
+  depends_on = [null_resource.camel_k_install_helm_repo]
+}
+
+resource "terraform_data" "camel_k_verify" {
+  provisioner "local-exec" {
+    command = "kubectl wait pod --all --for=condition=ready --timeout=600s -n ${var.namespace}"
+  }
+  depends_on = [terraform_data.camel_k]
+}
+
+resource "terraform_data" "create-secret-for-docker-registry" {
+  provisioner "local-exec" {
+    command = "kubectl create secret docker-registry docker-registry-secret --docker-server=docker.io --docker-username=adriannbalaban --docker-password=dckr_pat_54LuHTnvrOLeneiZzEwxyC6zqMw --docker-email=adrian.n.balanban@gmail.com -n ${var.namespace} || true && kubectl get secret docker-registry-secret -n ${var.namespace}"
+  }
+  depends_on = [terraform_data.camel_k_verify]
+}
+# for minikube use:
+# address: "${var.registry_svc_ip}:5000"
+# insecure: true
+resource "kubectl_manifest" "camel_k_integration_platform" {
+  yaml_body  = <<YAML
+apiVersion: camel.apache.org/v1
+kind: IntegrationPlatform
+metadata:
+  labels:
+    app: camel-k
+  namespace: ${var.namespace}
+  name: camel-k
+spec:
+  build:
+    registry:
+      address: "docker.io"
+      organization: "adriannbalaban"
+      secret: "docker-registry-secret"
+YAML
+  depends_on = [terraform_data.create-secret-for-docker-registry]
+}
+
+resource "null_resource" "set_default_namespace" {
+  provisioner "local-exec" {
+    command = "kubectl config set-context --current --namespace=${var.namespace}"
+  }
+  depends_on = [
+    kubectl_manifest.camel_k_integration_platform
+  ]
+}
+resource "terraform_data" "sse_connector_direct_to_kafka" {
+  provisioner "local-exec" {
+    command = "kamel delete fx-market-connector-sink-to-kafka ||true && kamel run -d github:adrian-n-balaban/market-data-services-lib/master ../camel-k/FxMarketConnectorSinkToKafka.java -n ${var.namespace} ||true"
+    #command = "kamel delete fx-market-connector-sink-to-kafka ||true && kamel run -d github:adrian-n-balaban/market-data-services-lib/master ../camel-k/FxMarketConnectorSinkToKafka.java -n ${var.namespace} ||true && kamel debug fx-market-connector-sink-to-kafka -n ${var.namespace} ||true"
+  }
+  depends_on = [null_resource.set_default_namespace]
+}
+resource "terraform_data" "sse_connector" {
+  provisioner "local-exec" {
+    command = "kamel delete fx-market-connector || true && kamel run ../camel-k/FxMarketConnector.java -n ${var.namespace}"
+  }
+  depends_on = [null_resource.set_default_namespace]
+}
+resource "terraform_data" "eurusd_extractor" {
+  provisioner "local-exec" {
+    command = "kamel delete fx-market-extractor || true && kamel run ../camel-k/FxMarketExtractorEurUsd.java -n ${var.namespace}"
+  }
+  depends_on = [terraform_data.sse_connector]
+}
+resource "terraform_data" "eurusd_output_events_eurusd" {
+  provisioner "local-exec" {
+    command = "kamel delete fx-market-output-stream || true && kamel run ../camel-k/FxMarketOutputStream.java -n ${var.namespace}"
+  }
+  depends_on = [terraform_data.eurusd_extractor]
+}
+resource "terraform_data" "kamel_get_integration_status" {
+  provisioner "local-exec" {
+    command = "kamel get -n ${var.namespace}"
+  }
+  depends_on = [terraform_data.sse_connector_direct_to_kafka]
+}
+resource "terraform_data" "trump_bitcoin_rm_integrations" {
+  provisioner "local-exec" {
+    command = "kamel delete better-predictor || true && kamel delete cautious-investor-adapter-sink || true && kamel delete cautious-investor-service || true && kamel delete market-source || true && kamel delete silly-investor || true && kamel delete simple-predictor || true"
+  }
+  depends_on = [terraform_data.sse_connector_direct_to_kafka]
+}
+resource "terraform_data" "trump_bitcoin_add_integrations" {
+  provisioner "local-exec" {
+    command = "kamel run ../camel-k/crypto-example/market-source.yaml -w && kamel run --name simple-predictor -p predictor.name=simple ../camel-k/crypto-example/Predictor.java -t knative-service.max-scale=1 -w && kamel run --name better-predictor -p predictor.name=better -p algorithm.sensitivity=0.0005 ../camel-k/crypto-example/Predictor.java -t knative-service.max-scale=1 -w && kamel run ../camel-k/crypto-example/SillyInvestor.java -w && kamel run ../camel-k/crypto-example/CautiousInvestorService.java -w && kamel run ../camel-k/crypto-example/CautiousInvestorAdapterSink.java -w"
+  }
+  depends_on = [terraform_data.trump_bitcoin_rm_integrations]
+}
+

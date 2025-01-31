@@ -56,6 +56,23 @@ node "Kafka Solution with Camel" as KafkaSolutionCamel {
     KS_FX_RATES_TOPIC_CAMEL --> K_KT1_Camel : KStream
 }
 
+node "Kafka Solution with Camel-K" as KafkaSolutionCamelK {
+    package "FxMarketConnector Camel" as KS_FxMarketConnectorCamelK #IndianRed {
+        component "Camel Java Route" as KS_FxMarketConnectorToolsCamelK #LightSteelBlue
+    }
+    package "Kafka / Confluent" as KafkaConfluentCamelK #LightSkyBlue {
+           component "Topic:\nfx_rates_camel" as KS_FX_RATES_TOPIC_CAMELK #grey
+    }
+    package "FxMarketProcessor Camel" as FxMarketProcessorCamelK #IndianRed {
+            component "Java 21, SpringBoot" as KS_FxMarketProcessorToolsCamelK #LightSteelBlue
+            component "KTable/GlobalKTable\nPAIR A/RATE A\nPAIR B/RATE B\nPAIR C/RATE C\n" as K_KT1_CamelK #grey
+    }
+
+    BMExternal --> KS_FxMarketConnectorCamelK : Stream
+    KS_FxMarketConnectorCamelK --> KS_FX_RATES_TOPIC_CAMELK : Stream\nProtobuf Serialized
+    KS_FX_RATES_TOPIC_CAMELK --> K_KT1_CamelK : KStream
+}
+
 'Flink
 node "Flink Solution" as Flink {
            package "FxMarketConnector" as FS_FxMarketConnector #IndianRed {
@@ -84,6 +101,34 @@ node "Flink Solution" as Flink {
             FS_FX_RATES_TOPIC --> "F_KS2" : Stream
             FlinkOrchestrator --> F_KC2 : Deploy Jar\nRun Task\nMonitor Task
 
+}
+
+node "Knative + Camel-K Solution" as Knative {
+
+    package "FxMarketConnector Camel-K" as KS_FxMarketConnectorK #IndianRed {
+        component "Camel K" as KS_FxMarketConnectorToolsK #LightSteelBlue
+    }
+    package "FxMarket Event Extractor EURUSD" as EvSplitEURUSD #IndianRed {
+        component "Camel K" as EvSplitEURUSDK #LightSteelBlue
+    }
+    package "FxMarket OutputStream EURUSD" as EvPrintEURUSD #IndianRed {
+        component "Camel K" as EvPrintEURUSDK #LightSteelBlue
+    }
+
+    component "=Knative Broker" as EventMesh  #LightSkyBlue
+
+    note bottom of EventMesh
+        Receives/sends events of types:
+        "knative:event/fx-market.eurusd-usdjpy"
+        "knative:event/fx-market.eurusd"
+    end note
+
+    BMExternal            --> KS_FxMarketConnectorK : Stream
+    KS_FxMarketConnectorK --> EventMesh : "knative:event/fx-market.eurusd-usdjpy"
+    EventMesh             -up-> EvSplitEURUSDK : "knative:event/fx-market.eurusd-usdjpy"
+    EventMesh             <-down- EvSplitEURUSDK : "knative:event/fx-market.eurusd"
+    EventMesh             -> EvPrintEURUSDK : "knative:event/fx-market.eurusd"
+    EvPrintEURUSDK        -> SystemOut : "send byte[]"
 }
 
 @enduml
