@@ -7,7 +7,7 @@ pipeline {
                 build=true
                 test=true
                 tag=test
-                registry=192.168.192.96:5001
+                registry="192.168.192.96:5001"
     }
     options {
         buildDiscarder(logRotator(
