@@ -24,23 +24,14 @@ pipeline {
     }
 
     stages {
-        stage('OS Setup') {
-            steps {
-                script {
-                        sh 'chmod +x gradlew'
-                        //sh 'rm -rf ~/.m2/repository/
-                }
-            }
-        }
         stage('Checkout') {
             steps {
                 checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
-                //git 'https://github.com/Jereczek/market-data-services.git
             }
         }
         stage('Build') {
             steps {
-                sh './gradlew --no-daemon clean build --refresh-dependencies '
+                cd fx-market-seervices && sh './gradlew --no-daemon clean build --refresh-dependencies '
             }
         }
         stage('Test') {
