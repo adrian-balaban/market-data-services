@@ -29,22 +29,21 @@ pipeline {
                 checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
             }
         }
-        stage('Build') {
+        stage('Build&Deploy') {
             steps {
-                sh 'cd fx-market-services && ./gradlew --no-daemon clean build --refresh-dependencies '
+                //sh 'cd fx-market-services && ./gradlew --no-daemon clean build --refresh-dependencies '
+                def build='true'
+                def test='true'
+                def n=env.BRANCH_NAME
+                def tag='test'
+                def registry='192.168.192.96:5001'
+                sh "cd infra/k8s && ./deployAll.sh -build=${build} -test=${test} -n=${} -tag ${tag} -registry ${registry}"
             }
         }
         stage('Test') {
             steps {
-                sh './gradlew test'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying...'
-                // Add deployment steps here
+                sh 'cd fx-market-services && ./gradlew test'
             }
         }
     }
-
 }
