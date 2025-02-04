@@ -151,7 +151,7 @@ apps:
 
     statefulSet:
       enabled: true
-      replicas: 9
+      replicas: 3
 
     autoscaling:
       enabled: false
