@@ -4,7 +4,7 @@ pipeline {
         jdk '21'
     }
     environment {
-                build="true"
+                build="false"
                 test="true"
                 tag="0.0.1-${env.BRANCH_NAME}"
                 registry="192.168.192.96:5001"
