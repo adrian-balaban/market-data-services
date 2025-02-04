@@ -132,7 +132,7 @@ wait_for_pod "fx-market-data-stub"
 pushd ./scripts && ./deploySolution.sh -tag ${TAG} -registry ${DOCKER_REGISTRY} -n ${NAMESPACE} && popd
 
 wait_for_pod "fx-market-connector"
-wait_for_pod "fx-market-camel-connector"
+#wait_for_pod "fx-market-camel-connector"
 wait_for_pod "fx-market-processor"
 wait_for_pod "flink-orchestrator"
 
