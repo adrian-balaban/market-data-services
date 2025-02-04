@@ -26,6 +26,6 @@ project(":fx-market-flink-processor").projectDir = file("./flink-jobs/fx-market-
 //Services
 include ':flink-orchestrator'
 include ':fx-market-connector'
-include ':fx-market-camel-connector'
+//include ':fx-market-camel-connector'
 include ':fx-market-processor'
 
