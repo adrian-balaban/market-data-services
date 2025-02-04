@@ -1,3 +1,6 @@
+import org.gradle.api.GradleException
+import org.gradle.api.tasks.Exec
+
 buildscript {
 
     ext {
@@ -61,7 +64,7 @@ dependencies {
 
 }
 
-final String K8S_NAMESPACE="dev"
+final String K8S_NAMESPACE="test"
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -202,6 +205,32 @@ tasks.register('connectorRunJob', Exec) {
         kubectl apply -f src/test/java/k8s/k6_job.yaml
     """
 
+}
+
+tasks.register('processorRun', Exec) {
+    group = 'test_performanceLocal'
+
+    def osName = System.getProperty("os.name").toLowerCase()
+    def isWindows = osName.contains("win")
+
+    def k6Command = isWindows ? "where k6" : "which k6"
+    def process = k6Command.execute()
+    process.waitFor()
+
+    if (process.exitValue() != 0) {
+        throw new GradleException("`k6` not installed")
+    } else {
+        k6Command = process.text.trim()
+    }
+
+    def scriptPathTest = "${projectDir}/src/test/java/performance/processorPerfTest.js"
+
+    environment 'PATH', System.getenv('PATH')
+    environment 'K6_WEB_DASHBOARD', 'true'
+    environment 'K6_WEB_DASHBOARD_EXPORT', 'build/test-results/html-report.html'
+    environment 'PATH', System.getenv('PATH')
+
+    commandLine k6Command, 'run',  scriptPathTest
 }
 
 tasks.named('bootJar') {
