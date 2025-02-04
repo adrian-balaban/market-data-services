@@ -43,8 +43,7 @@ pipeline {
                 credentialsId: 'k8s',
                 restrictKubeConfigAccess: true,
                 serverUrl: 'https://192.168.192.96:6443') {
-                  // some block
-                  sh "echo $PATH && cd infra/k8s && ./deployAll.sh -build ${env.build} -test ${env.test} -n ${env.BRANCH_NAME} -tag ${env.tag} -registry ${env.registry}"
+                  sh "cd infra/k8s && ./deployAll.sh -build ${env.build} -test ${env.test} -n ${env.BRANCH_NAME} -tag ${env.tag} -registry ${env.registry}"
               }
             }
         }
