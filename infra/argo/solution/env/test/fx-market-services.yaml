@@ -194,7 +194,7 @@ metadata:
     release: fx-market-services
 spec:
   serviceName: fx-market-processor-svc
-  replicas: 9
+  replicas: 3
   selector:
     matchLabels:
       app: fx-market-processor
