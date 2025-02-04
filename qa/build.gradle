@@ -131,8 +131,6 @@ tasks.register('connectorClear', Exec) {
 
     environment 'PATH', System.getenv('PATH')
     environment 'K6_WEB_DASHBOARD', 'true'
-    environment 'K6_WEB_DASHBOARD_EXPORT', 'build/test-results/html-report.html'
-    environment 'PATH', System.getenv('PATH')
 
     commandLine 'bash', '-c', "echo 'finished'"
 
@@ -155,11 +153,11 @@ tasks.register('connectorRun', Exec) {
         k6Command = process.text.trim()
     }
 
-    def scriptPathTest = "${projectDir}/src/test/java/performance/peakLoadTest.js"
+    def scriptPathTest = "${projectDir}/src/test/java/performance/connectorPerfTest.js"
 
     environment 'PATH', System.getenv('PATH')
     environment 'K6_WEB_DASHBOARD', 'true'
-    environment 'K6_WEB_DASHBOARD_EXPORT', 'build/test-results/html-report.html'
+    environment 'K6_WEB_DASHBOARD_EXPORT', 'build/test-results/connectorPerfTest-html-report.html'
     environment 'PATH', System.getenv('PATH')
 
     commandLine k6Command, 'run',  scriptPathTest
@@ -197,7 +195,7 @@ tasks.register('connectorRunJob', Exec) {
     def shell = isWindows ? "cmd" : "bash"
     def shellFlag = isWindows ? "/c" : "-c"
 
-    def scriptPath = "${projectDir}/src/test/java/performance/peakLoadTest.js"
+    def scriptPath = "${projectDir}/src/test/java/performance/connectorPerfTest.js"
 
     commandLine shell, shellFlag, """
         kubectl create configmap k6-performance --from-file=${scriptPath} -n ${K8S_NAMESPACE} --dry-run=client -o yaml | kubectl apply -f - && \
@@ -227,7 +225,7 @@ tasks.register('processorRun', Exec) {
 
     environment 'PATH', System.getenv('PATH')
     environment 'K6_WEB_DASHBOARD', 'true'
-    environment 'K6_WEB_DASHBOARD_EXPORT', 'build/test-results/html-report.html'
+    environment 'K6_WEB_DASHBOARD_EXPORT', 'build/test-results/processorPerfTest-html-report.html'
     environment 'PATH', System.getenv('PATH')
 
     commandLine k6Command, 'run',  scriptPathTest

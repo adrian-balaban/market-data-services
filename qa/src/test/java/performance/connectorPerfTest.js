@@ -6,7 +6,7 @@ let successRate = new Rate('http_req_success');
 
 export let options = {
     stages: [
-        { duration: '10s', target: 1000 },
+        { duration: '40s', target: 1000 },
     ],
     thresholds: {
         http_req_duration: ['p(95)<1500'],
