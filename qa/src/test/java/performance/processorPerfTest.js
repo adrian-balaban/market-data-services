@@ -39,6 +39,12 @@ const pairs = [
     "EUR/KWD", "GBP/KWD", "USD/AED", "EUR/AED"
 ];
 
+let globalStats = {
+    totalRequests: 0,
+    totalDurations: [],
+    counts: {}
+};
+
 function generateRateObject(pair) {
     let [baseCurrency, quoteCurrency] = pair.split('/');
     return {
@@ -56,8 +62,6 @@ export default function () {
     const ratesObject = { rates: rates };
 
     // 2. save timestamp of request send for each pair
-    console.log(`\n--- ITERATION START ---`);
-
     const sendTimestamps = {};
     pairs.forEach(pair => sendTimestamps[pair] = new Date().getTime());
 
@@ -111,18 +115,22 @@ export default function () {
                 [`fxRates ${pair} response time < 1500ms`]: (r) => r.timings.duration < 1500,
             });
 
+            let receivedAt = new Date().getTime();
+            let delta = receivedAt - sendTimestamps[pair];
+
             if (response.status === 200) {
                 let responseBody = JSON.parse(response.body);
                 let sentRate = rates.find(r => r.pair === pair);
 
                 // check if rates updated
                 if (responseBody.ask === sentRate.ask && responseBody.bid === sentRate.bid) {
-
-                    // calculate delta between send and receive moment
-                    let receivedAt = new Date().getTime();
-                    let delta = receivedAt - sendTimestamps[pair];
                     responseTimes.push(delta);
-                    updatedRates[pair] = delta; // save delta
+                    updatedRates[pair] = delta;
+
+                    globalStats.totalRequests++;
+                    globalStats.totalDurations.push(delta);
+                    let key = Number(delta);
+                    globalStats.counts[key] = (globalStats.counts[key] || 0) + 1;
                 } else {
                     console.log(`Attempt ${attempts + 1} for ${pair}: Rates do not match. Retrying...`);
                 }
@@ -144,20 +152,44 @@ export default function () {
     let counts = {};
 
     responseTimes.forEach(time => {
-        if (!counts[time]) {
-            counts[time] = 0;
-        }
-        counts[time]++;
+        let key = Number(time);
+        counts[key] = (counts[key] || 0) + 1;
     });
 
     let sortedOutput = Object.entries(counts)
-        .map(([time, count]) => {
-            let percentage = Math.round((count / totalResponses) * 100);
-            return { time: Number(time), percentage: percentage };
-        })
+        .map(([time, count]) => ({
+            time: Number(time),
+            percentage: totalResponses > 0 ? Math.round((count / totalResponses) * 100) : 0
+        }))
         .sort((a, b) => b.percentage - a.percentage)
         .map(entry => `${entry.percentage}% - ${entry.time} ms`);
 
     console.log("\n--- ITERATION RESULT ---");
     sortedOutput.forEach(line => console.log(line));
+
+    if (__ITER === options.iterations - 1) {
+        console.log("\n--- FINAL GLOBAL STATISTICS ---");
+
+        let totalGlobalResponses = globalStats.totalDurations.length;
+
+        if (totalGlobalResponses === 0) {
+            console.log("No response times recorded in global stats.");
+            return;
+        }
+
+        let sortedGlobalOutput = Object.entries(globalStats.counts)
+            .map(([time, count]) => ({
+                time: Number(time),
+                percentage: totalGlobalResponses > 0 ? Math.round((count / totalGlobalResponses) * 100) : 0
+            }))
+            .filter(entry => !isNaN(entry.time) && entry.percentage > 0)
+            .sort((a, b) => b.percentage - a.percentage)
+            .map(entry => `${entry.percentage}% - ${entry.time} ms`);
+
+        if (sortedGlobalOutput.length === 0) {
+            console.log("No response times recorded in global stats.");
+        } else {
+            sortedGlobalOutput.forEach(line => console.log(line));
+        }
+    }
 }
