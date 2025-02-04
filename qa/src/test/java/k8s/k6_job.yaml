@@ -12,7 +12,7 @@ spec:
           env:
             - name: STUB_HOST
               value: "http://fx-market-data-stub-svc:3080"
-          command: ["k6", "run", "/performance/peakLoadTest.js"]
+          command: ["k6", "run", "/performance/connectorPerfTest.js"]
           volumeMounts:
             - name: performance
               mountPath: /performance
