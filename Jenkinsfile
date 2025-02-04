@@ -8,7 +8,7 @@ pipeline {
                 test="true"
                 tag="0.0.1-${env.BRANCH_NAME}"
                 registry="192.168.192.96:5001"
-                k8s_namespace = (env.BRANCH_NAME == 'master') ? 'test' : env.BRANCH_NAME
+                k8s_namespace = env.BRANCH_NAME == 'master' ? 'test' : env.BRANCH_NAME
     }
     options {
         buildDiscarder(logRotator(
