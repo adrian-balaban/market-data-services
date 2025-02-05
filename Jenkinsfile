@@ -39,7 +39,7 @@ pipeline {
             }
         }
         stage('Build&Deploy with bash') {
-            when { ${params.useBash} == true }
+            when ${params.useBash} == true
             steps {
               script {
                  echo "useBash: ${params.useBash}"
@@ -53,7 +53,7 @@ pipeline {
             }
         }
         stage('Build&Deploy with argoCD') {
-            when { ${params.useBash} == false }
+            when ${params.useBash} == false
             steps {
               script {
                  echo "useBash: ${params.useBash}"
