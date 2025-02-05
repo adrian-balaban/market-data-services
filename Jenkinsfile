@@ -61,7 +61,7 @@ pipeline {
             }
         }
         stage("Build&Deploy use bash") {
-          when { expression { deployment.useBash} }
+          when { expression { deployment.useBash} } {
             steps {
               script {
                  k8s_namespace = env.BRANCH_NAME == 'master' ? 'test' : env.BRANCH_NAME
@@ -72,9 +72,10 @@ pipeline {
                  }
               }
             }
+          }
         }
         stage("Build&Deploy use ArgoCD") {
-          when { expression { deployment.useArgoCD} }
+          when { expression { deployment.useArgoCD} } {
             steps {
               script {
                  k8s_namespace = env.BRANCH_NAME == 'master' ? 'test' : env.BRANCH_NAME
@@ -85,6 +86,7 @@ pipeline {
                  }
               }
             }
+          }
         }
         stage('Test') {
             steps {
