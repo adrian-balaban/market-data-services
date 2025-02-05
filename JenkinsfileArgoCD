@@ -44,6 +44,7 @@ pipeline {
                           restrictKubeConfigAccess: true, serverUrl: 'https://192.168.192.96:6443') {
                       sh "cd infra/argo && ./deployAllWithArgo.sh -branch ${env.BRANCH_NAME} -env test -build ${env.build} -test ${env.test} -n ${env.BRANCH_NAME} -tag ${env.tag} -registry ${env.registry}"
                   }
+              }
             }
         }
         stage('Test') {
