@@ -26,7 +26,7 @@ Feature: Kafka test feature
     When the rates are sent by Bloomberg
     Then FX Rates NOT landed on kafka
     When the following rates data is prepared:
-      | pair      | baseCurrency          | quoteCurrency    | ask            | bid       |
-      |           |     null             |    null           |  null          |            |
+      | pair      | baseCurrency          | quoteCurrency     | ask            | bid        |
+      |           |     null              |    null           |  null          |            |
     When the rates are sent by Bloomberg
     Then FX Rates NOT landed on kafka
