@@ -27,7 +27,7 @@ variable "environments" {
 variable "namespaces_springboot_solution" {
   type = map(string)
   default = {
-    "dev"  = "adrian-fxmarket-2"
+    "dev"  = "fxmarket"
     "test" = "test"
   }
 }

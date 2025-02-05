@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e # exit immediately if any command within the script returns a non-zero exit status
+
 DOCKER_REGISTRY="docker.io" # default if not provided
 TAG='0.0.1' # default if not provided
 SPRING_PROFILE='' # default if not provided
