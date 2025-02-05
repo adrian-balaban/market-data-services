@@ -39,7 +39,7 @@ pipeline {
             }
         }
         stage("Build&Deploy useBash ${params.useBash}") {
-            when (${params.useBash} == true) {
+          when (${params.useBash} == true) {
             steps {
               script {
                  echo "useBash: ${params.useBash}"
@@ -55,6 +55,7 @@ pipeline {
                  }
               }
             }
+          }
         }
         stage('Test') {
             steps {
