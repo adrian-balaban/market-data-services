@@ -38,7 +38,7 @@ pipeline {
                 checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
             }
         }
-        stage("Build&Deploy useBash ${params.useBash}") {
+        stage("Build&Deploy useBash") {
           when (${params.useBash} == true) {
             steps {
               script {
