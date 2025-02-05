@@ -1,3 +1,4 @@
+def deployment = [useBash: true]
 pipeline {
     agent any
     tools {
@@ -33,14 +34,35 @@ pipeline {
     }
 
     stages {
+        stage('Ask parameters') {
+            options { timeout(time: 10, unit: 'SECONDS') }
+            steps {
+                script {
+                    try {
+                        isRelease = env.GIT_BRANCH =~ env.RELEASE_BRANCH ? true : false
+                        echo "LOG: isRelease: " + isRelease
+                        deployment = input(
+                            message: "Use bash?",
+                                parameters: [
+                                    booleanParam(defaultValue: true, name: 'useBash')
+                                ]
+                            )
+                    }catch(err) {
+                        deployment.useBash = true
+                    }
+                }
+                script {
+                  echo "CONFIG: deployment.useBash: " + deployment.useBash
+                }
+            }
+        }
         stage('Checkout') {
             steps {
-                echo "${params.useBash} "
                 checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
             }
         }
         stage("Build&Deploy useBash") {
-          when (${params.useBash} == true)
+          when { expression { deployment.useBash} }
             steps {
               script {
                  echo "useBash: ${params.useBash}"
@@ -56,7 +78,6 @@ pipeline {
                  }
               }
             }
-
         }
         stage('Test') {
             steps {
