@@ -35,6 +35,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                echo "${params.useBash} "
                 checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
             }
         }
