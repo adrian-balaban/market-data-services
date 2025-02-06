@@ -54,58 +54,6 @@ apps:
     affinity: {}
 
   ###################################
-  ##### FX MARKET CAMEL CONNECTOR APP #####
-  ###################################
-  fxmarketcamelconnector:
-    name: fx-market-camel-connector
-    image:
-      repository: localhost:5001/fx-market-services/fx-market-connector
-      #tag: 0.0.1
-    podAnnotations: {}
-
-    service:
-      type: NodePort
-      port: 8080
-
-    extraEnv:
-      - name: SERVER_PORT
-        value: "8080"
-      - name: KAFKA_BOOTSTRAP_SERVERS
-        value: "PLAINTEXT://kafka:9071"
-      - name: VENDOR_MARKET_DATA_STUB_URL
-        value: "http://fx-market-data-stub-svc:3080"
-      - name: KAFKA_TOPIC
-        value: "fx_rates_camel"
-      - name: JAVA_OPTS
-        value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
-
-    resources:
-      limits:
-        cpu: 1
-        memory: 3072Mi
-      requests:
-        cpu: 500m
-        memory: 3072Mi
-
-    volumes: []
-
-    statefulSet:
-      enabled: false
-
-    autoscaling:
-      enabled: false
-      minReplicas: 1
-      maxReplicas: 1
-      targetCPUUtilizationPercentage: 80
-
-    initContainers: {}
-    imagePullSecrets: {}
-    nodeSelector: {}
-    tolerations: []
-    affinity: {}
-
-
-  ###################################
   ##### FX MARKET PROCESSOR APP #####
   ###################################
   fxmarketprocessor:
@@ -165,56 +113,6 @@ apps:
     tolerations: []
     affinity: {}
 
-
-  ###################################
-  ##### FX MARKET CAMEL PROCESSOR APP #####
-  ###################################
-  fxmarketcamelprocessor:
-    name: fx-market-camel-processor
-    image:
-      repository: localhost:5001/fx-market-services/fx-market-processor
-    #      tag: 0.0.1
-
-    podAnnotations: {}
-
-    service:
-      type: ClusterIP
-      port: 8080
-
-    extraEnv:
-      - name: SERVER_PORT
-        value: "8080"
-      - name: KAFKA_BOOTSTRAP_SERVERS
-        value: "PLAINTEXT://kafka:9071"
-      - name: KAFKA_TOPIC
-        value: "fx_rates_camel"
-      - name: KAFKA_APPLICATION_ID_CONFIG
-        value: "fx-market-processor-stream-operator-camel"
-
-    resources:
-      limits:
-        cpu: 1
-        memory: 3072Mi
-      requests:
-        cpu: 500m
-        memory: 3072Mi
-
-    volumes: []
-
-    statefulSet:
-      enabled: false
-
-    autoscaling:
-      enabled: false
-      minReplicas: 1
-      maxReplicas: 1
-      targetCPUUtilizationPercentage: 80
-
-    initContainers: {}
-    imagePullSecrets: {}
-    nodeSelector: {}
-    tolerations: []
-    affinity: {}
 
   ###################################
   ##### FLINK ORCHESTRATOR APP ######
