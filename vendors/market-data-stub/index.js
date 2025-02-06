@@ -39,8 +39,8 @@ function generateRecord() {
         pair: randomCcyPair,
         baseCurrency: baseCurrency,
         quoteCurrency: quoteCurrency,
-        ask: (Math.random() * 2).toFixed(4),
-        bid: (Math.random() * 2).toFixed(4)
+        ask: (Math.random() * 2).toFixed(randomCcyPair.includes("JPY") ? 2 : 4),
+        bid: (Math.random() * 2).toFixed(randomCcyPair.includes("JPY") ? 2 : 4),
     }
 }
 
