@@ -13,7 +13,7 @@ spec:
             - name: STUB_HOST
               value: "http://fx-market-data-stub-svc:3080"
             - name: PROCESSOR_HOST
-              value: "http://fx-market-data-stub-svc:4080"
+              value: "http://fx-market-processor-svc:8080"
             - name: SCRIPT_NAME
               valueFrom:
                 configMapKeyRef:
