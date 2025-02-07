@@ -1,4 +1,4 @@
-def user_parameters = [useBash: true, build: true, test: true]
+def user_parameters = [useBash: true, build: false, test: false]
 def k8s_namespace = env.BRANCH_NAME == 'master' ? 'test' : env.BRANCH_NAME
 pipeline {
     agent any
