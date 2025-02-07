@@ -56,6 +56,7 @@ pipeline {
                     echo "CONFIG: user_parameters.build: " + user_parameters.build
                     echo "CONFIG: user_parameters.test: " + user_parameters.test
                     echo "CONFIG: user_parameters.tag_root: " + user_parameters.tag_root
+                    cleanWs()
                 }
             }
         }
@@ -80,10 +81,5 @@ pipeline {
                 sh 'cd qa && ./gradlew cucumberFullRun'
             }
         }
-    }
-    post {
-            always {
-                cleanWs()
-            }
     }
 }

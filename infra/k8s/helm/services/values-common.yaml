@@ -2,7 +2,7 @@
 
 tag: "latest"
 replicaCount: 1
-pullPolicy: Always
+imagePullPolicy: Always
 
 livenessProbe:
   httpGet:
