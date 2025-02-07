@@ -39,7 +39,7 @@ pipeline {
                             message: "Input params:",
                             parameters: [
                                 booleanParam(defaultValue: true, name: 'useBash'),
-                                booleanParam(defaultValue: true, name: 'build'),
+                                booleanParam(defaultValue: false, name: 'build'),
                                 booleanParam(defaultValue: false, name: 'test')]
                         )
                     }catch(err) {
