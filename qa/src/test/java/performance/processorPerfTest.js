@@ -12,9 +12,11 @@ export let options = {
     },
 };
 
-let testParam = __ENV.STUB_HOST || "http://localhost:3080";
-const urlEmitEvent = `${testParam}/emitEvent`;
-const urlFxRatesBase = "http://localhost:4080/fx/rates/";
+let connectorHost = __ENV.STUB_HOST || "http://localhost:3080";
+const urlEmitEvent = `${connectorHost}/emitEvent`;
+
+let procHost = __ENV.PROCESSOR_HOST || "http://localhost:4080";
+const urlFxRatesBase = `${procHost}/fx/rates/`;
 
 const params = {
     headers: { 'Content-Type': 'application/json' },

@@ -12,6 +12,7 @@ Feature: Kafka test feature
     Then Rates successfully updated
 
 
+  #Failing now because of lack of validation on connector side
   Scenario: Kafka - Negative - empty fields
     When the following rates data is prepared:
       | pair      | baseCurrency | quoteCurrency | ask    | bid   |
