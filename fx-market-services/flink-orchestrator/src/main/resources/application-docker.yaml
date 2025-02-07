@@ -12,3 +12,7 @@ flink:
       arguments:
         topic: fx_rates
         bootstrapServers: kafka:9092
+    - name: fxmarketflinkconnector
+      arguments:
+        stub_hostname: fx-market-stub
+        stub_port: 3081
