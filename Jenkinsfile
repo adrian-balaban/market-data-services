@@ -1,4 +1,4 @@
-def user_parameters = [useBash: true, build: false, test: false, tag_root = "0.0.1"]
+def user_parameters = [useBash: true, build: false, test: false, tag_root: "0.0.1"]
 def k8s_namespace = env.BRANCH_NAME == 'master' ? 'test' : env.BRANCH_NAME
 def tag="0.0.1-${env.BRANCH_NAME}"
 pipeline {
