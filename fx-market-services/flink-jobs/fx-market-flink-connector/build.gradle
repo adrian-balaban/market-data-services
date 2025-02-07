@@ -26,26 +26,26 @@ configurations {
 }
 
 dependencies {
+    implementation project(":model-fx-proto")
+    implementation project(":model-bloomberg-stub")
+    implementation project(":common-utils")
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
+
     // --------------------------------------------------------------
     // Compile-time dependencies that should NOT be part of the
     // shadow (uber) jar and are provided in the lib folder of Flink
     // --------------------------------------------------------------
-    implementation 'org.apache.flink:flink-streaming-java_2.12:1.14.6'
-    implementation 'org.apache.flink:flink-clients:1.20.0'
-    implementation 'com.google.code.gson:gson:2.11.0'
-    implementation 'org.apache.flink:flink-protobuf:1.20.0'
-
-    implementation('com.twitter:chill-protobuf:0.7.6') {
-        exclude group: 'com.esotericsoftware.kryo', module: 'kryo'
-    }
+    implementation 'org.apache.flink:flink-core:1.20.0'
+    implementation 'org.apache.flink:flink-streaming-java:1.20.0'
 
     // --------------------------------------------------------------
     // Dependencies that should be part of the shadow jar, e.g.
     // connectors. These must be in the flinkShadowJar configuration!
     // --------------------------------------------------------------
-    flinkShadowJar project(":model-fx-proto")
+    /*flinkShadowJar project(":model-fx-proto")
     flinkShadowJar 'org.apache.flink:flink-connector-kafka:3.4.0-1.20'
-    flinkShadowJar 'com.google.protobuf:protobuf-java:3.25.5'
+    flinkShadowJar 'com.google.protobuf:protobuf-java:3.25.5'*/
 
 
     // Test dependencies
@@ -55,8 +55,8 @@ dependencies {
 
 compileJava   {
     sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-    options.release = 11
+    targetCompatibility = JavaVersion.VERSION_21
+    options.release = 21
 }
 
 // make compileOnly dependencies available for tests:

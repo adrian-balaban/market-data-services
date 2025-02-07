@@ -1,76 +1,73 @@
 package com.fx.market.flink.processor;
 
-import com.fx.market.flink.processor.helpers.FxRateEventProtoMessageDeserializer;
-import com.fx.market.flink.processor.pojo.FxRate;
-import com.fx.market.flink.processor.pojo.FxRateEvent;
-import org.apache.flink.api.common.eventtime.WatermarkStrategy;
+import com.fx.model.FxRate;
+import com.fx.model.FxRateEvent;
 import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.utils.ParameterTool;
-import org.apache.flink.configuration.Configuration;
-import org.apache.flink.connector.kafka.source.KafkaSource;
-import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.Duration;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class FxMarketFlinkConnector {
 
     private static final Logger log = LoggerFactory.getLogger(FxMarketFlinkConnector.class);
 
     public static void main(String[] args) throws Exception {
+        //
         ParameterTool parameter = ParameterTool.fromArgs(args);
-        String bootstrapServers = "broker:29092"; // default
-        String topic = "fx_rates"; // default
+        String stub_hostname = "fx-market-data-stub-ws-svc"; // default
+        int stub_port = 3081; // default
 
-        // On FLINK GUI Program Arguments enter: --bootstrapServers kafka:9091
-        if (parameter.has("bootstrapServers")) {
-            bootstrapServers = parameter.get("bootstrapServers");
+        // On FLINK GUI Program Arguments enter: --stub_hostname fx-market-data-stub-ws-svc
+        // On FLINK GUI Program Arguments enter: --stub_port 3081
+        if (parameter.has("stub_hostname")) {
+            stub_hostname = parameter.get("stub_hostname");
         }
-        if (parameter.has("topic")) {
-            topic = parameter.get("topic");
+        if (parameter.has("stub_port")) {
+            stub_port = parameter.getInt("stub_port");
         }
 
-        log.info("FX_INFO: bootstrapServers set to {}", bootstrapServers);
-        log.info("FX_INFO: topic set to {}", topic);
+        log.info("FX_INFO: stub_hostname set to {}", stub_hostname);
+        log.info("FX_INFO: stub_port set to {}", stub_port);
 
-        Configuration config = new Configuration();
+        // get the execution environment
+        final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        //config.setString(
-        //        PipelineOptions.SERIALIZATION_CONFIG.key(),
-        //        "[com.fx.market.flink.processor.model.FxRateEventProto: {type: kryo, kryo-type: registered, class: com.twitter.chill.protobuf.ProtobufSerializer}}]");
+        DataStream<String> text = env.socketTextStream(stub_hostname, stub_port, "\n");
 
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment(config);
-        //env.getConfig().registerKryoType(MyCustomType.class);
-        //env.getConfig().disableGenericTypes();
-//        env.getConfig().registerTypeWithKryoSerializer(FxRateEventProto.class, ProtobufSerializer.class);
+        DataStream<FxRate> stream =
+                text.map(new FxRatesMapper())
+                        .flatMap(new FxRatesFlatMapper())
+                        .keyBy(FxRate::getPair)
+                        .window(TumblingProcessingTimeWindows.of(Duration.ofSeconds(5)))
+                        .reduce((FxRate aggValue, FxRate newValue) -> newValue)
+                        .returns(FxRate.class);
 
-        KafkaSource<FxRateEvent> source = KafkaSource.<FxRateEvent>builder()
-                .setBootstrapServers(bootstrapServers)
-                .setTopics(topic)
-                .setGroupId("flink-consumer-group")
-                .setStartingOffsets(OffsetsInitializer.latest())
-                .setValueOnlyDeserializer(new FxRateEventProtoMessageDeserializer())
-                .build();
+        // print the results with a single thread, rather than in parallel
+        stream.print().setParallelism(1);
 
-        DataStream<FxRate> stream = env.fromSource(
-                        source,
-                        WatermarkStrategy.noWatermarks(),
-                        "Kafka Source"
-                )
-                .flatMap(new FxRatesFlatMapper())
-                .keyBy(FxRate::getPair)
-                .reduce((FxRate aggValue, FxRate newValue) -> newValue);
+        env.execute("Flink Websocket Consumer Example");
+    }
 
-        stream.print();
-
-        env.execute("Flink Kafka Consumer Example");
+    public static class FxRatesMapper implements MapFunction<String, FxRateEvent> {
+        private static final ObjectMapper MAPPER = new ObjectMapper();
+        @Override
+        public FxRateEvent map(String value) throws Exception {
+            return MAPPER.readValue(value, FxRateEvent.class);
+        }
     }
 
     public static class FxRatesFlatMapper implements FlatMapFunction<FxRateEvent, FxRate> {
 
         @Override
-        public void flatMap(FxRateEvent fxRateEvent, org.apache.flink.util.Collector<FxRate> collector) throws Exception {
+        public void flatMap(FxRateEvent fxRateEvent, org.apache.flink.util.Collector<FxRate> collector) {
             fxRateEvent.getRates().forEach(
                     collector::collect
             );

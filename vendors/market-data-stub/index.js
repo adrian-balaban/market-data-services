@@ -97,13 +97,13 @@ app.listen(3080, () => {
 
 import { WebSocketServer } from "ws";
 const wss = new WebSocketServer({ port: 3081 });
+console.log("Websocket server is running on port 3081");
 wss.on("connection", function connection(ws) {
-    console.log("Websocket server is running on port 3081");
     setInterval(async () => {
         const record = updateFxRates(); // Update data with a random number
         record['timestamp'] =  new Date().toISOString();
         console.log("message:" + JSON.stringify(record));
-        ws.send(`data: ${JSON.stringify(record)}\n\n`);
+        ws.send(`${JSON.stringify(record)}\n`);
     }, 1000);// Schedule next update in 10ms
 });
 
