@@ -39,7 +39,7 @@ pipeline {
                             message: "Input params:",
                             parameters: [
                                 booleanParam(defaultValue: true, name: 'useBash'),
-                                booleanParam(defaultValue: false, name: 'build'),
+                                booleanParam(defaultValue: true, name: 'build'),
                                 booleanParam(defaultValue: false, name: 'test'),
                                 string(defaultValue: "0.0.1", name: 'tag_root')
                             ]
