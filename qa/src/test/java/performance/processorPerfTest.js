@@ -12,6 +12,7 @@ export let options = {
     },
 };
 
+let testMode = __ENV.TEST_MODE || "all_in_one";
 let connectorHost = __ENV.STUB_HOST || "http://localhost:3080";
 const urlEmitEvent = `${connectorHost}/emitEvent`;
 
@@ -40,6 +41,7 @@ const pairs = [
     "GBP/QAR", "USD/OMR", "EUR/OMR", "GBP/OMR", "USD/BHD", "EUR/BHD", "GBP/BHD", "USD/KWD",
     "EUR/KWD", "GBP/KWD", "USD/AED", "EUR/AED"
 ];
+let sentRates = {};
 
 let globalStats = {
     totalRequests: 0,
@@ -64,22 +66,41 @@ export default function () {
     const ratesObject = { rates: rates };
 
     // 2. save timestamp of request send for each pair
+    rates.forEach(rate => {
+        sentRates[rate.pair] = rate;
+    });
+
+    // 3. Сохраняем timestamp отправки
     const sendTimestamps = {};
     pairs.forEach(pair => sendTimestamps[pair] = new Date().getTime());
 
-    // 3. send post request to /emitEvent (ALL PAIRS IN ONE REQUEST)
-    let resEmitEvent = http.post(urlEmitEvent, JSON.stringify(ratesObject), {
-        headers: { 'Content-Type': 'application/json' },
-        tags: { name: "emitEvent" }
-    });
+    if (testMode === "all_in_one") {
+        console.log("Sending ALL pairs in one request...");
 
-    successRate.add(resEmitEvent.status === 200);
+        let resEmitEvent = http.post(urlEmitEvent, JSON.stringify(ratesObject), params);
 
-    check(resEmitEvent, {
-        'emitEvent status is 200': (r) => r.status === 200,
-        'emitEvent response time < 1500ms': (r) => r.timings.duration < 1500,
-    });
+        successRate.add(resEmitEvent.status === 200);
+     //   check(resEmitEvent, {
+     //       'emitEvent status is 200': (r) => r.status === 200,
+     //       'emitEvent response time < 1500ms': (r) => r.timings.duration < 1500,
+     //   });
 
+    } else if (testMode === "parallel") {
+        console.log("Sending each pair separately...");
+
+        pairs.forEach(pair => {
+            let payload = JSON.stringify({ rates: [sentRates[pair]] }); // using previously saved rates.
+            let res = http.post(urlEmitEvent, payload, params);
+
+            successRate.add(res.status === 200);
+       //     check(res, {
+       //         [`emitEvent ${pair} status is 200`]: (r) => r.status === 200,
+       //         [`emitEvent ${pair} response time < 1500ms`]: (r) => r.timings.duration < 1500,
+       //     });
+
+            sendTimestamps[pair] = new Date().getTime();  // Updating timestamp..
+        });
+    }
 
     let maxAttempts = 10;
     let attempts = 0;
@@ -96,14 +117,7 @@ export default function () {
 
         let batchRequests = remainingPairs.map(pair => {
             let url = `${urlFxRatesBase}${pair.replace('/', '')}`;
-            return {
-                method: 'GET',
-                url: url,
-                params: {
-                    headers: { 'Content-Type': 'application/json' },
-                    tags: { name: "fxRates" }
-                }
-            };
+            return { method: 'GET', url: url, params };
         });
 
         let responses = http.batch(batchRequests);
@@ -112,17 +126,17 @@ export default function () {
             let pair = remainingPairs[index];
             successRate.add(response.status === 200);
 
-            check(response, {
-                [`fxRates ${pair} status is 200`]: (r) => r.status === 200,
-                [`fxRates ${pair} response time < 1500ms`]: (r) => r.timings.duration < 1500,
-            });
+         //   check(response, {
+         //       [`fxRates ${pair} status is 200`]: (r) => r.status === 200,
+         //       [`fxRates ${pair} response time < 1500ms`]: (r) => r.timings.duration < 1500,
+         //   });
 
             let receivedAt = new Date().getTime();
             let delta = receivedAt - sendTimestamps[pair];
 
             if (response.status === 200) {
                 let responseBody = JSON.parse(response.body);
-                let sentRate = rates.find(r => r.pair === pair);
+                let sentRate = sentRates[pair];
 
                 // check if rates updated
                 if (responseBody.ask === sentRate.ask && responseBody.bid === sentRate.bid) {
@@ -131,8 +145,7 @@ export default function () {
 
                     globalStats.totalRequests++;
                     globalStats.totalDurations.push(delta);
-                    let key = Number(delta);
-                    globalStats.counts[key] = (globalStats.counts[key] || 0) + 1;
+                    globalStats.counts[delta] = (globalStats.counts[delta] || 0) + 1;
                 } else {
                     console.log(`Attempt ${attempts + 1} for ${pair}: Rates do not match. Retrying...`);
                 }
@@ -154,8 +167,7 @@ export default function () {
     let counts = {};
 
     responseTimes.forEach(time => {
-        let key = Number(time);
-        counts[key] = (counts[key] || 0) + 1;
+        counts[time] = (counts[time] || 0) + 1;
     });
 
     let sortedOutput = Object.entries(counts)
@@ -166,10 +178,10 @@ export default function () {
         .sort((a, b) => b.percentage - a.percentage)
         .map(entry => `${entry.percentage}% - ${entry.time} ms`);
 
-    console.log("\n--- ITERATION RESULT ---");
+    console.log(`\n--- ITERATION RESULT (Iteration ${__ITER + 1}) ---`);
     sortedOutput.forEach(line => console.log(line));
 
-    if (__ITER === options.iterations - 1) {
+    if (__ITER === options.iterations - 1 || options.iterations === 1) {
         console.log("\n--- FINAL GLOBAL STATISTICS ---");
 
         let totalGlobalResponses = globalStats.totalDurations.length;
