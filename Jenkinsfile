@@ -49,7 +49,6 @@ pipeline {
                     }
                 }
                 script {
-                    echo "LOG: changesDetected: " + changesDetected()
                     echo "CONFIG: user_parameters.useBash: " + user_parameters.useBash
                     echo "CONFIG: user_parameters.build: " + user_parameters.build
                     echo "CONFIG: user_parameters.test: " + user_parameters.test
