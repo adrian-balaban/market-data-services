@@ -72,7 +72,7 @@ export default function () {
         sentRates[rate.pair] = rate;
     });
 
-    // 3. Сохраняем timestamp отправки
+    // 3. Save timestamp of sending request
     const sendTimestamps = {};
     pairs.forEach(pair => sendTimestamps[pair] = new Date().getTime());
 
