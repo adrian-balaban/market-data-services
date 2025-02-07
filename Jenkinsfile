@@ -44,7 +44,7 @@ pipeline {
                         )
                     }catch(err) {
                         user_parameters.useBash = true
-                        user_parameters.build = true
+                        user_parameters.build = false
                         user_parameters.test = false
                     }
                 }
