@@ -62,6 +62,8 @@ function generateRateObject(pair) {
 
 export default function () {
     // 1. generate rates for all currency pairs
+    console.log(`\n🔄 Starting Iteration ${__ITER + 1}`);
+
     const rates = pairs.map(generateRateObject);
     const ratesObject = { rates: rates };
 
@@ -76,29 +78,15 @@ export default function () {
 
     if (testMode === "all_in_one") {
         console.log("Sending ALL pairs in one request...");
-
         let resEmitEvent = http.post(urlEmitEvent, JSON.stringify(ratesObject), params);
-
         successRate.add(resEmitEvent.status === 200);
-     //   check(resEmitEvent, {
-     //       'emitEvent status is 200': (r) => r.status === 200,
-     //       'emitEvent response time < 1500ms': (r) => r.timings.duration < 1500,
-     //   });
-
     } else if (testMode === "parallel") {
         console.log("Sending each pair separately...");
-
         pairs.forEach(pair => {
-            let payload = JSON.stringify({ rates: [sentRates[pair]] }); // using previously saved rates.
+            let payload = JSON.stringify({ rates: [sentRates[pair]] });
             let res = http.post(urlEmitEvent, payload, params);
-
             successRate.add(res.status === 200);
-       //     check(res, {
-       //         [`emitEvent ${pair} status is 200`]: (r) => r.status === 200,
-       //         [`emitEvent ${pair} response time < 1500ms`]: (r) => r.timings.duration < 1500,
-       //     });
-
-            sendTimestamps[pair] = new Date().getTime();  // Updating timestamp..
+            sendTimestamps[pair] = new Date().getTime();
         });
     }
 
@@ -107,29 +95,21 @@ export default function () {
     let updatedRates = {}; // store updated time for each pair
     let responseTimes = [];
 
-   // 4. start parallel GET-requests with http.batch()
     while (attempts < maxAttempts) {
         let remainingPairs = pairs.filter(pair => !(pair in updatedRates));
+        if (remainingPairs.length === 0) break;
 
-        if (remainingPairs.length === 0) {
-            break; // all pairs updated, exit loop
-        }
-
-        let batchRequests = remainingPairs.map(pair => {
-            let url = `${urlFxRatesBase}${pair.replace('/', '')}`;
-            return { method: 'GET', url: url, params };
-        });
+        let batchRequests = remainingPairs.map(pair => ({
+            method: 'GET',
+            url: `${urlFxRatesBase}${pair.replace('/', '')}`,
+            params
+        }));
 
         let responses = http.batch(batchRequests);
 
         responses.forEach((response, index) => {
             let pair = remainingPairs[index];
             successRate.add(response.status === 200);
-
-         //   check(response, {
-         //       [`fxRates ${pair} status is 200`]: (r) => r.status === 200,
-         //       [`fxRates ${pair} response time < 1500ms`]: (r) => r.timings.duration < 1500,
-         //   });
 
             let receivedAt = new Date().getTime();
             let delta = receivedAt - sendTimestamps[pair];
@@ -138,8 +118,9 @@ export default function () {
                 let responseBody = JSON.parse(response.body);
                 let sentRate = sentRates[pair];
 
-                // check if rates updated
-                if (responseBody.ask === sentRate.ask && responseBody.bid === sentRate.bid) {
+                if (parseFloat(responseBody.ask) === parseFloat(sentRate.ask) &&
+                    parseFloat(responseBody.bid) === parseFloat(sentRate.bid)) {
+
                     responseTimes.push(delta);
                     updatedRates[pair] = delta;
 
@@ -147,22 +128,20 @@ export default function () {
                     globalStats.totalDurations.push(delta);
                     globalStats.counts[delta] = (globalStats.counts[delta] || 0) + 1;
                 } else {
-                    console.log(`Attempt ${attempts + 1} for ${pair}: Rates do not match. Retrying...`);
+                    console.log(`⚠️ Attempt ${attempts + 1} for ${pair}: Rates do not match. Retrying...`);
                 }
             }
         });
-
+        sleep(0.5);
         attempts++;
     }
 
-    // check if any pairs still not updated
     pairs.forEach(pair => {
         if (!(pair in updatedRates)) {
-            console.log(`Failed to get updated rate for ${pair} after ${maxAttempts} attempts.`);
+            console.log(`⚠️ Failed to get updated rate for ${pair} after ${maxAttempts} attempts.`);
         }
     });
 
-    // Stats to console
     let totalResponses = responseTimes.length;
     let counts = {};
 
@@ -173,7 +152,7 @@ export default function () {
     let sortedOutput = Object.entries(counts)
         .map(([time, count]) => ({
             time: Number(time),
-            percentage: totalResponses > 0 ? Math.round((count / totalResponses) * 100) : 0
+            percentage: totalResponses > 0 ? ((count / totalResponses) * 100).toFixed(2) : 0
         }))
         .sort((a, b) => b.percentage - a.percentage)
         .map(entry => `${entry.percentage}% - ${entry.time} ms`);
@@ -194,7 +173,7 @@ export default function () {
         let sortedGlobalOutput = Object.entries(globalStats.counts)
             .map(([time, count]) => ({
                 time: Number(time),
-                percentage: totalGlobalResponses > 0 ? Math.round((count / totalGlobalResponses) * 100) : 0
+                percentage: totalGlobalResponses > 0 ? ((count / totalGlobalResponses) * 100).toFixed(2) : 0
             }))
             .filter(entry => !isNaN(entry.time) && entry.percentage > 0)
             .sort((a, b) => b.percentage - a.percentage)
