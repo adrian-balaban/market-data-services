@@ -12,7 +12,19 @@ spec:
           env:
             - name: STUB_HOST
               value: "http://fx-market-data-stub-svc:3080"
-          command: ["k6", "run", "/performance/connectorPerfTest.js"]
+            - name: PROCESSOR_HOST
+              value: "http://fx-market-processor-svc:8080"
+            - name: SCRIPT_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: k6-performance
+                  key: scriptName
+            - name: TEST_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: k6-performance
+                  key: testMode
+          command: ["/bin/sh", "-c", "TEST_MODE=$TEST_MODE k6 run /performance/$SCRIPT_NAME"]
           volumeMounts:
             - name: performance
               mountPath: /performance
