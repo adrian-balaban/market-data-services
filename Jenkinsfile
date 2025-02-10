@@ -6,6 +6,12 @@ pipeline {
     tools {
         jdk '21'
     }
+#    parameters {
+#        booleanParam(defaultValue: true, name: 'useBash')
+#        booleanParam(defaultValue: true, name: 'build')
+#        booleanParam(defaultValue: false, name: 'test')
+#        string(defaultValue: "0.0.1", name: 'tag_root')
+#    }
     environment {
         registry="192.168.192.96:5001"
     }
@@ -65,15 +71,6 @@ pipeline {
                 checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
             }
         }
-        stage('Build'){
-            when{
-                expression{${user_parameters.useBash}' == true}
-            }
-            steps{
-                echo env.AUTO_BUILD
-                echo env.BUILD_OPT
-                echo env.BRANCH_NAME
-            }
         stage("Build&Deploy with bash script") {
             when{
                 expression{user_parameters.useBash == true}
