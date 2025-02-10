@@ -76,9 +76,7 @@ pipeline {
                      sh """
                         #if [ ${useBash} = true ]; then
                            echo "Executing with bash script..."
-                           pushd ./infra/k8s
-                              ./deployAll.sh      -build ${user_parameters.build} -test ${user_parameters.test} -n ${k8s_namespace} -tag ${user_parameters.tag_root}-${env.BRANCH_NAME} -registry ${env.registry}
-                           popd
+                           cd ./infra/k8s && ./deployAll.sh      -build ${user_parameters.build} -test ${user_parameters.test} -n ${k8s_namespace} -tag ${user_parameters.tag_root}-${env.BRANCH_NAME} -registry ${env.registry}
                         #else
                         #   echo "Executing with argoCD script..."
                         #   pushd ./infra/argo
