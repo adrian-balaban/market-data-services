@@ -128,7 +128,7 @@ wait_for_pod "flink-jobmanager"
 wait_for_pod "zookeeper-0"
 wait_for_pod "kafka-0"
 wait_for_pod "fx-market-data-stub"
-wait_for_pod "fx-market-data-stub-ws"
+#wait_for_pod "fx-market-data-stub-ws"
 
 pushd ./scripts && ./deploySolution.sh -tag ${TAG} -registry ${DOCKER_REGISTRY} -n ${NAMESPACE} && popd
 
