@@ -1,0 +1,35 @@
+jobmanager:
+  containerSecurityContext:
+    enabled: false # Without this we cannot move Flink jar from opt to lib
+  replicaCount: 1
+  extraEnvVars:
+  - name: FLINK_PROPERTIES
+    value: |
+      queryable-state.enable: true
+  lifecycleHooks:
+    postStart:
+      exec:
+        command:
+          - /bin/sh
+          - -c
+          - |
+            mv opt/flink-queryable-state* lib/
+
+taskmanager:
+  containerSecurityContext:
+    enabled: false ## Without this we cannot move Flink jar from opt to lib
+  replicaCount: 1
+  extraEnvVars:
+  - name: FLINK_PROPERTIES
+    value: |
+      queryable-state.enable: true
+  lifecycleHooks:
+    postStart:
+      exec:
+        command:
+          - /bin/sh
+          - -c
+          - |
+            mv opt/flink-queryable-state* lib/
+
+      
