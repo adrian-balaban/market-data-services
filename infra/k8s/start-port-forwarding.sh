@@ -23,6 +23,7 @@ echo "ARGOCD PASSWORD: ${PASSWD}"
 kubectl port-forward -n ${NAMESPACE} svc/kafka 9093:9092 &
 kubectl port-forward -n ${NAMESPACE} svc/controlcenter 9021:9021 &
 kubectl port-forward -n ${NAMESPACE} svc/fx-flink-jobmanager 8081:8081 &
+kubectl port-forward -n ${NAMESPACE} svc/fx-redis-cluster 6379:6379 &
 
 #STUBS
 kubectl port-forward -n ${NAMESPACE} svc/fx-market-data-stub-svc 3080:3080 &
