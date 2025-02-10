@@ -14,5 +14,5 @@ flink:
         bootstrapServers: kafka:9092
     - name: fxmarketflinkconnector
       arguments:
-        stub_hostname: fx-market-data-stub-ws-svc
+        stub_hostname: localhost
         stub_port: 3081

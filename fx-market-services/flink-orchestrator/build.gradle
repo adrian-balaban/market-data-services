@@ -11,6 +11,7 @@ apply plugin: 'org.springframework.boot'
 org.gradle.internal.os.OperatingSystem os = org.gradle.internal.os.OperatingSystem.current();
 
 dependencies {
+    implementation project(':fx-market-flink-connector')
     implementation project(':fx-market-flink-processor')
     implementation project(':model-flink-api')
     implementation project(':common-utils')

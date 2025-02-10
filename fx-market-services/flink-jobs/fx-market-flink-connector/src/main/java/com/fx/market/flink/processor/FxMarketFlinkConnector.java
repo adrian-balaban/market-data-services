@@ -22,7 +22,7 @@ public class FxMarketFlinkConnector {
     public static void main(String[] args) throws Exception {
         //
         ParameterTool parameter = ParameterTool.fromArgs(args);
-        String stub_hostname = "fx-market-data-stub-ws-svc"; // default
+        String stub_hostname = "localhost"; // fx-market-data-stub-ws-svc"; // default
         int stub_port = 3081; // default
 
         // On FLINK GUI Program Arguments enter: --stub_hostname fx-market-data-stub-ws-svc
@@ -40,10 +40,9 @@ public class FxMarketFlinkConnector {
         // get the execution environment
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        DataStream<String> text = env.socketTextStream(stub_hostname, stub_port, "\n");
-
         DataStream<FxRate> stream =
-                text.map(new FxRatesMapper())
+                env.socketTextStream(stub_hostname, stub_port)//, '\n', 100)
+                .map(new FxRatesMapper())
                         .flatMap(new FxRatesFlatMapper())
                         .keyBy(FxRate::getPair)
                         .window(TumblingProcessingTimeWindows.of(Duration.ofSeconds(5)))
@@ -57,15 +56,17 @@ public class FxMarketFlinkConnector {
     }
 
     public static class FxRatesMapper implements MapFunction<String, FxRateEvent> {
+        private static final Logger log = LoggerFactory.getLogger(FxRatesMapper.class);
         private static final ObjectMapper MAPPER = new ObjectMapper();
         @Override
         public FxRateEvent map(String value) throws Exception {
+            log.info("FX_RATES_MAPPER: value {}", value);
             return MAPPER.readValue(value, FxRateEvent.class);
         }
     }
 
     public static class FxRatesFlatMapper implements FlatMapFunction<FxRateEvent, FxRate> {
-
+        private static final Logger log = LoggerFactory.getLogger(FxRatesFlatMapper.class);
         @Override
         public void flatMap(FxRateEvent fxRateEvent, org.apache.flink.util.Collector<FxRate> collector) {
             fxRateEvent.getRates().forEach(
