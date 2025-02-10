@@ -1,4 +1,3 @@
-def user_parameters = [useBash: true, build: false, test: false, tag_root: "0.0.1"]
 def k8s_namespace = env.BRANCH_NAME == 'master' ? 'test' : env.BRANCH_NAME
 def tag="0.0.1-${env.BRANCH_NAME}"
 pipeline {
@@ -36,36 +35,6 @@ pipeline {
     }
 
     stages {
-        /*stage('Ask parameters') {
-            options { timeout(time: 10, unit: 'SECONDS') }
-            steps {
-                script {
-                    try {
-                        user_parameters = input(
-                            message: "Input params:",
-                            parameters: [
-                                booleanParam(defaultValue: true, name: 'useBash'),
-                                booleanParam(defaultValue: true, name: 'build'),
-                                booleanParam(defaultValue: false, name: 'test'),
-                                string(defaultValue: "0.0.1", name: 'tag_root')
-                            ]
-                        )
-                    }catch(err) {
-                        user_parameters.useBash = true
-                        user_parameters.build = false
-                        user_parameters.test = false
-                        user_parameters.tag_root = "0.0.1"
-                    }
-                }
-                script {
-                    echo "CONFIG: user_parameters.useBash: " + user_parameters.useBash
-                    echo "CONFIG: user_parameters.build: " + user_parameters.build
-                    echo "CONFIG: user_parameters.test: " + user_parameters.test
-                    echo "CONFIG: user_parameters.tag_root: " + user_parameters.tag_root
-                    cleanWs()
-                }
-            }
-        }*/
         stage('Checkout') {
             steps {
                 checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
@@ -82,7 +51,7 @@ pipeline {
                 withKubeConfig(caCertificate: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJVFRxVjBzTFozUkl3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TlRBeE16RXhNakl6TURSYUZ3MHpOVEF4TWpreE1qSTRNRFJhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUURoS3ZSYURaVnNPem0xNWRYV2tDeXpQKzBhMWVwaVdKQ1BGUDU5T1dIR25CemwvK0pWZ1hQdEk3ZTkKcVEySWtwejA4dnMrWDBnNFh2UlJrTlhULzdTcEpqVnM2OHlnRFZid0lsK1V4RWg5a0QxdzNDVkNnTjNvNWc5MgoydTBDeXVIUVdFekNqRVBrc0F2TGlRdU5rZlljdXdnbVVGLzcwS1VqdmRMNEhYQThiN055OUV6MTdOZGhNKzMrClV2T1J4dmFSMk9BaE1jN25Pa3Y1T0pCRFNoUEtDbVprVzh4NWNkZ0ozK29OTmdSa29hU2ZkUXdiS3pFM2N3VFgKT3ZFYUVMZHlIbm15bnIrdi9PLzZrU1VsVDhYWUZVNlVJMEdjMFF2RGlLZmkzdzdBOUJMMS9MdDZJN3BISi9EegplZG5JV0NicGNnTVJzN09QdG80cDltZE1rUXFQQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJTQkcxamlRcHlpSURUNmhkTG83VGwrZDBFcFh6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQ0VLNklxNGJ3QgorWkI5a3FhRTl3M1ltSjNPaVpFaElMckNDVXdFcWtjeXlGZW9jVURSMlFOcVVUV3hwdGlKWnoycVlKOGh0STY2Ck14bllCK0F4YWtKYWkvY0JZMzU2UURpWTJJOFNlYlhKdFNtSCtIZjNVQTRJZXRBKzFyNzJVb2kzc3dPcW01Z0sKcm0raEptK2MwZEdFQlZPemRQdlhSb0w5STVMcDBKc2J2aHVnSHJYRjFyQ3pBaXZ4Uit1RVlXWTdiZk9BeG56eAowM0JMTjRQbGVrWGZSbHdZeGFLNXRZV2lzcHlKblpXUWx3VXp2ODdRVDFsOTgrVUpWa2VCakVITTJmTTBpMHBTCkVBd0tiQ1JYY010TWN5YmZObUtWbGRILy81VjlJR25zakpHNUprUXhIaE5GRmtTWjd5TjBSSTcwTVdiaGt3YmUKY2wwbzQxeGFhU2xjCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K',
                   clusterName: 'kind-kind', contextName: 'kind-kind', credentialsId: 'K8sConfigMichal', namespace: 'default',
                   restrictKubeConfigAccess: true, serverUrl: 'https://192.168.192.96:6443') {
-                    sh "cd ./infra/k8s && ./deployAll.sh      -build ${user_parameters.build} -test ${user_parameters.test} -n ${k8s_namespace} -tag ${user_parameters.tag_root}-${env.BRANCH_NAME} -registry ${env.registry}"
+                    sh "cd ./infra/k8s && ./deployAll.sh      -build ${env.build} -test ${env.test} -n ${k8s_namespace} -tag ${env.tag_root}-${env.BRANCH_NAME} -registry ${env.registry}"
                 }
               }
             }
@@ -98,7 +67,7 @@ pipeline {
                     withKubeConfig(caCertificate: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJVFRxVjBzTFozUkl3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TlRBeE16RXhNakl6TURSYUZ3MHpOVEF4TWpreE1qSTRNRFJhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUURoS3ZSYURaVnNPem0xNWRYV2tDeXpQKzBhMWVwaVdKQ1BGUDU5T1dIR25CemwvK0pWZ1hQdEk3ZTkKcVEySWtwejA4dnMrWDBnNFh2UlJrTlhULzdTcEpqVnM2OHlnRFZid0lsK1V4RWg5a0QxdzNDVkNnTjNvNWc5MgoydTBDeXVIUVdFekNqRVBrc0F2TGlRdU5rZlljdXdnbVVGLzcwS1VqdmRMNEhYQThiN055OUV6MTdOZGhNKzMrClV2T1J4dmFSMk9BaE1jN25Pa3Y1T0pCRFNoUEtDbVprVzh4NWNkZ0ozK29OTmdSa29hU2ZkUXdiS3pFM2N3VFgKT3ZFYUVMZHlIbm15bnIrdi9PLzZrU1VsVDhYWUZVNlVJMEdjMFF2RGlLZmkzdzdBOUJMMS9MdDZJN3BISi9EegplZG5JV0NicGNnTVJzN09QdG80cDltZE1rUXFQQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJTQkcxamlRcHlpSURUNmhkTG83VGwrZDBFcFh6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQ0VLNklxNGJ3QgorWkI5a3FhRTl3M1ltSjNPaVpFaElMckNDVXdFcWtjeXlGZW9jVURSMlFOcVVUV3hwdGlKWnoycVlKOGh0STY2Ck14bllCK0F4YWtKYWkvY0JZMzU2UURpWTJJOFNlYlhKdFNtSCtIZjNVQTRJZXRBKzFyNzJVb2kzc3dPcW01Z0sKcm0raEptK2MwZEdFQlZPemRQdlhSb0w5STVMcDBKc2J2aHVnSHJYRjFyQ3pBaXZ4Uit1RVlXWTdiZk9BeG56eAowM0JMTjRQbGVrWGZSbHdZeGFLNXRZV2lzcHlKblpXUWx3VXp2ODdRVDFsOTgrVUpWa2VCakVITTJmTTBpMHBTCkVBd0tiQ1JYY010TWN5YmZObUtWbGRILy81VjlJR25zakpHNUprUXhIaE5GRmtTWjd5TjBSSTcwTVdiaGt3YmUKY2wwbzQxeGFhU2xjCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K',
                         clusterName: 'kind-kind', contextName: 'kind-kind', credentialsId: 'K8sConfigMichal', namespace: 'default',
                         restrictKubeConfigAccess: true, serverUrl: 'https://192.168.192.96:6443') {
-                        sh "cd  ./infra/argo && ./deployWithArgo.sh -build ${user_parameters.build} -test ${user_parameters.test} -n ${k8s_namespace} -tag ${user_parameters.tag_root}-${env.BRANCH_NAME} -registry ${env.registry} -branch ${env.BRANCH_NAME} -env test"
+                        sh "cd  ./infra/argo && ./deployWithArgo.sh -build ${env.build} -test ${env.test} -n ${k8s_namespace} -tag ${env.tag_root}-${env.BRANCH_NAME} -registry ${env.registry} -branch ${env.BRANCH_NAME} -env test"
                     }
                 }
             }
