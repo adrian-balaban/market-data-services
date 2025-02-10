@@ -269,7 +269,7 @@ tasks.register('processorRunSingleJob', Exec) {
     """
 }
 
-tasks.register('processorRun', Exec) {
+tasks.register('processorRunBatchLocal', Exec) {
     group = 'test_performanceLocal'
 
     def osName = System.getProperty("os.name").toLowerCase()
@@ -287,12 +287,39 @@ tasks.register('processorRun', Exec) {
 
     def scriptPathTest = "${projectDir}/src/test/java/performance/processorPerfTest.js"
 
-    environment 'PATH', System.getenv('PATH')
     environment 'K6_WEB_DASHBOARD', 'true'
     environment 'K6_WEB_DASHBOARD_EXPORT', 'build/test-results/processorPerfTest-html-report.html'
     environment 'PATH', System.getenv('PATH')
+    environment 'TEST_MODE', 'all_in_one'
 
     commandLine k6Command, 'run',  scriptPathTest
+}
+
+
+tasks.register('processorRunSingleLocal', Exec) {
+    group = 'test_performanceLocal'
+
+    def osName = System.getProperty("os.name").toLowerCase()
+    def isWindows = osName.contains("win")
+
+    def k6Command = isWindows ? "where k6" : "which k6"
+    def process = k6Command.execute()
+    process.waitFor()
+
+    if (process.exitValue() != 0) {
+        throw new GradleException("`k6` not installed")
+    } else {
+        k6Command = process.text.trim()
+    }
+
+    def scriptPathTest = "${projectDir}/src/test/java/performance/processorPerfTest.js"
+
+    environment 'K6_WEB_DASHBOARD', 'true'
+    environment 'K6_WEB_DASHBOARD_EXPORT', 'build/test-results/processorPerfTest-html-report.html'
+    environment 'PATH', System.getenv('PATH')
+    environment 'TEST_MODE', 'parallel'
+
+    commandLine  k6Command, 'run',  scriptPathTest
 }
 
 tasks.named('bootJar') {
