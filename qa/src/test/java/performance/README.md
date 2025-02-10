@@ -6,24 +6,20 @@ These tests include peak load and stress testing, to check system performance.
 ---
 ## **How to Run Tests**
 
-1. ![img.png](../../resources/img.png)
-The Peak Load Test evaluates the system's performance under a high number of concurrent users for a short period.
+FROM GRADLE TASK:
+Gradle task 'connectorRun'
+- triggers `connectorPerfTest.js`: Simulates peak load conditions on /emitEvent to measure system performance.
+Gradle task 'processorRun'
+- triggers `processorPerfTest.js`: measures FX rate update latency by sending data on /emitEvent, polling for updates from /fx/rates/{pair}, verifying consistency, and aggregating response time statistics.
 
-Just hit needed task:
-runPeakLoadTest - running only runPeakLoadTest.js
-runPeakLoadTestAndDelta - running runPeakLoadTest.js and calculate Delta timing between message timestamp and kafak timestamp in console
----
-
-## **Test Files**
-
-- `peakLoadTest.js`: Simulates peak load conditions to measure system performance.
-- `longStandingTest.js`: Gradually increases the load to determine the system's breaking point.
+From TERMINAL:
+- `TEST_MODE=parallel k6 run connectorPerfTest.js` - Runs the test with 120 parallel virtual users, each sending a request with a random currency pair.
+- `TEST_MODE=all_in_one k6 run connectorPerfTest.js` - Runs the test once, sending a single request containing all 120 currency pairs.
 
 ---
 
 
-
-### 2. See the report
+### See the report
 
 Now it's generated as an artifact after performancelocal - Run task.
 qa/build/test-results
