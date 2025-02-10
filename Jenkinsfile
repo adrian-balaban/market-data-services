@@ -6,12 +6,12 @@ pipeline {
     tools {
         jdk '21'
     }
-#    parameters {
+/*#    parameters {
 #        booleanParam(defaultValue: true, name: 'useBash')
 #        booleanParam(defaultValue: true, name: 'build')
 #        booleanParam(defaultValue: false, name: 'test')
 #        string(defaultValue: "0.0.1", name: 'tag_root')
-#    }
+#    }*/
     environment {
         registry="192.168.192.96:5001"
     }
