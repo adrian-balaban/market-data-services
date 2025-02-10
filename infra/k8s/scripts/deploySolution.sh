@@ -35,6 +35,9 @@ echo "$SEPARATOR"
 echo "DEPLOYING SOLUTION - START"
 echo "$SEPARATOR"
 
+helm uninstall --namespace ${NAMESPACE} fx-market-services
+sleep 5
+
 helm upgrade --install \
     --namespace ${NAMESPACE} \
     --set tag="${TAG}" \
