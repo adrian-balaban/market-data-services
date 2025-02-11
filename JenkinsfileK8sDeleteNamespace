@@ -1,8 +1,8 @@
-parameters {
-    string(defaultValue: env.BRANCH_NAME, name: 'k8s_namespace')
-}
 pipeline {
     agent any
+    parameters {
+        string(defaultValue: env.BRANCH_NAME, name: 'k8s_namespace')
+    }
     options {
         buildDiscarder(logRotator(
             // number of builds to keep
