@@ -11,6 +11,7 @@ apply plugin: 'org.springframework.boot'
 org.gradle.internal.os.OperatingSystem os = org.gradle.internal.os.OperatingSystem.current();
 
 dependencies {
+    implementation project(':fx-market-flink-connector')
     implementation project(':fx-market-flink-processor')
     implementation project(':model-flink-api')
     implementation project(':common-utils')
@@ -32,7 +33,7 @@ dependencies {
 }
 
 tasks.named('compileJava') {
-    dependsOn tasks.named('copyFxMarketFlinkProcessorJar')
+    dependsOn tasks.named('copyFxMarketFlinkJars')
 }
 
 tasks.named('clean') {
@@ -40,14 +41,18 @@ tasks.named('clean') {
     dependsOn(':fx-market-flink-processor:clean')
 }
 
-task copyFxMarketFlinkProcessorJar(type: Copy) {
+task copyFxMarketFlinkJars(type: Copy) {
+    dependsOn(':fx-market-flink-connector:shadowJar')
     dependsOn(':fx-market-flink-processor:shadowJar')
-    //doLast {
+    doLast {
+        from project(':fx-market-flink-connector').fileTree('build/libs') {
+            include '*-all.jar'
+        }
         from project(':fx-market-flink-processor').fileTree('build/libs') {
             include '*-all.jar'
         }
-        into FLINK_JOBS_JARS_PATH
-    //}
+    }
+    into FLINK_JOBS_JARS_PATH
 }
 
 task cleanDirectory(type: Delete) {
@@ -83,5 +88,5 @@ bootBuildImage {
 }
 
 processResources {
-    dependsOn copyFxMarketFlinkProcessorJar
+    dependsOn copyFxMarketFlinkJars
 }
