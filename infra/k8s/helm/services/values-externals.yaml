@@ -4,7 +4,7 @@ apps:
 ###################################
 ####### FX MARKET DATA STUB #######
 ###################################
-  fxmarketdatastub:
+  fxmarket_data_stub:
     name: fx-market-data-stub
     image:
       repository: localhost:5001/fx-market-externals/market-data-stub
@@ -46,7 +46,7 @@ apps:
   ###################################
   ####### FX MARKET DATA STUB WS ####
   ###################################
-  fxmarketdatastubws:
+  fxmarket_data_stub_websocket:
     name: fx-market-data-stub-ws
     image:
       repository: localhost:5001/fx-market-externals/market-data-stub

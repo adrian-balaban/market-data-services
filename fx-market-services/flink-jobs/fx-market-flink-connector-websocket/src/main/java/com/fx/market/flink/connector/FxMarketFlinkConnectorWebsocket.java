@@ -22,7 +22,7 @@ public class FxMarketFlinkConnectorWebsocket {
     public static void main(String[] args) throws Exception {
         //
         ParameterTool parameter = ParameterTool.fromArgs(args);
-        String stub_hostname = "localhost"; // fx-market-data-stub-ws-svc"; // default
+        String stub_hostname = "fx-market-data-stub-ws-svc"; // default
         int stub_port = 3081; // default
 
         // On FLINK GUI Program Arguments enter: --stub_hostname fx-market-data-stub-ws-svc

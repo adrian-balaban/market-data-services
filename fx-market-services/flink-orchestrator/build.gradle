@@ -11,8 +11,7 @@ apply plugin: 'org.springframework.boot'
 org.gradle.internal.os.OperatingSystem os = org.gradle.internal.os.OperatingSystem.current();
 
 dependencies {
-    implementation project(':fx-market-flink-connector')
-    //implementation project(':fx-market-flink-connector-wordcount')
+    implementation project(':fx-market-flink-connector-websocket')
     implementation project(':fx-market-flink-processor')
     implementation project(':model-flink-api')
     implementation project(':common-utils')
@@ -34,28 +33,28 @@ dependencies {
 }
 
 tasks.named('compileJava') {
-    dependsOn tasks.named('copyFxMarketFlinkJars')
+    dependsOn tasks.named('copyFxMarketFlinkConnectorWebsocketJar')
+    dependsOn tasks.named('copyFxMarketFlinkProcessorJar')
 }
 
 tasks.named('clean') {
     dependsOn cleanDirectory
+    dependsOn(':fx-market-flink-connector-websocket:clean')
     dependsOn(':fx-market-flink-processor:clean')
 }
 
-task copyFxMarketFlinkJars(type: Copy) {
-    dependsOn(':fx-market-flink-connector:shadowJar')
-    //dependsOn(':fx-market-flink-connector-wordcount:shadowJar')
+task copyFxMarketFlinkConnectorWebsocketJar(type: Copy) {
+    dependsOn(':fx-market-flink-connector-websocket:shadowJar')
+    from project(':fx-market-flink-connector-websocket').fileTree('build/libs') {
+        include '*-all.jar'
+    }
+    into FLINK_JOBS_JARS_PATH
+}
+
+task copyFxMarketFlinkProcessorJar(type: Copy) {
     dependsOn(':fx-market-flink-processor:shadowJar')
-    doLast {
-        from project(':fx-market-flink-connector').fileTree('build/libs') {
-            include '*-all.jar'
-        }
-        /*from project(':fx-market-flink-connector-wordcount').fileTree('build/libs') {
-            include '*-all.jar'
-        }*/
-        from project(':fx-market-flink-processor').fileTree('build/libs') {
-            include '*-all.jar'
-        }
+    from project(':fx-market-flink-processor').fileTree('build/libs') {
+        include '*-all.jar'
     }
     into FLINK_JOBS_JARS_PATH
 }
@@ -93,5 +92,6 @@ bootBuildImage {
 }
 
 processResources {
-    dependsOn copyFxMarketFlinkJars
+    dependsOn copyFxMarketFlinkConnectorWebsocketJar
+    dependsOn copyFxMarketFlinkProcessorJar
 }
