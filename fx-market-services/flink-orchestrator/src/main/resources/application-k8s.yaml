@@ -8,11 +8,11 @@ server:
 flink:
   url: "http://fx-flink-jobmanager:8081"
   jobs:
-    - name: fxmarketflinkproces
+    - name: job_fxmarket_flink_processor
       arguments:
         topic: fx_rates
         bootstrapServers: kafka:9071
-    - name: fxmarketflinkconnector
+    - name: job_fxmarket_flink_connector_websocket
       arguments:
         stub_hostname: fx-market-data-stub-ws-svc
         stub_port: 3081

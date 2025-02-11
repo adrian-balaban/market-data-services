@@ -8,7 +8,7 @@ plugins {
 // artifact properties
 group = 'com.fx.market.flink.connector'
 version = rootProject.version
-mainClassName = 'com.fx.market.flink.processor.FxMarketFlinkConnector'
+mainClassName = 'com.fx.market.flink.processor.FxMarketFlinkConnectorWebsocket'
 description = """Flink Sample Flink Job"""
 
 
@@ -50,8 +50,8 @@ dependencies {
 
 compileJava   {
     sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_21
-    options.release = 21
+    targetCompatibility = JavaVersion.VERSION_11
+    options.release = 11
 }
 
 // make compileOnly dependencies available for tests:
@@ -72,6 +72,6 @@ jar {
 }
 
 shadowJar {
-    archiveBaseName.set('fxmarketflinkconnect')
+    archiveBaseName.set('job_fxmarket_flink_connector_websocket')
     configurations = [project.configurations.flinkShadowJar]
 }

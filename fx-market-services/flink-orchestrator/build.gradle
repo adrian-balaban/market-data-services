@@ -12,6 +12,7 @@ org.gradle.internal.os.OperatingSystem os = org.gradle.internal.os.OperatingSyst
 
 dependencies {
     implementation project(':fx-market-flink-connector')
+    //implementation project(':fx-market-flink-connector-wordcount')
     implementation project(':fx-market-flink-processor')
     implementation project(':model-flink-api')
     implementation project(':common-utils')
@@ -43,11 +44,15 @@ tasks.named('clean') {
 
 task copyFxMarketFlinkJars(type: Copy) {
     dependsOn(':fx-market-flink-connector:shadowJar')
+    //dependsOn(':fx-market-flink-connector-wordcount:shadowJar')
     dependsOn(':fx-market-flink-processor:shadowJar')
     doLast {
         from project(':fx-market-flink-connector').fileTree('build/libs') {
             include '*-all.jar'
         }
+        /*from project(':fx-market-flink-connector-wordcount').fileTree('build/libs') {
+            include '*-all.jar'
+        }*/
         from project(':fx-market-flink-processor').fileTree('build/libs') {
             include '*-all.jar'
         }

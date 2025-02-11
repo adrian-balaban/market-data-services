@@ -1,4 +1,4 @@
-package com.fx.market.flink.processor;
+package com.fx.market.flink.connector;
 
 import com.fx.model.FxRate;
 import com.fx.model.FxRateEvent;
@@ -15,9 +15,9 @@ import java.time.Duration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class FxMarketFlinkConnector {
+public class FxMarketFlinkConnectorWebsocket {
 
-    private static final Logger log = LoggerFactory.getLogger(FxMarketFlinkConnector.class);
+    private static final Logger log = LoggerFactory.getLogger(FxMarketFlinkConnectorWebsocket.class);
 
     public static void main(String[] args) throws Exception {
         //
@@ -41,7 +41,7 @@ public class FxMarketFlinkConnector {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         DataStream<FxRate> stream =
-                env.socketTextStream(stub_hostname, stub_port)//, '\n', 100)
+                env.socketTextStream(stub_hostname, stub_port, "\n", 100)
                 .map(new FxRatesMapper())
                         .flatMap(new FxRatesFlatMapper())
                         .keyBy(FxRate::getPair)

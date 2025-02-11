@@ -38,15 +38,20 @@ echo "$SEPARATOR"
 helm uninstall --namespace ${NAMESPACE} fx-market-services
 sleep 5
 
+#    --set apps.fxmarketconnector.image.repository="${DOCKER_REGISTRY}/fx-market-services/fx-market-connector" \
+#    --set apps.fxmarketprocessor.image.repository="${DOCKER_REGISTRY}/fx-market-services/fx-market-processor" \
 helm upgrade --install \
     --namespace ${NAMESPACE} \
     --set tag="${TAG}" \
-    --set apps.fxmarketconnector.image.repository="${DOCKER_REGISTRY}/fx-market-services/fx-market-connector" \
-    --set apps.fxmarketprocessor.image.repository="${DOCKER_REGISTRY}/fx-market-services/fx-market-processor" \
     --set apps.flinkorchestrator.image.repository="${DOCKER_REGISTRY}/fx-market-services/flink-orchestrator" \
     -f ../helm/services/values-common.yaml \
     -f ../helm/services/values-fxmarket.yaml fx-market-services \
     ../helm/services
+# TO FIX this message at deployment of the chart:
+# WARNING: There are "resources" sections in the chart not set. Using "resourcesPreset" is not recommended for production. For production installations, please set the following values according to your workload needs:
+#            - jobmanager.resources
+#            - taskmanager.resources
+#   +info https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
 
 if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
