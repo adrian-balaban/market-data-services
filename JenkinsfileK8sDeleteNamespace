@@ -1,4 +1,6 @@
-def k8s_namespace = env.BRANCH_NAME == 'master' ? 'test' : env.BRANCH_NAME
+parameters {
+    string(defaultValue: env.BRANCH_NAME, name: 'k8s_namespace')
+}
 pipeline {
     agent any
     options {
