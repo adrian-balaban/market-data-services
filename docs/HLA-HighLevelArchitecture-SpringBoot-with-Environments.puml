@@ -18,26 +18,30 @@ cloud {
 
 package "Visa" as Visa #LightBlue {
     package "Currency Cloud" {
-        package "Controller Environment for 2 TEST&STAGE envs.under AWS Subscription" as ControllerTEST #Yellow {
-          [AWS Secrets for 2 envs.]
-          [Jenkins for 2 envs.]
+      package "Controller Environments" {
+        package "Controller Environment for Dev & Test envs.under distinct AWS Subscription" as ControllerTEST #Yellow {
+          [AWS Secrets for Dev & Test]
+          [Jenkins for Dev & Test]
+          [DataDog for Dev & Test]
         }
-        package "Controller Environment for PREPROD&PROD under AWS Subscription" as ControllerPROD #Yellow {
-          [AWS S3 buckets for terraform states for all envs.]
-          [Container and Maven Registries]
-          [AWS Secrets for 2 envs.]
-          [ArgoCD for 2 envs.]
+        package "Controller Environment for Preprod & Prod under distinct AWS Subscription" as ControllerPROD #Yellow {
+          [Common Container and Maven Registries for all envs.]
+          [AWS Secrets for  Preprod & Prod]
+          [ArgoCD for  Preprod & Prod]
+          [DataDog for  Preprod & Prod]
+          [AWS S3 buckets for terraform states for all envs. ?]
         }
-        package "Work Environments" {
-            node "Dev Clusters / AWS Subscription" as Dev #Orange {
-            }
-            node "Test Cluster / AWS Subscription" as Test #Green {
-            }
-            node "PreProd Cluster / AWS Subscription" as PreProd #Magenta {
-            }
-            node "Prod Cluster / AWS Subscription " as Prod #Aqua {
-            }
-        }
+      }
+      package "Work Environments" {
+          node "Dev Clusters (distinct AWS Subscription ?)" as Dev #Orange {
+          }
+          node "Test Cluster (distinct AWS Subscription ?)" as Test #Green {
+          }
+          node "PreProd Cluster (distinct AWS Subscription ?)" as PreProd #Magenta {
+          }
+          node "Prod Cluster (distinct AWS Subscription ?) " as Prod #Aqua {
+          }
+      }
     }
     package "Kafka Environments" {
         node "Dev" as KafkaDev #Orange {
