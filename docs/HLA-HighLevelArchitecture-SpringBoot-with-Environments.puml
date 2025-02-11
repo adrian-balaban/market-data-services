@@ -1,0 +1,83 @@
+@startuml
+
+skinparam linetype ortho #polyline
+'top to bottom direction
+left to right direction
+
+actor "User (various roles)" as User #LightBlue
+
+cloud {
+  node "Github" {
+    [Source Repositories]
+  }
+  package "Bloomberg B-PIPE Environments" {
+      node "B-PIPE" #Orange {
+      }
+  }
+}
+
+package "Visa" as Visa #LightBlue {
+    package "Currency Cloud" {
+        package "Controller Environment for 2 TEST&STAGE envs.under AWS Subscription" as ControllerTEST #Yellow {
+          [AWS Secrets for 2 envs.]
+          [Jenkins for 2 envs.]
+        }
+        package "Controller Environment for PREPROD&PROD under AWS Subscription" as ControllerPROD #Yellow {
+          [AWS S3 buckets for terraform states for all envs.]
+          [Container and Maven Registries]
+          [AWS Secrets for 2 envs.]
+          [ArgoCD for 2 envs.]
+        }
+        package "Work Environments" {
+            node "Dev Clusters / AWS Subscription" as Dev #Orange {
+            }
+            node "Test Cluster / AWS Subscription" as Test #Green {
+            }
+            node "PreProd Cluster / AWS Subscription" as PreProd #Magenta {
+            }
+            node "Prod Cluster / AWS Subscription " as Prod #Aqua {
+            }
+        }
+    }
+    package "Kafka Environments" {
+        node "Dev" as KafkaDev #Orange {
+        }
+        node "Test" as KafkaTest #Green {
+        }
+        node "PreProd" as KafkaPreProd #Magenta {
+        }
+        node "Prod" as KafkaProd #Aqua {
+        }
+    }
+
+    package "Consumers of data" {
+        node "Dev" as ConsumersDev #Orange {
+        }
+        node "Test" as ConsumersTest #Green {
+        }
+        node "PreProd" as ConsumersPreProd #Magenta {
+        }
+        node "Prod" as ConsumersProd #Aqua {
+        }
+    }
+    package "Producers of data for CurrencyCloud" {
+        node "Dev" as ProducersDev #Orange {
+        }
+        node "Test" as ProducersTest #Green {
+        }
+        node "PreProd" as ProducersPreProd #Magenta {
+        }
+        node "Prod" as ProducersProd #Aqua {
+        }
+    }
+}
+
+User --> ControllerTEST
+User --> ControllerPROD
+
+/'note top of Controller
+  Controller is on the main AWS subscription
+  and the 1-st to deploy with Terraform
+end note'/
+@enduml
+
