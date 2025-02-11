@@ -40,7 +40,7 @@ pipeline {
                       restrictKubeConfigAccess: true, serverUrl: 'https://192.168.192.96:6443') {
                       sh " kubectl get namespace ${k8s_namespace} -o json  | "
                       sh """ tr -d \n | """
-                      sh ~~~ sed "s/\"finalizers\": [[^]]\+\]/\"finalizers\": []/" ~~~
+                      echo ~~~ sed "s/\"finalizers\": [[^]]\+\]/\"finalizers\": []/" ~~~
                       sh "| kubectl replace --raw /api/v1/namespaces/{k8s_namespace}/finalize -f - "
                   }
               }
