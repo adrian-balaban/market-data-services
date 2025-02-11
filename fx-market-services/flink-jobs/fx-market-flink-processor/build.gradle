@@ -77,6 +77,6 @@ jar {
 }
 
 shadowJar {
-    archiveBaseName.set('job_fxmarket_flink_processor')
+    archiveBaseName.set('fxmarketflinkproces')
     configurations = [project.configurations.flinkShadowJar]
 }

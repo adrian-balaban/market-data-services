@@ -62,7 +62,6 @@ sourceSets {
     test.runtimeClasspath += configurations.flinkShadowJar
     javadoc.classpath += configurations.flinkShadowJar
 }
-//run.classpath = sourceSets.main.runtimeClasspath
 
 jar {
     manifest {
@@ -72,6 +71,6 @@ jar {
 }
 
 shadowJar {
-    archiveBaseName.set('job_fxmarket_flink_connector_websocket')
+    archiveBaseName.set('fxmarketflinkconnectorwebsocket')
     configurations = [project.configurations.flinkShadowJar]
 }
