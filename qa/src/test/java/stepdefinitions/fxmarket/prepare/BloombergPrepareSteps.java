@@ -19,6 +19,14 @@ public class BloombergPrepareSteps {
 
     @When("the following rates data is prepared:")
     public void prepareRatesData(io.cucumber.datatable.DataTable dataTable) {
+        if (System.getenv("JENKINS_HOME") != null || "true".equals(System.getenv("JENKINS_RUN"))) {
+            System.out.println("Running inside Jenkins!");
+            System.out.println("Kubernetes Namespace: " + System.getenv("K8S_NAMESPACE"));
+            System.out.println("Test Tag: " + System.getenv("TEST_TAG"));
+            System.out.println("Registry: " + System.getenv("REGISTRY"));
+        } else {
+            System.out.println("Running locally.");
+        }
         LocalDateTime now = LocalDateTime.ofInstant(Instant.now(), java.time.ZoneOffset.UTC);
         String timestamp = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").format(now);
 
