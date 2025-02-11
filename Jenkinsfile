@@ -1,4 +1,4 @@
-def ns = (env.BRANCH_NAME == 'master' ? 'test' : env.BRANCH_NAME)
+//def ns = (env.BRANCH_NAME == 'master' ? 'test' : env.BRANCH_NAME)
 pipeline {
     agent any
     tools {
