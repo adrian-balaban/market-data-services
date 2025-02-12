@@ -71,7 +71,9 @@ public class FlinkJarService {
                 jarId,
                 jarRunRequestBody
         );
-        log.info("Submitted jobId {} based on jarId: {}.", response.getJobid(), jarId);
+        log.info("Submitted jobId {} based on jarId: {}. Job Arguments: {}",
+                response.getJobid(), jarId,
+                jarRunRequestBody.getProgramArgsList());
         return response;
     }
 
