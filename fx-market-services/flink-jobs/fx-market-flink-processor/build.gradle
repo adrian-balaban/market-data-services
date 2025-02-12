@@ -67,7 +67,6 @@ sourceSets {
     test.runtimeClasspath += configurations.flinkShadowJar
     javadoc.classpath += configurations.flinkShadowJar
 }
-//run.classpath = sourceSets.main.runtimeClasspath
 
 jar {
     manifest {

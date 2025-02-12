@@ -8,7 +8,7 @@ plugins {
 // artifact properties
 group = 'com.fx.market.flink.connector'
 version = rootProject.version
-mainClassName = 'com.fx.market.flink.processor.FxMarketFlinkConnectorWebsocket'
+mainClassName = 'com.fx.market.flink.connector.FxMarketFlinkConnectorWebsocket'
 description = """Flink Sample Flink Job"""
 
 
