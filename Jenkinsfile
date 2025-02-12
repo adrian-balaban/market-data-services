@@ -85,7 +85,7 @@ pipeline {
                 script {
 
                     sh 'infra/k8s/stop-port-forwarding.sh'
-                     sh 'infra/k8s/start-port-forwarding.sh -n master'
+                   sh "infra/k8s/start-port-forwarding.sh -n ${params.k8s_namespace}"
                     try {
 
                         sh 'cd qa && ./gradlew cucumberFullRun  --stacktrace --debug -Dcucumber.execution.verbose=true'
