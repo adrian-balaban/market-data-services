@@ -52,6 +52,24 @@ spec:
   selector:
     app: fx-market-processor
 ---
+# Source: application/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: fx-redis-adapter-svc
+  labels:
+    managed-by: Helm
+    release: fx-market-services
+spec:
+  clusterIP: None
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: fx-redis-adapter
+---
 # Source: application/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -61,7 +79,7 @@ metadata:
     app: flink-orchestrator
     managed-by: Helm
     release: fx-market-services
-    version: 0.4.0
+    version: 0.5.0
 spec:
   replicas: 1
   selector:
@@ -73,17 +91,31 @@ spec:
       labels:
         app: flink-orchestrator
         release: fx-market-services
-        version: 0.4.0
+        version: 0.5.0
     spec:
       containers:
         - name: flink-orchestrator
-          image: "192.168.192.96:5001/fx-market-services/flink-orchestrator:0.4.0"
+          image: "192.168.192.96:5001/fx-market-services/flink-orchestrator:0.5.0"
           imagePullPolicy: IfNotPresent
           env:
           - name: SERVER_PORT
             value: "8080"
           - name: FLINK_URL
             value: http://fx-flink-jobmanager:8081
+          - name: FLINK_JOBS_0_NAME
+            value: fxmarketflinkproces
+          - name: FLINK_JOBS_0_ARGUMENTS_TOPIC
+            value: fx_rates
+          - name: FLINK_JOBS_0_ARGUMENTS_BOOTSTRAPSERVERS
+            value: kafka:9071
+          - name: FLINK_JOBS_0_ARGUMENTS_REDISHOST
+            value: fx-redis-cluster
+          - name: FLINK_JOBS_0_ARGUMENTS_REDISPORT
+            value: "6379"
+          - name: FLINK_JOBS_0_ARGUMENTS_REDISUSERNAME
+            value: FlinkProcessorRedisSink
+          - name: FLINK_JOBS_0_ARGUMENTS_REDISPASSWORD
+            value: default
           ports:
             - name: http
               containerPort: 8080
@@ -124,7 +156,7 @@ metadata:
     app: fx-market-connector
     managed-by: Helm
     release: fx-market-services
-    version: 0.4.0
+    version: 0.5.0
 spec:
   replicas: 1
   selector:
@@ -136,11 +168,11 @@ spec:
       labels:
         app: fx-market-connector
         release: fx-market-services
-        version: 0.4.0
+        version: 0.5.0
     spec:
       containers:
         - name: fx-market-connector
-          image: "192.168.192.96:5001/fx-market-services/fx-market-connector:0.4.0"
+          image: "192.168.192.96:5001/fx-market-services/fx-market-connector:0.5.0"
           imagePullPolicy: IfNotPresent
           env:
           - name: SERVER_PORT
@@ -204,11 +236,11 @@ spec:
       labels:
         app: fx-market-processor
         release: fx-market-services
-        version: 0.4.0
+        version: 0.5.0
     spec:
       containers:
         - name: fx-market-processor
-          image: "192.168.192.96:5001/fx-market-services/fx-market-processor:0.4.0"
+          image: "192.168.192.96:5001/fx-market-services/fx-market-processor:0.5.0"
           imagePullPolicy: IfNotPresent
           env:
           - name: SERVER_PORT
@@ -241,4 +273,56 @@ spec:
       resources:
         requests:
           storage: 1Gi
+---
+# Source: application/templates/statefulSet.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: fx-redis-adapter-set
+  labels:
+    managed-by: Helm
+    release: fx-market-services
+spec:
+  serviceName: fx-redis-adapter-svc
+  replicas: 3
+  selector:
+    matchLabels:
+      app: fx-redis-adapter
+      release: fx-market-services
+  template:
+    metadata:
+      labels:
+        app: fx-redis-adapter
+        release: fx-market-services
+        version: 0.0.1-mj1
+    spec:
+      containers:
+        - name: fx-redis-adapter
+          image: "192.168.192.96:5001/fx-market-services/fx-market-redis-adapter:0.5.0"
+          imagePullPolicy: IfNotPresent
+          env:
+          - name: SERVER_PORT
+            value: "8080"
+          - name: VENDOR_REDIS_USERNAME
+            value: fx-redis-adatper
+          - name: VENDOR_REDIS_PASSWORD
+            value: default
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+  volumeClaimTemplates:
+  - metadata:
+      name: fx-redis-adapter-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+---
+# Source: application/templates/deployment.yaml
+---
+---
+# Source: application/templates/statefulSet.yaml
+---
 
