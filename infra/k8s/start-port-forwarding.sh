@@ -2,6 +2,7 @@
 
 NAMESPACE="fxmarket" # default if not provided
 
+ps -ef | grep kubectl | grep port
 
 # Parse command-line options
 while [[ "$#" -gt 0 ]]; do
