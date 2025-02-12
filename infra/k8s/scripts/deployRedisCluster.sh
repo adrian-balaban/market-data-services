@@ -9,6 +9,8 @@ NAMESPACE="fxmarket" # default if not provided
 REGISTRY_NAME=registry-1.docker.io
 REPOSITORY_NAME=bitnamicharts
 
+REDIS_DEFAULT_PASSWORD=default
+
 print_usage() {
   echo "Usage:"
   echo "-n <namespace>                <- to specify namespace"
@@ -37,11 +39,12 @@ if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exi
 helm repo update
 if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
-helm install fx oci://${REGISTRY_NAME}/${REPOSITORY_NAME}/redis-cluster \
+helm upgrade --install fx oci://${REGISTRY_NAME}/${REPOSITORY_NAME}/redis-cluster \
+    --set "password=${REDIS_DEFAULT_PASSWORD},cluster.nodes=6" \
     --timeout 600s \
     --namespace ${NAMESPACE} 
 
-REDIS_PASSWORD=$(kubectl get secret --namespace ${NAMESPACE}  fx-redis-cluster -o jsonpath="{.data.redis-password}" | base64 -d)
+#REDIS_PASSWORD=$(kubectl get secret --namespace ${NAMESPACE}  fx-redis-cluster -o jsonpath="{.data.redis-password}" | base64 -d)
 
 if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
