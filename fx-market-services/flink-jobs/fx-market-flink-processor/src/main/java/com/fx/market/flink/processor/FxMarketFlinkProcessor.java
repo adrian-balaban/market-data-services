@@ -29,10 +29,10 @@ public class FxMarketFlinkProcessor {
                 ParameterTool.fromMap(Map.of(
                         "bootstrapServers", "kafka:9071",
                         "topic", "fx_rates",
-                        "redisHost","fx-redis-redis-cluster",
+                        "redisHost","fx-redis-cluster",
                         "redisPort","6379",
                         "redisUsername","default",
-                        "redisPassword","kEs7roTlPT"
+                        "redisPassword","default"
                 ));
 
         ParameterTool finalParameters = defaultParameters.mergeWith(argParameter); // Default are overridden by Arg
@@ -62,7 +62,7 @@ public class FxMarketFlinkProcessor {
                 .flatMap(new FxRatesFlatMapper())
                 .keyBy(FxRateProto::getPair);
 
-        //redis-cli -h fx-redis-redis-cluster -p 6379 -a kEs7roTlPT
+        //redis-cli -h fx-redis-redis-cluster -p 6379 -a password
         stream.addSink(new RedisSink());
 
         env.execute("FlinkFxRateKafkaToRedisProcessor");
