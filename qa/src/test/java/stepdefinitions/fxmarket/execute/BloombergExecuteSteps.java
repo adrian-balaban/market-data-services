@@ -25,10 +25,10 @@ public class BloombergExecuteSteps {
     public void sendRatesData() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
 
-        if ((System.getenv("JENKINS_RUN")).equalsIgnoreCase("true")) {
-            System.out.println("Running on Jenkins.");
-            stubEndpoint = settings.getProperty("stubCICD.blomberg_url");
-        }
+      //  if ((System.getenv("JENKINS_RUN")).equalsIgnoreCase("true")) {
+        //    System.out.println("Running on Jenkins.");
+          //  stubEndpoint = settings.getProperty("stub.blomberg_url");
+      //  }
 
         RatesRequest ratesRequest = (RatesRequest) SharedScenarioContext.getInstance().get("request");
 
