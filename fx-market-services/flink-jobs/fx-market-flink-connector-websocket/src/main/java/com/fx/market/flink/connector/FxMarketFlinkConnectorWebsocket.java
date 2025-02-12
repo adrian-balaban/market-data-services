@@ -2,6 +2,7 @@ package com.fx.market.flink.connector;
 
 import com.fx.model.FxRate;
 import com.fx.model.FxRateEvent;
+import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.utils.ParameterTool;
@@ -45,13 +46,10 @@ public class FxMarketFlinkConnectorWebsocket {
                 .map(new FxRatesMapper())
                         .flatMap(new FxRatesFlatMapper())
                         .keyBy(FxRate::getPair)
-                        .window(TumblingProcessingTimeWindows.of(Duration.ofSeconds(5)))
+                        //.window(TumblingProcessingTimeWindows.of(Duration.ofSeconds(5)))
                         .reduce((FxRate aggValue, FxRate newValue) -> newValue)
                         .returns(FxRate.class);
-
-        // print the results with a single thread, rather than in parallel
-        stream.print().setParallelism(1);
-
+        stream.print();
         env.execute("Flink Websocket Consumer Example");
     }
 
