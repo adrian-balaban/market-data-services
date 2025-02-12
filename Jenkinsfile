@@ -18,7 +18,7 @@ pipeline {
                 env.BRANCH_NAME ==~ /support\/.*/ ? '3' :
                     env.BRANCH_NAME ==~ /release/ ? '3' :
                         env.BRANCH_NAME ==~ /develop/ ? '3' :
-                            env.BRANCH_NAME ==~ /feature\/.*|bugfix\/.*|hotfix\/.*/ ? '3' : '1',
+                            env.BRANCH_NAME ==~ /feature\/.*|bugfix\/.*|hotfix\/.*/ ? '3' : '3',
             // number of builds to keep the artifacts from
             artifactNumToKeepStr: env.BRANCH_NAME ==~ /master/ ? '3' :
                 env.BRANCH_NAME ==~ /support\/.*/ ? '3' :
@@ -32,6 +32,15 @@ pipeline {
     }
 
     stages {
+        stage("Clean workspace") {
+            steps {
+                script {
+                    sh "ls"
+                    cleanWs()
+                    sh "ls"
+                }
+            }
+        }
         stage('Checkout') {
             steps {
                 checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
