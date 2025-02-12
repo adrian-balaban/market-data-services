@@ -78,8 +78,22 @@ pipeline {
             }
         }
         stage('Test') {
+            environment {
+                JENKINS_RUN = "true"
+            }
             steps {
-                sh 'cd qa && ./gradlew cucumberFullRun'
+                script {
+
+                    sh 'infra/k8s/stop-port-forwarding.sh'
+                     sh 'infra/k8s/start-port-forwarding.sh -n master'
+                    try {
+
+                        sh 'cd qa && ./gradlew cucumberFullRun  --stacktrace --debug -Dcucumber.execution.verbose=true'
+                    } finally {
+
+                        sh 'infra/k8s/stop-port-forwarding.sh'
+                    }
+                }
             }
         }
     }
