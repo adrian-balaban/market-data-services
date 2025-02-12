@@ -34,10 +34,9 @@ pipeline {
     stages {
         stage("Clean workspace") {
             steps {
+                cleanWs()
                 script {
-                    sh "ls"
-                    cleanWs()
-                    sh "ls"
+                    deleteDir()
                 }
             }
         }
