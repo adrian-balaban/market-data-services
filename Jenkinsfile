@@ -33,12 +33,14 @@ pipeline {
     }
 
     stages {
-        stage("Clean workspace") {
+        stage("Clean workspace and docker unused resources on the agent") {
             steps {
                 script {
                     sh "ls"
                     cleanWs()
                     sh "ls"
+                    sh 'sudo docker volume prune --all --force'
+                    sh 'sudo docker system prune --all --force --volumes'
                 }
             }
         }
