@@ -105,11 +105,15 @@ task cucumberFullRun() {
             classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
             args = [
                     '--plugin', 'pretty',
+                    '--plugin', 'html:build/test-results/cucumber/cucumber.html',  // HTML-report
+                    '--plugin', 'json:build/test-results/cucumber/cucumber.json',  // JSON-report
+                    '--plugin', 'junit:build/test-results/cucumber/cucumber.xml',  // JUnit-report for ci
                     '--glue', 'stepdefinitions',
                     '--glue', 'helpers',
                     '--glue', 'testvisa',
                     'src/test/resources/features/sample-domain/'
             ]
+            systemProperties System.getProperties()
         }
     }
 }
