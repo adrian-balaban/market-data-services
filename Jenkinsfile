@@ -33,6 +33,15 @@ pipeline {
     }
 
     stages {
+        stage("Clean workspace") {
+            steps {
+                script {
+                    sh "ls"
+                    cleanWs()
+                    sh "ls"
+                }
+            }
+        }
         stage('Checkout') {
             steps {
                 checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
