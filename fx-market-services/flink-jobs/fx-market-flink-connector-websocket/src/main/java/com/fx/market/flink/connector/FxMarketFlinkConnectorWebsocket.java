@@ -38,19 +38,27 @@ public class FxMarketFlinkConnectorWebsocket {
         log.info("FX_INFO: stub_hostname set to {}", stub_hostname);
         log.info("FX_INFO: stub_port set to {}", stub_port);
 
-        // get the execution environment
-        final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-
-        DataStream<FxRate> stream =
-                env.socketTextStream(stub_hostname, stub_port, "\n", 100)
-                .map(new FxRatesMapper())
-                        .flatMap(new FxRatesFlatMapper())
-                        .keyBy(FxRate::getPair)
-                        //.window(TumblingProcessingTimeWindows.of(Duration.ofSeconds(5)))
-                        .reduce((FxRate aggValue, FxRate newValue) -> newValue)
-                        .returns(FxRate.class);
-        stream.print();
-        env.execute("Flink Websocket Consumer Example");
+        while (true) {
+            try (StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();) {
+                DataStream<FxRate> stream =
+                        env.socketTextStream(stub_hostname, stub_port, "\n", 100)
+                                .map(new FxRatesMapper())
+                                .flatMap(new FxRatesFlatMapper())
+                                .keyBy(FxRate::getPair)
+                                .reduce((FxRate aggValue, FxRate newValue) -> newValue)
+                                .returns(FxRate.class);
+                stream.print();
+                env.execute("Flink Websocket Consumer Example");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                log.info("FX_INFO: sleep 5000 ms");
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     public static class FxRatesMapper implements MapFunction<String, FxRateEvent> {

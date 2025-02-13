@@ -41,8 +41,8 @@ sleep 5
 helm upgrade --install \
     --namespace ${NAMESPACE} \
     --set tag="${TAG}" \
-    --set apps.fxmarket_data_stub.image.repository="${DOCKER_REGISTRY}/fx-market-externals/market-data-stub" \
-    --set apps.fxmarket_data_stub_websocket.image.repository="${DOCKER_REGISTRY}/fx-market-externals/market-data-stub" \
+    --set apps.fxmarketdatastub.image.repository="${DOCKER_REGISTRY}/fx-market-externals/market-data-stub" \
+    --set apps.fxmarketdatastubws.image.repository="${DOCKER_REGISTRY}/fx-market-externals/market-data-stub" \
     -f ../helm/services/values-externals.yaml fx-market-externals \
     ../helm/services
 
