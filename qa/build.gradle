@@ -97,7 +97,6 @@ configurations {
 
 task cucumberFullRun() {
     group = 'test_functionalLocal'
-
     dependsOn assemble, testClasses
     doLast {
         javaexec {
@@ -105,11 +104,15 @@ task cucumberFullRun() {
             classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
             args = [
                     '--plugin', 'pretty',
+                    '--plugin', 'html:build/reports/cucumber/cucumber.html',  // HTML-report
+                    '--plugin', 'json:build/reports/cucumber/cucumber.json',  // JSON-report
+                    '--plugin', 'junit:build/reports/cucumber/cucumber.xml',  // JUnit-report
                     '--glue', 'stepdefinitions',
                     '--glue', 'helpers',
                     '--glue', 'testvisa',
                     'src/test/resources/features/sample-domain/'
             ]
+            systemProperties System.getProperties()
         }
     }
 }
