@@ -32,15 +32,6 @@ pipeline {
     }
 
     stages {
-        stage("Clean workspace") {
-            steps {
-                script {
-                    sh "ls"
-                    cleanWs()
-                    sh "ls"
-                }
-            }
-        }
         stage('Checkout') {
             steps {
                 checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
@@ -78,9 +69,39 @@ pipeline {
                 }
             }
         }
-        stage('Test') {
+        stage('CucumberRun') {
+            environment {
+                JENKINS_RUN = "true"
+            }
             steps {
-                sh 'cd qa && ./gradlew cucumberFullRun'
+                script {
+                    sh 'infra/k8s/stop-port-forwarding.sh'
+                    sh "infra/k8s/start-port-forwarding.sh -n ${params.k8s_namespace}"
+                    try {
+                        sh 'cd qa && ./gradlew cucumberFullRun'
+                    } finally {
+                        sh 'infra/k8s/stop-port-forwarding.sh'
+                    }
+                }
+            }
+            post {
+                always {
+                    junit '**/qa/build/reports/cucumber/cucumber.xml'
+
+                    cucumber(
+                        buildStatus: 'UNCHANGED',
+                        customCssFiles: '',
+                        customJsFiles: '',
+                        failedFeaturesNumber: -1,
+                        failedScenariosNumber: -1,
+                        failedStepsNumber: -1,
+                        fileIncludePattern: 'qa/build/reports/cucumber/cucumber.json',
+                        pendingStepsNumber: -1,
+                        skippedStepsNumber: -1,
+                        sortingMethod: 'ALPHABETICAL',
+                        undefinedStepsNumber: -1
+                    )
+                }
             }
         }
     }

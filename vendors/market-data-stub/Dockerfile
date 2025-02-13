@@ -7,3 +7,4 @@ RUN npm install
 CMD ["sh", "-c", "if [ $TEST_MODE_ENV = true ]; then echo $TEST_MODE_ENV && node index_test.js; else echo $TEST_MODE_ENV && node index.js; fi"]
 
 EXPOSE 3080
+EXPOSE 3081
