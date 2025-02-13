@@ -193,7 +193,7 @@ apps:
       - name: SERVER_PORT
         value: "8080"
       - name: "VENDOR_REDIS_USERNAME"
-        value: "fx-redis-adatper"
+        value: "fx-redis-adapter"
       - name: VENDOR_REDIS_PASSWORD
         value: "default"
 
