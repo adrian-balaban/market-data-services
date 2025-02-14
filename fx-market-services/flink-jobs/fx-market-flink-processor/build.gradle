@@ -7,7 +7,7 @@ plugins {
 
 // artifact properties
 group = 'com.fx.market.flink.processor'
-version = "0.0.0-MJTest1"
+version = rootProject.version
 mainClassName = 'com.fx.market.flink.processor.FxMarketFlinkProcessor'
 description = """Flink Sample Flink Job"""
 
