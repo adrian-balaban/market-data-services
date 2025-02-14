@@ -1,7 +1,8 @@
 // app.js
-const express = require("express");
+import express from "express";
 const app = express();
-const { v4 } = require("uuid");
+//const { v4 } = require("uuid");
+import { v4 as uuidv4 } from 'uuid';
 let clients = [];
 app.use(express.json());
 app.use(express.static("./public"));
@@ -21,7 +22,8 @@ const ccyPairs = [ // Let's simulate similar list of CCY Pairs as Bloomberg publ
     "USD/NZD", "EUR/NZD", "GBP/NZD", "USD/TRY", "EUR/TRY", "GBP/TRY", "USD/PKR", "EUR/PKR",
     "GBP/PKR", "USD/ARS", "EUR/ARS", "GBP/ARS", "USD/PHP", "EUR/PHP", "GBP/PHP", "USD/SAR",
     "EUR/SAR", "GBP/SAR", "USD/QAR", "EUR/QAR", "GBP/QAR", "USD/OMR", "EUR/OMR", "GBP/OMR",
-    "USD/BHD", "EUR/BHD", "GBP/BHD", "USD/KWD", "EUR/KWD", "GBP/KWD", "USD/AED", "EUR/AED"
+    "USD/BHD", "EUR/BHD", "GBP/BHD", "USD/KWD", "EUR/KWD", "GBP/KWD", "USD/AED", "EUR/AED",
+    "USD/RON", "EUR/RON", "GBP/RON"
 ]
 
 function getRandomCcyPair() {
@@ -81,17 +83,27 @@ app.get("/forex/rates", async (req, res) => {
     });
 });
 
-
-
 function updateData() { 
     const record = updateFxRates(); // Update data with a random number 
     sendDataToAllClients(record);
     setTimeout(updateData, 1000); // Schedule next update in 10ms 
 }
 
-
 updateData();
 
 app.listen(3080, () => {
     console.log("Server is running on port 3080");
 });
+
+import { WebSocketServer } from "ws";
+const wss = new WebSocketServer({ port: 3081 });
+console.log("Websocket server is running on port 3081");
+wss.on("connection", function connection(ws) {
+    setInterval(async () => {
+        const record = updateFxRates(); // Update data with a random number
+        record['timestamp'] =  new Date().toISOString();
+        console.log("message:" + JSON.stringify(record));
+        ws.send(`${JSON.stringify(record)}\n`);
+    }, 1000);// Schedule next update in 10ms
+});
+

@@ -30,12 +30,6 @@ public class FxMarketConnectorService {
     private String bootstrapServers;
 
     public void processFxMarketRates() {
-        try  {
-            KafkaAdminCreateTopic.createTopic(bootstrapServers, topic);
-        } catch (Exception ex) {
-            log.error("Error creating topic: ", ex);
-        }
-
         log.info("Processing of FX Market Rates started");
         try {
             kafkaStreamProducer.produceStream(topic,

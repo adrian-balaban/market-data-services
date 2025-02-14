@@ -10,7 +10,7 @@ import io.cucumber.junit.platform.engine.Constants;
 @ConfigurationParameter(key = Constants.GLUE_PROPERTY_NAME, value = "stepdefinitions.fxmarket,stepdefinitions,helpers,testvisa")
 @ConfigurationParameter(
         key = Constants.PLUGIN_PROPERTY_NAME,
-        value = "pretty, json:build/reports/cucumber-report.json, html:build/reports/cucumber-report.html"
+        value = "pretty, json:qa/build/reports/cucumber-report.json, html:qa/build/reports/cucumber-report.html"
 )
 public class RunCucumberTest {
 
