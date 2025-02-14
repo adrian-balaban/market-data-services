@@ -18,12 +18,17 @@ import java.net.http.HttpResponse;
 public class BloombergExecuteSteps {
 
     TestSettings settings = TestSettings.getInstance();
-    private final String endpoint = settings.getProperty("stub.blomberg_url");
+    private String stubEndpoint = settings.getProperty("stub.blomberg_url");
     private HttpResponse<String> response;
 
     @When("the rates are sent by Bloomberg")
     public void sendRatesData() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
+
+      //  if ((System.getenv("JENKINS_RUN")).equalsIgnoreCase("true")) {
+        //    System.out.println("Running on Jenkins.");
+          //  stubEndpoint = settings.getProperty("stub.blomberg_url");
+      //  }
 
         RatesRequest ratesRequest = (RatesRequest) SharedScenarioContext.getInstance().get("request");
 
@@ -34,7 +39,7 @@ public class BloombergExecuteSteps {
         String requestBody = new Gson().toJson(ratesRequest);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(endpoint+"/emitEvent"))
+                .uri(new URI(stubEndpoint +"/emitEvent"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();

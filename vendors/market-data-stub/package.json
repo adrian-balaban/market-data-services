@@ -12,7 +12,8 @@
   "dependencies": {
     "dockerode": "^4.0.2",
     "express": "^4.21.1",
-    "uuid": "^11.0.3"
+    "uuid": "^11.0.3",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "chokidar": "^4.0.1",

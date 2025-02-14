@@ -35,6 +35,9 @@ echo "$SEPARATOR"
 echo "DEPLOYING EXTERNALS - START"
 echo "$SEPARATOR"
 
+helm uninstall --namespace ${NAMESPACE} fx-market-externals
+sleep 5
+
 helm upgrade --install \
     --namespace ${NAMESPACE} \
     --set tag="${TAG}" \
