@@ -34,8 +34,7 @@ dependencies {
     implementation 'org.apache.flink:flink-clients:1.20.0'
     implementation 'com.google.code.gson:gson:2.11.0'
     implementation 'org.apache.flink:flink-protobuf:1.20.0'
-
-    implementation('com.twitter:chill-protobuf:0.7.6') {
+    flinkShadowJar('com.twitter:chill-protobuf:0.7.6') {
         exclude group: 'com.esotericsoftware.kryo', module: 'kryo'
     }
 
@@ -46,6 +45,7 @@ dependencies {
     flinkShadowJar project(":model-fx-proto")
     flinkShadowJar 'org.apache.flink:flink-connector-kafka:3.4.0-1.20'
     flinkShadowJar 'com.google.protobuf:protobuf-java:3.25.5'
+    flinkShadowJar 'redis.clients:jedis:5.2.0'
 
 
     // Test dependencies

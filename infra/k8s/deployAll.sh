@@ -117,6 +117,9 @@ pushd ./scripts
   ./deployFlink.sh -n ${NAMESPACE}
   if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
+  ./deployRedisCluster.sh -n ${NAMESPACE}
+  if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
+
   ./deployExternals.sh -tag ${TAG} -registry ${DOCKER_REGISTRY} -n ${NAMESPACE}
   if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
@@ -127,6 +130,7 @@ sleep 5
 wait_for_pod "flink-jobmanager"
 wait_for_pod "zookeeper-0"
 wait_for_pod "kafka-0"
+wait_for_pod "fx-redis-cluster-0"
 wait_for_pod "fx-market-data-stub"
 #wait_for_pod "fx-market-data-stub-ws"
 
