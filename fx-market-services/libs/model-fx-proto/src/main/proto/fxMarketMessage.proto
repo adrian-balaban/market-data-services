@@ -16,4 +16,5 @@ message FxRateProto {
   string ask = 4;
   string bid = 5;
   string createdAt = 6;
+  string savedAt = 7;
 }

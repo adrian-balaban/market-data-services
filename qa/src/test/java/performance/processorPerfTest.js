@@ -170,6 +170,8 @@ export default function () {
             return;
         }
 
+        console.log("TOTAL REQUEST SENT: " + globalStats.totalRequests);
+        console.log("TOTAL SUM DURATION: " + globalStats.totalDurations.reduce((accumulator, currentValue) => accumulator + currentValue, 0) + "ms");
         let sortedGlobalOutput = Object.entries(globalStats.counts)
             .map(([time, count]) => ({
                 time: Number(time),
@@ -184,5 +186,17 @@ export default function () {
         } else {
             sortedGlobalOutput.forEach(line => console.log(line));
         }
+
+        const processingTimes = sortedGlobalOutput.map(item => {
+            const timePart = item.split(' - ')[1];
+            return parseInt(timePart.replace(' ms', ''));
+        });
+
+        // Calculate the sum of processing times
+        const totalProcessingTime = processingTimes.reduce((sum, time) => sum + time, 0);
+        // Calculate the average processing time
+        const averageProcessingTime = totalProcessingTime / processingTimes.length;
+        // Output the average processing time
+        console.log(`Average processing time: ${averageProcessingTime.toFixed(2)} ms`);
     }
 }
