@@ -5,6 +5,7 @@ import com.fx.model.FxRateEvent;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.connector.source.Source;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -22,28 +23,22 @@ public class FxMarketFlinkConnectorWebsocket {
 
     public static void main(String[] args) throws Exception {
         //
-        ParameterTool parameter = ParameterTool.fromArgs(args);
-        String stub_hostname = "fx-market-data-stub-ws-svc"; // default
-        int stub_port = 3081; // default
-
         // On FLINK GUI Program Arguments enter: --stub_hostname fx-market-data-stub-ws-svc
         // On FLINK GUI Program Arguments enter: --stub_port 3081
-        if (parameter.has("stub_hostname")) {
-            stub_hostname = parameter.get("stub_hostname");
-        }
-        if (parameter.has("stub_port")) {
-            stub_port = parameter.getInt("stub_port");
-        }
-
+        ParameterTool parameter = ParameterTool.fromArgs(args);
+        String stub_hostname = parameter.get("stub_hostname", "fx-market-data-stub-ws-svc");
+        int stub_port = parameter.getInt("stub_port", 3081);
         log.info("FX_INFO: stub_hostname set to {}", stub_hostname);
         log.info("FX_INFO: stub_port set to {}", stub_port);
-
+        final String delimiter = "\n";
+        final long max_retries = 100;
         try (StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();) {
-            DataStream<FxRate> stream =
-                    env.socketTextStream(stub_hostname, stub_port, "\n", 100)
+            var stream =
+                    env.socketTextStream(stub_hostname,stub_port, delimiter, max_retries)
                             .map(new FxRatesMapper())
                             .flatMap(new FxRatesFlatMapper())
                             .keyBy(FxRate::getPair)
+                            //.window(TumblingProcessingTimeWindows.of(Duration.ofSeconds(5)))
                             .reduce((FxRate aggValue, FxRate newValue) -> newValue)
                             .returns(FxRate.class);
             stream.print();

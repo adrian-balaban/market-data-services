@@ -1,6 +1,6 @@
 {{- $outer := . -}}
 {{ range .Values.apps }}
-
+---
 {{- if .autoscaling.enabled }}
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
