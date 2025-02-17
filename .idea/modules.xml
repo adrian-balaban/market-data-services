@@ -3,9 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/flink-orchestrator/fx-market-services.flink-orchestrator.main.iml" filepath="$PROJECT_DIR$/.idea/modules/flink-orchestrator/fx-market-services.flink-orchestrator.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/fx-market-camel-connector/fx-market-services.fx-market-camel-connector.main.iml" filepath="$PROJECT_DIR$/.idea/modules/fx-market-camel-connector/fx-market-services.fx-market-camel-connector.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/fx-market-connector/fx-market-services.fx-market-connector.main.iml" filepath="$PROJECT_DIR$/.idea/modules/fx-market-connector/fx-market-services.fx-market-connector.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/fx-market-processor/fx-market-services.fx-market-processor.main.iml" filepath="$PROJECT_DIR$/.idea/modules/fx-market-processor/fx-market-services.fx-market-processor.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/fx-market-redis-adapter/fx-market-services.fx-market-redis-adapter.main.iml" filepath="$PROJECT_DIR$/.idea/modules/fx-market-redis-adapter/fx-market-services.fx-market-redis-adapter.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/libs/model-bloomberg-stub/fx-market-services.model-bloomberg-stub.main.iml" filepath="$PROJECT_DIR$/.idea/modules/libs/model-bloomberg-stub/fx-market-services.model-bloomberg-stub.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/market-data-processor.iml" filepath="$PROJECT_DIR$/.idea/market-data-processor.iml" />
     </modules>

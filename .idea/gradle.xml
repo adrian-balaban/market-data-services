@@ -11,9 +11,9 @@
             <option value="$PROJECT_DIR$/fx-market-services" />
             <option value="$PROJECT_DIR$/fx-market-services/flink-jobs/fx-market-flink-processor" />
             <option value="$PROJECT_DIR$/fx-market-services/flink-orchestrator" />
-            <option value="$PROJECT_DIR$/fx-market-services/fx-market-camel-connector" />
             <option value="$PROJECT_DIR$/fx-market-services/fx-market-connector" />
             <option value="$PROJECT_DIR$/fx-market-services/fx-market-processor" />
+            <option value="$PROJECT_DIR$/fx-market-services/fx-market-redis-adapter" />
             <option value="$PROJECT_DIR$/fx-market-services/libs/common-utils" />
             <option value="$PROJECT_DIR$/fx-market-services/libs/model-bloomberg-stub" />
             <option value="$PROJECT_DIR$/fx-market-services/libs/model-flink-api" />
