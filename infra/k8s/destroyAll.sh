@@ -49,8 +49,9 @@ kubectl patch kafka.platform.confluent.io/kafka -p '{"metadata":{"finalizers":[]
 timeout 5 kubectl -n ${NAMESPACE} delete zookeeper.platform.confluent.io/zookeeper --force --grace-period=0 
 timeout 5 kubectl -n ${NAMESPACE} delete kafka.platform.confluent.io/kafka --force --grace-period=0 
 
-timeout 5 kubectl delete all --all -n ${NAMESPACE}
+kubectl patch zookeeper.platform.confluent.io/zookeeper -p '{"metadata":{"finalizers":[]}}' --type=merge
 
+timeout 5 kubectl delete all --all -n ${NAMESPACE}
 
 echo "DELETING NAMESPACE"
 timeout 15 kubectl delete namespace ${NAMESPACE}
