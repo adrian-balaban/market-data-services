@@ -45,12 +45,18 @@ kubectl get pv | grep ${NAMESPACE} | awk {'print $1'} | xargs --no-run-if-empty 
 
 #Delete annoying zookeeper
 kubectl patch zookeeper.platform.confluent.io/zookeeper -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
+sleep 5
 kubectl patch controlcenter.platform.confluent.io/controlcenter -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
+sleep 5
 kubectl patch kafka.platform.confluent.io/kafka -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
+sleep 5
 
-timeout 5 kubectl patch  -n ${NAMESPACE} zookeeper.platform.confluent.io/zookeeper -p '{"metadata":{"finalizers":[]}}' --type=merge
-timeout 5 kubectl -n ${NAMESPACE} delete zookeeper.platform.confluent.io/zookeeper --force --grace-period=0
-timeout 5 kubectl -n ${NAMESPACE} delete kafka.platform.confluent.io/kafka --force --grace-period=0 
+timeout 5 kubectl -n ${NAMESPACE} delete zookeeper.platform.confluent.io/zookeeper --force
+sleep 5
+timeout 5 kubectl -n ${NAMESPACE} delete controlcenter.platform.confluent.io/controlcenter --force
+sleep 5
+timeout 5 kubectl -n ${NAMESPACE} delete kafka.platform.confluent.io/kafka --force
+sleep 5
 
 timeout 5 kubectl delete all --all -n ${NAMESPACE}
 
