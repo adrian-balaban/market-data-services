@@ -35,6 +35,8 @@ helm uninstall fx-market-services -n ${NAMESPACE}
 
 helm uninstall fx-market-externals -n ${NAMESPACE}
 
+./scripts/undeployKafka.sh -n ${NAMESPACE}
+
 kubectl get pods -n ${NAMESPACE} | grep argo && kubectl delete -n ${NAMESPACE} -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 # DELETE PV AND PVC
