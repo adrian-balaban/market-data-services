@@ -47,7 +47,6 @@ kubectl get pv | grep ${NAMESPACE} | awk {'print $1'} | xargs --no-run-if-empty 
 kubectl patch zookeeper.platform.confluent.io/zookeeper -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
 kubectl patch controlcenter.platform.confluent.io/controlcenter -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
 kubectl patch kafka.platform.confluent.io/kafka -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
-kubectl patch zookeeper.platform.confluent.io/zookeeper -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
 
 timeout 5 kubectl patch  -n ${NAMESPACE} zookeeper.platform.confluent.io/zookeeper -p '{"metadata":{"finalizers":[]}}' --type=merge
 timeout 5 kubectl -n ${NAMESPACE} delete zookeeper.platform.confluent.io/zookeeper --force --grace-period=0
