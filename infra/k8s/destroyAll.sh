@@ -53,14 +53,14 @@ sleep 5
 kubectl patch kafka.platform.confluent.io/kafka -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
 sleep 5
 
-timeout 5 kubectl -n ${NAMESPACE} delete zookeeper.platform.confluent.io/zookeeper --force
+kubectl -n ${NAMESPACE} delete zookeeper.platform.confluent.io/zookeeper --force
 sleep 5
-timeout 5 kubectl -n ${NAMESPACE} delete controlcenter.platform.confluent.io/controlcenter --force
+kubectl -n ${NAMESPACE} delete controlcenter.platform.confluent.io/controlcenter --force
 sleep 5
-timeout 5 kubectl -n ${NAMESPACE} delete kafka.platform.confluent.io/kafka --force
+kubectl -n ${NAMESPACE} delete kafka.platform.confluent.io/kafka --force
 sleep 5
 
-timeout 5 kubectl delete all --all -n ${NAMESPACE}
+kubectl delete all --all -n ${NAMESPACE}
 
 echo "DELETING NAMESPACE"
 timeout 15 kubectl delete namespace ${NAMESPACE} --force
