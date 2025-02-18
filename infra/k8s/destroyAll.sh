@@ -23,6 +23,8 @@ echo "NAMESPACE: ${NAMESPACE}" # default if not provided
 echo "$SEPARATOR"
 sleep 5
 
+set -x #echo on
+
 helm uninstall fx-flink -n ${NAMESPACE}
 
 helm uninstall fx -n ${NAMESPACE} # Redis
@@ -45,8 +47,10 @@ kubectl get pv | grep ${NAMESPACE} | awk {'print $1'} | xargs --no-run-if-empty 
 kubectl patch zookeeper.platform.confluent.io/zookeeper -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
 kubectl patch controlcenter.platform.confluent.io/controlcenter -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
 kubectl patch kafka.platform.confluent.io/kafka -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
+kubectl patch zookeeper.platform.confluent.io/zookeeper -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
 
-timeout 5 kubectl -n ${NAMESPACE} delete zookeeper.platform.confluent.io/zookeeper --force --grace-period=0 
+timeout 5 kubectl patch  -n ${NAMESPACE} zookeeper.platform.confluent.io/zookeeper -p '{"metadata":{"finalizers":[]}}' --type=merge
+timeout 5 kubectl -n ${NAMESPACE} delete zookeeper.platform.confluent.io/zookeeper --force --grace-period=0
 timeout 5 kubectl -n ${NAMESPACE} delete kafka.platform.confluent.io/kafka --force --grace-period=0 
 
 timeout 5 kubectl delete all --all -n ${NAMESPACE}
