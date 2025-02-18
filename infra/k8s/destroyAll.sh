@@ -55,4 +55,4 @@ timeout 5 kubectl -n ${NAMESPACE} delete kafka.platform.confluent.io/kafka --for
 timeout 5 kubectl delete all --all -n ${NAMESPACE}
 
 echo "DELETING NAMESPACE"
-timeout 15 kubectl delete namespace ${NAMESPACE}
+timeout 15 kubectl delete namespace ${NAMESPACE} --force
