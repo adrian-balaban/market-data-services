@@ -19,6 +19,11 @@ const urlEmitEvent = `${connectorHost}/emitEvent`;
 let procHost = __ENV.PROCESSOR_HOST || "http://localhost:4080";
 const urlFxRatesBase = `${procHost}/fx/rates/`;
 
+
+console.log("Test Mode:", testMode);
+console.log("Emit Event URL:", urlEmitEvent);
+console.log("FX Rates Base URL:", urlFxRatesBase);
+
 const params = {
     headers: { 'Content-Type': 'application/json' },
 };
@@ -130,7 +135,17 @@ export default function () {
                 } else {
                     console.log(`⚠️ Attempt ${attempts + 1} for ${pair}: Rates do not match. Retrying...`);
                 }
-            }
+            } else
+            {
+               console.log(`Request Details:
+               ➜ URL: ${response.request.url}
+               ➜ Method: ${response.request.method}
+               ➜ Headers: ${JSON.stringify(response.request.headers)}
+               ➜ Body: ${JSON.stringify(response.request.body)}`);
+
+               console.log(`Request failed:
+               ➜ Status Code: ${response.status}
+               ➜ Response Body: ${response.body}`);}
         });
     //    sleep(0.5);
         attempts++;
