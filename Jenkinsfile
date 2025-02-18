@@ -1,5 +1,4 @@
 pipeline {
-    timeout: timeout(time: 20, unit: 'MINUTES')
     agent any
     tools {
         jdk '21'
