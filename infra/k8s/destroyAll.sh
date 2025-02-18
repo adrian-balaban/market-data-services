@@ -36,6 +36,10 @@ helm uninstall fx-market-services -n ${NAMESPACE}
 helm uninstall fx-market-externals -n ${NAMESPACE}
 
 ./scripts/undeployKafka.sh -n ${NAMESPACE}
+kubectl -n ${NAMESPACE} delete pod zookeeper-0 --force
+sleep 5
+kubectl -n ${NAMESPACE} delete pod kafka-0 --force
+sleep 5
 
 kubectl get pods -n ${NAMESPACE} | grep argo && kubectl delete -n ${NAMESPACE} -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 

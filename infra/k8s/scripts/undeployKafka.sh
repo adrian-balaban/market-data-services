@@ -30,7 +30,7 @@ echo "UNDEPLOYING KAFKA - START"
 echo "$SEPARATOR"
 
 sed -i "s/___CHANGE_ME_NAMESPACE___/${NAMESPACE}/g" ../helm/kafka/confluent-platform-singlenode-minimal.yaml ## Set proper namespace
-kubectl destroy -f ../helm/kafka/confluent-platform-singlenode-minimal.yaml
+kubectl delete -f ../helm/kafka/confluent-platform-singlenode-minimal.yaml
 return_status_code=$? # Save to check later after sed revert
 sed -i "s/${NAMESPACE}/___CHANGE_ME_NAMESPACE___/g" ../helm/kafka/confluent-platform-singlenode-minimal.yaml ## Revert
 if [[ $return_status_code != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
