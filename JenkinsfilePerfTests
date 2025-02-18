@@ -1,0 +1,84 @@
+pipeline {
+    agent any
+    tools {
+        jdk '21'
+    }
+    parameters {
+        string(defaultValue: "0.0.1", name: 'tag_root')
+        string(defaultValue: "192.168.192.96:5001", name: 'registry')
+        string(defaultValue: "master", name: 'k8s_namespace')
+        booleanParam(defaultValue: false, name: 'connectorRunBatchJob')
+        booleanParam(defaultValue: false, name: 'connectorRunSingleJob')
+        booleanParam(defaultValue: false, name: 'processorRunBatchJob')
+        booleanParam(defaultValue: false, name: 'processorRunSingleJob')
+
+
+    }
+    options {
+        buildDiscarder(logRotator(
+            // number of builds to keep
+            numToKeepStr: env.BRANCH_NAME ==~ /master/ ? '3' :
+                env.BRANCH_NAME ==~ /support\/.*/ ? '3' :
+                    env.BRANCH_NAME ==~ /release/ ? '3' :
+                        env.BRANCH_NAME ==~ /develop/ ? '3' :
+                            env.BRANCH_NAME ==~ /feature\/.*|bugfix\/.*|hotfix\/.*/ ? '10' : '10',
+            // number of builds to keep the artifacts from
+            artifactNumToKeepStr: env.BRANCH_NAME ==~ /master/ ? '3' :
+                env.BRANCH_NAME ==~ /support\/.*/ ? '3' :
+                    env.BRANCH_NAME ==~ /release/ ? '3' :
+                        env.BRANCH_NAME ==~ /develop/ ? '3' :
+                            env.BRANCH_NAME ==~ /feature\/.*|bugfix\/.*|hotfix\/.*/ ? '1' : '0'
+        ))
+
+        // this will limit the build to one per branch
+        disableConcurrentBuilds()
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scmGit(branches: [[name: 'tests-implement-perftests-on-ci-cd']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
+            }
+        }
+
+
+stage('PerfTestsRun') {
+    environment {
+        JENKINS_RUN = "true"
+    }
+    steps {
+        script {
+            withKubeConfig(
+                clusterName: 'kind-kind',
+                contextName: 'kind-kind',
+                credentialsId: 'K8sConfigMichal',
+                namespace: params.k8s_namespace,
+                restrictKubeConfigAccess: true,
+                serverUrl: 'https://192.168.192.96:6443'
+            ) {
+                try {
+
+                    if (params.connectorRunSingleJob) {
+                        sh "cd qa && ./gradlew -i connectorRunSingleJob -PK8S_NAMESPACE=${params.k8s_namespace}"
+                    }
+                    if (params.connectorRunBatchJob) {
+                        sh "cd qa && ./gradlew connectorRunBatchJob -PK8S_NAMESPACE=${params.k8s_namespace}"
+                    }
+                     if (params.processorRunSingleJob) {
+                        sh "cd qa && ./gradlew processorRunSingleJob -PK8S_NAMESPACE=${params.k8s_namespace}"
+                    }
+                     if (params.processorRunBatchJob) {
+                        sh "cd qa && ./gradlew processorRunBatchJob -PK8S_NAMESPACE=${params.k8s_namespace}"
+                    }
+                } catch (Exception e) {
+                    echo "Error: ${e}"
+                    currentBuild.result = 'FAILURE'
+                } finally {
+                    echo "Finally"
+                }
+            }
+        }
+    }
+}
+    }
+}
