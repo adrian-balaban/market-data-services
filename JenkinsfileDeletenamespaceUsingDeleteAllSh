@@ -1,5 +1,4 @@
 pipeline {
-    timeout: timeout(time: 30, unit: 'MINUTES')
     agent any
     parameters {
         string(defaultValue: env.BRANCH_NAME, name: 'k8s_namespace')
