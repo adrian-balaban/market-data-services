@@ -97,17 +97,18 @@ pipeline {
                     not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
                 }
             }
-            steps {
-                script {
-                    sh 'cd infra/k8s&& ./stop-port-forwarding.sh'
-                    sh "cd infra/k8s&& ./start-port-forwarding.sh -n ${params.k8s_namespace}"
-                    try {
-                        sh 'cd qa && ./gradlew cucumberFullRun'
-                    } finally {
-                        sh 'cd infra/k8s&& ./stop-port-forwarding.sh'
-                    }
-                }
-            }
+          steps {
+              script {
+                  sh 'cd infra/k8s && ./stop-port-forwarding.sh'
+                  sh "cd infra/k8s && ./start-port-forwarding.sh -n ${params.k8s_namespace}"
+
+                  try {
+                      sh 'cd qa && ./gradlew cucumberFullRun'
+                  } finally {
+                      sh 'cd infra/k8s && ./stop-port-forwarding.sh'
+                  }
+              }
+          }
             post {
                 always {
                     junit '**/qa/build/reports/cucumber/cucumber.xml'
