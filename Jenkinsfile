@@ -34,6 +34,14 @@ pipeline {
     }
 
     stages {
+        stage("Clean workspace") {
+            steps {
+                cleanWs()
+                script {
+                    deleteDir()
+                }
+            }
+        }
         stage('Checkout') {
             when {
                 allOf {
