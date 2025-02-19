@@ -15,7 +15,7 @@ spec:
         # Do not change the main container name
         - name: flink-main-container
           volumeMounts:
-            - mountPath: /opt/flink/jars
+            - mountPath: /flink/jars
               name: flink-jars
         # Sidecar container with Flink Jar
         - name: fx-flink-processor
@@ -35,5 +35,5 @@ spec:
       memory: "2048m"
       cpu: 1
   job:
-    jarURI: local:///opt/flink/jars/fxmarketflinkproces-all.jar
+    jarURI: local:///flink/jars/fxmarketflinkproces-all.jar
     parallelism: 2
