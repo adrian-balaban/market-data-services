@@ -44,7 +44,7 @@ pipeline {
             when {
                 allOf {
                     triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
+                    //not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
                 }
             }
             steps {
@@ -55,7 +55,7 @@ pipeline {
             when {
                 allOf {
                     triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
+                    //not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
                 }
             }
             steps {
@@ -92,7 +92,7 @@ pipeline {
             when {
                 allOf {
                     triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
+                    //not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
                 }
             }
             steps {
