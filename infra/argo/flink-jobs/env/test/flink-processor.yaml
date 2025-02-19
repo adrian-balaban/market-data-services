@@ -14,7 +14,7 @@ spec:
       initContainers:
           # Sample sidecar container
         - name: fx-flink-processor
-          image: 192.168.192.96:5001/fx-market-flink-jobs/processor:0.0.2
+          image: 192.168.192.96:5001/fx-market-flink-jobs/processor:0.0.3
           command: ["sh", "-c", "cp /flink/jars/* /shared/"]
           volumeMounts:
             - mountPath: /shared
