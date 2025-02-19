@@ -27,8 +27,10 @@ echo "Building OSI Image - fx-market-connector - Start"
 
 pushd ../../../../fx-market-services
 
-./gradlew fx-market-connector:clean && \
+./gradlew fx-market-connector:clean
+if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 ./gradlew fx-market-connector:bootBuildImage -Pversion=${TAG} -Pregistry=${DOCKER_REGISTRY} -Pprofile=${SPRING_PROFILE}
+if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
 popd
 
