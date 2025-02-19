@@ -19,6 +19,13 @@ spec:
         value: 1.10.0
       - name: "watchNamespaces"
         value: "{___CHANGE_ME_NAMESPACE___}"
+      - name: "defaultConfiguration.flink-conf.yaml"
+        value: |+
+          kubernetes.operator.job.restart.failed: true
+          kubernetes.operator.metrics.reporter.slf4j.factory.class: org.apache.flink.metrics.slf4j.Slf4jReporterFactory
+          kubernetes.operator.metrics.reporter.slf4j.interval: 5 MINUTE
+          kubernetes.operator.reconcile.interval: 15 s
+          kubernetes.operator.observer.progress-check.interval: 5 s
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: ___CHANGE_ME_NAMESPACE___
