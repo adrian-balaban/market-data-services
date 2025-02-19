@@ -1,0 +1,30 @@
+#kubectl apply -f application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flink-kubernetes-operator___CHANGE_ME_NAMESPACE___
+  namespace: ___CHANGE_ME_NAMESPACE___
+spec:
+  project: market-data-___CHANGE_ME_NAMESPACE___
+  source:
+    repoURL: https://github.com/apache/flink-kubernetes-operator
+    targetRevision: main
+    path: helm/flink-kubernetes-operator
+    helm:
+      # Extra parameters to set (same as setting through values.yaml, but these take precedence)
+      parameters:
+      - name: "image.repository"
+        value: 192.168.192.96:5001/apache/flink-kubernetes-operator
+      - name: "image.tag"
+        value: 1.10.0
+      - name: "watchNamespaces"
+        value: "{___CHANGE_ME_NAMESPACE___}"
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: ___CHANGE_ME_NAMESPACE___
+  syncPolicy:
+    automated:
+      prune: true # Delete components if no longer used
+      selfHeal: true # Automatically Fetch and override any manual changes
+    syncOptions:
+      - CreateNamespace=true

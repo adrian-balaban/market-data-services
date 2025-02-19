@@ -1,0 +1,21 @@
+#kubectl apply -f application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flink-jobs-___CHANGE_ME_NAMESPACE___
+  namespace: ___CHANGE_ME_NAMESPACE___
+spec:
+  project: market-data-___CHANGE_ME_NAMESPACE___
+  source:
+    repoURL: 'https://github.com/Jereczek/market-data-processor.git'
+    targetRevision: 35-DeploymentModels #___CHANGE_ME_BRANCH___
+    path: 'infra/argo/flink-jobs/env/dev'
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: ___CHANGE_ME_NAMESPACE___
+  syncPolicy:
+    automated:
+      prune: true # Delete components if no longer used
+      selfHeal: true # Automatically Fetch and override any manual changes
+    syncOptions:
+      - CreateNamespace=true
