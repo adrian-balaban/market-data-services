@@ -1,11 +1,12 @@
 def jenkinsfilename = 'Jenkinsfile'
+def true, name: 'useBash')
+
 pipeline {
     agent any
     tools {
         jdk '21'
     }
     parameters {
-        booleanParam(defaultValue: true, name: 'useBash')
         booleanParam(defaultValue: true, name: 'build')
         booleanParam(defaultValue: false, name: 'test')
         string(defaultValue: "0.0.1", name: 'tag_root')
