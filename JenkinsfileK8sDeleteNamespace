@@ -1,5 +1,4 @@
 def jenkinsfilename = 'JenkinsfileK8sDeleteNamespace'
-def branchAllowed   = 'master'
 pipeline {
     agent any
     parameters {
@@ -32,7 +31,6 @@ pipeline {
                     }
                     triggeredBy 'UserIdCause' // start the job only if it is launched by user
                     not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
-                    branch "${branchAllowed}" // run only on this branch
                 }
             }
             steps {
@@ -47,7 +45,6 @@ pipeline {
                     }
                     triggeredBy 'UserIdCause' // start the job only if it is launched by user
                     not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
-                    branch "${branchAllowed}" // run only on this branch
                 }
             }
             steps {

@@ -5,7 +5,6 @@ pipeline {
         jdk '21'
     }
     parameters {
-        booleanParam(defaultValue: true, name: 'useBash')
         booleanParam(defaultValue: true, name: 'build')
         booleanParam(defaultValue: false, name: 'test')
         string(defaultValue: "0.0.1", name: 'tag_root', description: 'if ArgoCD, use tag: 0.5.0')
@@ -35,6 +34,14 @@ pipeline {
     }
 
     stages {
+        stage("Clean workspace") {
+            steps {
+                cleanWs()
+                script {
+                    deleteDir()
+                }
+            }
+        }
         stage('Checkout') {
             when {
                 allOf {
@@ -49,9 +56,6 @@ pipeline {
         stage("Build&Deploy with bash script") {
             when {
                 allOf {
-                    expression {
-                        return params.useBash
-                    }
                     triggeredBy 'UserIdCause' // start the job only if it is launched by user
                     not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
                 }
@@ -66,12 +70,9 @@ pipeline {
               }
             }
         }
-        stage("Build&Deploy with argocd script") {
+        /*stage("Build&Deploy with argocd script") {
             when {
                 allOf {
-                    expression {
-                        return !params.useBash
-                    }
                     triggeredBy 'UserIdCause' // start the job only if it is launched by user
                     not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
                 }
@@ -85,7 +86,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
         stage('CucumberRun') {
             environment {
                 JENKINS_RUN = "true"
