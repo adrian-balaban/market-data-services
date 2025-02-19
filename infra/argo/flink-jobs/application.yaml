@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: 'https://github.com/Jereczek/market-data-processor.git'
     targetRevision: 35-DeploymentModels #___CHANGE_ME_BRANCH___
-    path: 'infra/argo/flink-jobs/env/dev'
+    path: 'infra/argo/flink-jobs/env/___CHANGE_ME_ENV___'
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: ___CHANGE_ME_NAMESPACE___

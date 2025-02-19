@@ -1,0 +1,39 @@
+apiVersion: flink.apache.org/v1beta1
+kind: FlinkDeployment
+metadata:
+  namespace: mj1
+  name: fx-flink-processor
+spec:
+  image: flink:1.17
+  flinkVersion: v1_17
+  flinkConfiguration:
+    taskmanager.numberOfTaskSlots: "2"
+  serviceAccount: flink
+  podTemplate:
+    spec:
+      containers:
+        # Do not change the main container name
+        - name: flink-main-container
+          volumeMounts:
+            - mountPath: /opt/flink/jars
+              name: flink-jars
+        # Sidecar container with Flink Jar
+        - name: fx-flink-processor
+          image: 192.168.192.96:5001/fx-market-flink-jobs/processor:0.0.1 
+          volumeMounts:
+            - mountPath: /flink/jars
+              name: flink-jars
+      volumes:
+        - name: flink-jars
+          emptyDir: { }
+  jobManager:
+    resource:
+      memory: "2048m"
+      cpu: 1
+  taskManager:
+    resource:
+      memory: "2048m"
+      cpu: 1
+  job:
+    jarURI: local:///opt/flink/jars/fxmarketflinkproces-all.jar
+    parallelism: 2
