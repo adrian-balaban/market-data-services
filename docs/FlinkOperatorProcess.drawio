@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 Edg/133.0.0.0" version="26.0.9">
   <diagram name="Page-1" id="zO95b2uXn4h4WgBS5ltE">
-    <mxGraphModel dx="2572" dy="593" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="4293" dy="1185" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -128,11 +128,6 @@
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="-310" y="362.5" as="sourcePoint" />
             <mxPoint x="100" y="170" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="MhFBdpPt02JVW4a9P1IF-101" value="Refer to Jar&amp;nbsp;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=none;" vertex="1" connectable="0" parent="MhFBdpPt02JVW4a9P1IF-100">
-          <mxGeometry x="-0.2323" y="-3" relative="1" as="geometry">
-            <mxPoint x="904" y="427" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="MhFBdpPt02JVW4a9P1IF-102" value="Flink Job Checkpoints" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;" vertex="1" parent="1">
