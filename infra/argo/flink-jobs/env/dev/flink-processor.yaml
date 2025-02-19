@@ -11,17 +11,19 @@ spec:
   serviceAccount: flink
   podTemplate:
     spec:
+      initContainers:
+          # Sample sidecar container
+        - name: fx-flink-processor
+          image: 192.168.192.96:5001/fx-market-flink-jobs/processor:0.0.1
+          command: ["sh", "-c", "cp /flink/jars/* /shared/"]
+          volumeMounts:
+            - mountPath: /shared
+              name: flink-jars
       containers:
         # Do not change the main container name
         - name: flink-main-container
           volumeMounts:
-            - mountPath: /flink/jars
-              name: flink-jars
-        # Sidecar container with Flink Jar
-        - name: fx-flink-processor
-          image: 192.168.192.96:5001/fx-market-flink-jobs/processor:0.0.1 
-          volumeMounts:
-            - mountPath: /flink/jars
+            - mountPath: /shared
               name: flink-jars
       volumes:
         - name: flink-jars
@@ -35,5 +37,5 @@ spec:
       memory: "2048m"
       cpu: 1
   job:
-    jarURI: local:///flink/jars/fxmarketflinkproces-all.jar
+    jarURI: local:///shared/fxmarketflinkproces-all.jar
     parallelism: 2
