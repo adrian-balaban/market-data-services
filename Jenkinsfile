@@ -12,7 +12,6 @@ pipeline {
         string(defaultValue: "192.168.192.96:5001", name: 'registry')
         string(defaultValue: env.BRANCH_NAME, name: 'k8s_namespace')
         booleanParam(defaultValue: false, name: 'delete_namespace_at_end')
-
     }
     options {
         buildDiscarder(logRotator(
@@ -129,21 +128,20 @@ pipeline {
         }
 
         stage("Delete namespace") {
-                    steps {
-                      when {
-                       expression {
-                          return params.delete_namespace_at_end
-                       }
-                      }
-                      script {
-                        withKubeConfig(
-                                clusterName: 'kind-kind', contextName: 'kind-kind', credentialsId: 'K8sConfigMichal', namespace: 'default',
-                                restrictKubeConfigAccess: true, serverUrl: 'https://192.168.192.96:6443') {
-                            sh "cd ./infra/k8s && ./destroyAll.sh -n ${params.k8s_namespace}"
-                         }
-                      }
-                    }
-                }
+            steps {
+              when {
+               expression {
+                  return params.delete_namespace_at_end
                }
+              }
+              script {
+                withKubeConfig(
+                        clusterName: 'kind-kind', contextName: 'kind-kind', credentialsId: 'K8sConfigMichal', namespace: 'default',
+                        restrictKubeConfigAccess: true, serverUrl: 'https://192.168.192.96:6443') {
+                    sh "cd ./infra/k8s && ./destroyAll.sh -n ${params.k8s_namespace}"
+                 }
+              }
+            }
+        }
     }
 }
