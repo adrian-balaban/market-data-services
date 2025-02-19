@@ -39,3 +39,5 @@ spec:
   job:
     jarURI: local:///shared/fxmarketflinkproces-all.jar
     parallelism: 2
+    upgradeMode: stateless
+    state: running
