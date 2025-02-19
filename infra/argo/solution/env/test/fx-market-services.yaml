@@ -79,7 +79,7 @@ metadata:
     app: flink-orchestrator
     managed-by: Helm
     release: fx-market-services
-    version: 0.5.0
+    version: 0.5.0-master
 spec:
   replicas: 1
   selector:
@@ -91,11 +91,11 @@ spec:
       labels:
         app: flink-orchestrator
         release: fx-market-services
-        version: 0.5.0
+        version: 0.5.0-master
     spec:
       containers:
         - name: flink-orchestrator
-          image: "192.168.192.96:5001/fx-market-services/flink-orchestrator:0.5.0"
+          image: "192.168.192.96:5001/fx-market-services/flink-orchestrator:0.5.0-master"
           imagePullPolicy: IfNotPresent
           env:
           - name: SERVER_PORT
@@ -156,7 +156,7 @@ metadata:
     app: fx-market-connector
     managed-by: Helm
     release: fx-market-services
-    version: 0.5.0
+    version: 0.5.0-master
 spec:
   replicas: 1
   selector:
@@ -168,11 +168,11 @@ spec:
       labels:
         app: fx-market-connector
         release: fx-market-services
-        version: 0.5.0
+        version: 0.5.0-master
     spec:
       containers:
         - name: fx-market-connector
-          image: "192.168.192.96:5001/fx-market-services/fx-market-connector:0.5.0"
+          image: "192.168.192.96:5001/fx-market-services/fx-market-connector:0.5.0-master"
           imagePullPolicy: IfNotPresent
           env:
           - name: SERVER_PORT
@@ -236,11 +236,11 @@ spec:
       labels:
         app: fx-market-processor
         release: fx-market-services
-        version: 0.5.0
+        version: 0.5.0-master
     spec:
       containers:
         - name: fx-market-processor
-          image: "192.168.192.96:5001/fx-market-services/fx-market-processor:0.5.0"
+          image: "192.168.192.96:5001/fx-market-services/fx-market-processor:0.5.0-master"
           imagePullPolicy: IfNotPresent
           env:
           - name: SERVER_PORT
@@ -298,7 +298,7 @@ spec:
     spec:
       containers:
         - name: fx-redis-adapter
-          image: "192.168.192.96:5001/fx-market-services/fx-market-redis-adapter:0.5.0"
+          image: "192.168.192.96:5001/fx-market-services/fx-market-redis-adapter:0.5.0-master"
           imagePullPolicy: IfNotPresent
           env:
           - name: SERVER_PORT
