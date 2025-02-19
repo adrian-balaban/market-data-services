@@ -1,7 +1,7 @@
 {{- $outer := . -}}
 {{ range .Values.apps }}
 ---
-{{- if .statefulSet.enabled }}
+{{- if and .enabled .statefulSet.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:

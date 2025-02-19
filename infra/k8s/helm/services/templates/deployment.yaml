@@ -1,7 +1,7 @@
 {{- $outer := . -}}
 {{ range .Values.apps }}
 ---
-{{- if not .statefulSet.enabled }}
+{{- if and .enabled (not .statefulSet.enabled) }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

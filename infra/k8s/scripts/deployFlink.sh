@@ -36,7 +36,7 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 helm repo update
 if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
-helm install fx-flink oci://${REGISTRY_NAME}/${REPOSITORY_NAME}/flink \
+helm upgrade --install fx-flink oci://${REGISTRY_NAME}/${REPOSITORY_NAME}/flink \
     --version 1.3.16 \
     --namespace ${NAMESPACE} \
     -f ./resources/flink/values-custom.yaml

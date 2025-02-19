@@ -33,12 +33,12 @@ echo "DEPLOYING FLINK OPERATOR - START"
 echo "$SEPARATOR"
 
 kubectl create -f https://github.com/jetstack/cert-manager/releases/download/v1.8.2/cert-manager.yaml
-if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
+
 helm repo add flink-operator-repo https://downloads.apache.org/flink/flink-kubernetes-operator-1.10.0/
 if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 helm repo update
 if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
-helm install flink-kubernetes-operator flink-operator-repo/flink-kubernetes-operator -n ${NAMESPACE}
+helm install flink-kubernetes-operator flink-operator-repo/flink-kubernetes-operator --namespace ${NAMESPACE} --create-namespace
 if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
 

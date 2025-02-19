@@ -5,6 +5,7 @@ apps:
   ##### FX MARKET CONNECTOR APP #####
   ###################################
   fxmarketconnector:
+    enabled: true
     name: fx-market-connector
     image:
       repository: localhost:5001/fx-market-services/fx-market-connector
@@ -57,6 +58,7 @@ apps:
   ##### FX MARKET PROCESSOR APP #####
   ###################################
   fxmarketprocessor:
+    enabled: false
     name: fx-market-processor
     image:
       repository: localhost:5001/fx-market-services/fx-market-processor
@@ -118,6 +120,7 @@ apps:
   ##### FLINK ORCHESTRATOR APP ######
   ###################################
   flinkorchestrator:
+    enabled: false
     name: flink-orchestrator
     image:
       repository: localhost:5001/fx-market-services/flink-orchestrator
@@ -178,6 +181,7 @@ apps:
   #####  FX REDIS ADAPTER APP  ######
   ###################################
   fxredisadapter:
+    enabled: true
     name: fx-redis-adapter
     image:
       repository: localhost:5001/fx-market-services/fx-market-redis-adapter
