@@ -1,6 +1,4 @@
 def jenkinsfilename = 'Jenkinsfile'
-def true, name: 'useBash')
-
 pipeline {
     agent any
     tools {
@@ -56,9 +54,6 @@ pipeline {
         stage("Build&Deploy with bash script") {
             when {
                 allOf {
-                    expression {
-                        return params.useBash
-                    }
                     triggeredBy 'UserIdCause' // start the job only if it is launched by user
                     not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
                 }
@@ -73,12 +68,9 @@ pipeline {
               }
             }
         }
-        stage("Build&Deploy with argocd script") {
+        /*stage("Build&Deploy with argocd script") {
             when {
                 allOf {
-                    expression {
-                        return !params.useBash
-                    }
                     triggeredBy 'UserIdCause' // start the job only if it is launched by user
                     not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
                 }
@@ -92,7 +84,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
         stage('CucumberRun') {
             environment {
                 JENKINS_RUN = "true"
