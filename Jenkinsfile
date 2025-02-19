@@ -94,8 +94,8 @@ pipeline {
 
           steps {
               script {
-                  sh "./stop-port-forwarding.sh"
-                  sh "./start-port-forwarding.sh -n ${params.k8s_namespace}"
+                 sh 'infra/k8s/stop-port-forwarding.sh'
+                 sh "infra/k8s/start-port-forwarding.sh -n ${params.k8s_namespace}"
 
                   try {
                       sh 'cd qa && ./gradlew cucumberFullRun'
