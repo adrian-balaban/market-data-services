@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-set -v
 trap "exit 1" TERM
 export TOP_PID=$$
 
@@ -21,10 +20,10 @@ while [[ "$#" -gt 0 ]]; do
   esac
   shift
 done
+
 ###############################################################
 
-kubectl get namespace ${NAMESPACE} || kubectl create namespace ${NAMESPACE}
-###############################################################
+set -v
 
 echo "$SEPARATOR"
 echo "UNDEPLOYING KAFKA - START"
