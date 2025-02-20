@@ -52,7 +52,7 @@ pipeline {
                     //SPECIFIC CAUSE [[_class:hudson.model.Cause$UserIdCause, shortDescription:Started by user admin, userId:admin, userName:admin]]
                     if (!triggeredBy('UserIdCause')) {
                         currentBuild.result = 'ABORTED'
-                        error('Stopping early because job wasn't started by an user')
+                        error('Stopping early because job was not started by an user')
                     }
                     if (params.k8s_namespace.trim().isEmpty()) {
                         currentBuild.result = 'ABORTED'
