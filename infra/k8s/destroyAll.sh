@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -v
+
 separator="==============="
 #NAMESPACE=fxmarket
 NAMESPACE=fxmarket
@@ -23,8 +25,6 @@ echo "NAMESPACE: ${NAMESPACE}" # default if not provided
 echo "$SEPARATOR"
 sleep 5
 
-set -x #echo on
-
 helm uninstall fx-flink -n ${NAMESPACE}
 
 helm uninstall fx -n ${NAMESPACE} # Redis
@@ -36,18 +36,20 @@ helm uninstall fx-market-services -n ${NAMESPACE}
 helm uninstall fx-market-externals -n ${NAMESPACE}
 
 ./scripts/undeployKafka.sh -n ${NAMESPACE}
-kubectl -n ${NAMESPACE} delete pod zookeeper-0 --force
+
+kubectl -n ${NAMESPACE} delete statefulset controlcenter
 sleep 5
+kubectl -n ${NAMESPACE} delete statefulset kafka
+sleep 5
+kubectl -n ${NAMESPACE} delete statefulset zookeeper
+sleep 5
+
+kubectl -n ${NAMESPACE} delete pod zookeeper-0 --force
+sleep 10
 kubectl -n ${NAMESPACE} delete pod kafka-0 --force
 sleep 5
 
 kubectl get pods -n ${NAMESPACE} | grep argo && kubectl delete -n ${NAMESPACE} -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-
-# DELETE PV AND PVC
-kubectl delete pvc --all -n ${NAMESPACE}
-kubectl get pv | grep ${NAMESPACE} | awk {'print $1'} | xargs --no-run-if-empty timeout 5 kubectl delete pv
-kubectl get pv | grep ${NAMESPACE} | grep Terminating | awk {'print $1'} | xargs -I{} kubectl patch pv {} -p '{"metadata":{"finalizers":[]}}' --type=merge
-kubectl get pv | grep ${NAMESPACE} | awk {'print $1'} | xargs --no-run-if-empty timeout 5 kubectl delete pv
 
 #Delete annoying zookeeper
 kubectl patch zookeeper.platform.confluent.io/zookeeper -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
@@ -63,6 +65,12 @@ kubectl -n ${NAMESPACE} delete controlcenter.platform.confluent.io/controlcenter
 sleep 5
 kubectl -n ${NAMESPACE} delete kafka.platform.confluent.io/kafka --force
 sleep 5
+
+# DELETE PV AND PVC
+kubectl delete pvc --all -n ${NAMESPACE}
+kubectl get pv | grep ${NAMESPACE} | awk {'print $1'} | xargs --no-run-if-empty timeout 5 kubectl delete pv
+kubectl get pv | grep ${NAMESPACE} | grep Terminating | awk {'print $1'} | xargs -I{} kubectl patch pv {} -p '{"metadata":{"finalizers":[]}}' --type=merge
+kubectl get pv | grep ${NAMESPACE} | awk {'print $1'} | xargs --no-run-if-empty timeout 5 kubectl delete pv
 
 kubectl delete all --all -n ${NAMESPACE}
 

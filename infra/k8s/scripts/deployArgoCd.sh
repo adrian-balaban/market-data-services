@@ -24,10 +24,10 @@ kubectl get namespace ${NAMESPACE} || kubectl create namespace ${NAMESPACE}
 
 #kubectl apply -n -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml ## Without kustomization only argocd namespace
 
-sed -i "s/___CHANGE_ME_NAMESPACE___/${NAMESPACE}/g" ./kustomize/argocd/kustomization.yaml ## Set proper namespace
-kubectl apply -k ./kustomize/argocd/
+sed -i "s/___CHANGE_ME_NAMESPACE___/${NAMESPACE}/g" ./resources/argocd/kustomize/kustomization.yaml ## Set proper namespace
+kubectl apply -k ./resources/argocd/kustomize/
 return_status_code=$? # Save to check later after sed revert
-sed -i "s/${NAMESPACE}/___CHANGE_ME_NAMESPACE___/g" ./kustomize/argocd/kustomization.yaml ## Revert
+sed -i "s/${NAMESPACE}/___CHANGE_ME_NAMESPACE___/g" ./resources/argocd/kustomize/kustomization.yaml ## Revert
 if [[ $return_status_code != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
 ###############################################################

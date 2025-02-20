@@ -19,6 +19,11 @@ const urlEmitEvent = `${connectorHost}/emitEvent`;
 let procHost = __ENV.PROCESSOR_HOST || "http://localhost:4080";
 const urlFxRatesBase = `${procHost}/fx/rates/`;
 
+
+console.log("Test Mode:", testMode);
+console.log("Emit Event URL:", urlEmitEvent);
+console.log("FX Rates Base URL:", urlFxRatesBase);
+
 const params = {
     headers: { 'Content-Type': 'application/json' },
 };
@@ -130,7 +135,17 @@ export default function () {
                 } else {
                     console.log(`⚠️ Attempt ${attempts + 1} for ${pair}: Rates do not match. Retrying...`);
                 }
-            }
+            } else
+            {
+               console.log(`Request Details:
+               ➜ URL: ${response.request.url}
+               ➜ Method: ${response.request.method}
+               ➜ Headers: ${JSON.stringify(response.request.headers)}
+               ➜ Body: ${JSON.stringify(response.request.body)}`);
+
+               console.log(`Request failed:
+               ➜ Status Code: ${response.status}
+               ➜ Response Body: ${response.body}`);}
         });
     //    sleep(0.5);
         attempts++;
@@ -170,6 +185,8 @@ export default function () {
             return;
         }
 
+        console.log("TOTAL REQUEST SENT: " + globalStats.totalRequests);
+        console.log("TOTAL SUM DURATION: " + globalStats.totalDurations.reduce((accumulator, currentValue) => accumulator + currentValue, 0) + "ms");
         let sortedGlobalOutput = Object.entries(globalStats.counts)
             .map(([time, count]) => ({
                 time: Number(time),
@@ -184,5 +201,17 @@ export default function () {
         } else {
             sortedGlobalOutput.forEach(line => console.log(line));
         }
+
+        const processingTimes = sortedGlobalOutput.map(item => {
+            const timePart = item.split(' - ')[1];
+            return parseInt(timePart.replace(' ms', ''));
+        });
+
+        // Calculate the sum of processing times
+        const totalProcessingTime = processingTimes.reduce((sum, time) => sum + time, 0);
+        // Calculate the average processing time
+        const averageProcessingTime = totalProcessingTime / processingTimes.length;
+        // Output the average processing time
+        console.log(`Average processing time: ${averageProcessingTime.toFixed(2)} ms`);
     }
 }

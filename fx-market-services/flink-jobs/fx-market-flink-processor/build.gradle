@@ -46,6 +46,7 @@ dependencies {
     flinkShadowJar project(":model-fx-proto")
     flinkShadowJar 'org.apache.flink:flink-connector-kafka:3.4.0-1.20'
     flinkShadowJar 'com.google.protobuf:protobuf-java:3.25.5'
+    flinkShadowJar 'redis.clients:jedis:5.2.0'
 
 
     // Test dependencies

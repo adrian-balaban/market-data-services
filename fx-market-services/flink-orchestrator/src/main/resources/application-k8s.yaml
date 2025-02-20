@@ -12,6 +12,10 @@ flink:
       arguments:
         topic: fx_rates
         bootstrapServers: kafka:9071
+        redisHost: fx-redis-cluster
+        redisPort: 6379
+        redisUsername: flink-sink
+        redisPassword: default
     - name: fxmarketflinkconnectorwebsocket
       arguments:
         stub_hostname: fx-market-data-stub-ws-svc

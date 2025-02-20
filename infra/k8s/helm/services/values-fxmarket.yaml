@@ -134,6 +134,20 @@ apps:
         value: "8080"
       - name: FLINK_URL
         value: "http://fx-flink-jobmanager:8081"
+      - name: FLINK_JOBS_0_NAME
+        value: "fxmarketflinkproces"
+      - name: FLINK_JOBS_0_ARGUMENTS_TOPIC
+        value: "fx_rates"
+      - name: FLINK_JOBS_0_ARGUMENTS_BOOTSTRAPSERVERS
+        value: "kafka:9071"
+      - name: FLINK_JOBS_0_ARGUMENTS_REDISHOST
+        value: "fx-redis-cluster"
+      - name: FLINK_JOBS_0_ARGUMENTS_REDISPORT
+        value: "6379"
+      - name: FLINK_JOBS_0_ARGUMENTS_REDISUSERNAME
+        value: "FlinkProcessorRedisSink"
+      - name: FLINK_JOBS_0_ARGUMENTS_REDISPASSWORD
+        value: "default"
 
     resources:
       limits:
@@ -147,6 +161,55 @@ apps:
 
     statefulSet:
       enabled: false
+
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 1
+      targetCPUUtilizationPercentage: 80
+
+    initContainers: {}
+    imagePullSecrets: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+  ###################################
+  #####  FX REDIS ADAPTER APP  ######
+  ###################################
+  fxredisadapter:
+    name: fx-redis-adapter
+    image:
+      repository: localhost:5001/fx-market-services/fx-market-redis-adapter
+#      tag: 0.0.0
+
+    podAnnotations: {}
+
+    service:
+      type: ClusterIP
+      port: 8080
+
+    extraEnv:
+      - name: SERVER_PORT
+        value: "8080"
+      - name: "VENDOR_REDIS_USERNAME"
+        value: "fx-redis-adapter"
+      - name: VENDOR_REDIS_PASSWORD
+        value: "default"
+
+    resources:
+      limits:
+        cpu: 1
+        memory: 3072Mi
+      requests:
+        cpu: 500m
+        memory: 3072Mi
+
+    volumes: []
+
+    statefulSet:
+      enabled: true
+      replicas: 3
 
     autoscaling:
       enabled: false

@@ -1,24 +1,18 @@
 package com.fx.market.flink.processor.helpers;
 
-import com.fx.market.flink.processor.model.FxRateEventProto;
-import com.fx.market.flink.processor.pojo.FxRateEvent;
+import com.fx.market.kafka.message.FxRateEventProto;
 import org.apache.flink.api.common.serialization.DeserializationSchema;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 
 import java.io.IOException;
 import java.util.Arrays;
 
-import static com.fx.market.flink.processor.mappers.FxRateProtoMapper.fromProto;
-
-public class FxRateEventProtoMessageDeserializer implements DeserializationSchema<FxRateEvent> {
+public class FxRateEventProtoMessageDeserializer implements DeserializationSchema<FxRateEventProto> {
 
     @Override
-    public FxRateEvent deserialize(byte[] bytes) throws IOException {
+    public FxRateEventProto deserialize(byte[] bytes) throws IOException {
         try{
-            //System.out.println("MJ DEBUG deserialize:" + Arrays.toString(bytes));
-            //System.out.println("MJ1 DEBUG deserialize:" + FxRateEventProto.parseFrom(bytes).toString());
-            var fxProto = FxRateEventProto.parseFrom(bytes);
-            return fromProto(fxProto);
+            return FxRateEventProto.parseFrom(bytes);
         } catch (Exception e) {
             System.out.println("InvalidProtocolBufferException:" + Arrays.toString(bytes));
         }
@@ -26,12 +20,12 @@ public class FxRateEventProtoMessageDeserializer implements DeserializationSchem
     }
 
     @Override
-    public boolean isEndOfStream(FxRateEvent fxRateEventProto) {
+    public boolean isEndOfStream(FxRateEventProto fxRateEventProto) {
         return false;
     }
 
     @Override
-    public TypeInformation<FxRateEvent> getProducedType() {
-        return TypeInformation.of(FxRateEvent.class);
+    public TypeInformation<FxRateEventProto> getProducedType() {
+        return TypeInformation.of(FxRateEventProto.class);
     }
 }

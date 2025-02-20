@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: fxMarketRedisAdapter
+
+server:
+  port: 4083
+
+vendor:
+  redis:
+    nodes:
+      - host: docker_not_supported_for_now
+        port: 6379
+    username: default
+    password: default
+    poolMaxTotal: 1024
+    poolMaxIdle: 64
+    poolMinIdle: 4
+    connectionTimeout: 2000
+    soTimeout: 2000
+    maxAttempts: 5

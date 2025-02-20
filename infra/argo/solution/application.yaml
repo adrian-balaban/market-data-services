@@ -8,7 +8,7 @@ spec:
   project: market-data-___CHANGE_ME_NAMESPACE___
   source:
     repoURL: 'https://github.com/Jereczek/market-data-processor.git'
-    targetRevision: ___CHANGE_ME_BRANCH___
+    targetRevision: ___CHANGE_ME_NAMESPACE___
     path: 'infra/argo/solution/env/___CHANGE_ME_ENV___'
   destination:
     server: 'https://kubernetes.default.svc'

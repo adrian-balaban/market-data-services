@@ -64,7 +64,8 @@ dependencies {
 
 }
 
-final String K8S_NAMESPACE="test"
+String K8S_NAMESPACE=""
+String masterNamespace="master"
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -97,7 +98,6 @@ configurations {
 
 task cucumberFullRun() {
     group = 'test_functionalLocal'
-
     dependsOn assemble, testClasses
     doLast {
         javaexec {
@@ -105,11 +105,15 @@ task cucumberFullRun() {
             classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
             args = [
                     '--plugin', 'pretty',
+                    '--plugin', 'html:build/reports/cucumber/cucumber.html',  // HTML-report
+                    '--plugin', 'json:build/reports/cucumber/cucumber.json',  // JSON-report
+                    '--plugin', 'junit:build/reports/cucumber/cucumber.xml',  // JUnit-report
                     '--glue', 'stepdefinitions',
                     '--glue', 'helpers',
                     '--glue', 'testvisa',
                     'src/test/resources/features/sample-domain/'
             ]
+            systemProperties System.getProperties()
         }
     }
 }
@@ -120,6 +124,8 @@ tasks.register('connectorClear', Exec) {
     group = 'test_performanceLocal'
 
     def deleteScriptPath = "${projectDir}/src/test/java/performance/delete_kafka_records.sh"
+
+    K8S_NAMESPACE = project.hasProperty("K8S_NAMESPACE") ? project.getProperty("K8S_NAMESPACE") : masterNamespace
 
         println "Copy delete_kafka_records.sh to kafka container, to run it .."
         exec {
@@ -193,7 +199,7 @@ tasks.register('connectorRunBatchJob', Exec) {
     group = 'test_performanceJob'
 
     def isWindows = System.getProperty("os.name").toLowerCase().contains("win")
-    def shell = isWindows ? "cmd" : "bash"
+    def shell = isWindows ? "cmd" : "/bin/bash"
     def shellFlag = isWindows ? "/c" : "-c"
 
     def scriptName = "connectorPerfTest.js"
@@ -201,13 +207,16 @@ tasks.register('connectorRunBatchJob', Exec) {
 
     def scriptPath = "${projectDir}/src/test/java/performance/${scriptName}"
 
+    K8S_NAMESPACE = project.hasProperty("K8S_NAMESPACE") ? project.getProperty("K8S_NAMESPACE") : masterNamespace
+
     commandLine shell, shellFlag, """
-        echo "Running K6 test with script: ${scriptName}, mode: ${testMode}" && \
-        kubectl create configmap k6-performance --from-literal=scriptName=${scriptName} --from-literal=testMode=${testMode} --from-file=${scriptPath} -n test --dry-run=client -o yaml | kubectl apply -f - && \
+        echo "Running K6 test with script: ${scriptName}, mode: ${testMode} , namespace: ${K8S_NAMESPACE}" && \
+        kubectl create configmap k6-performance --from-literal=scriptName=${scriptName} --from-literal=testMode=${testMode} --from-file=${scriptPath} -n ${K8S_NAMESPACE} --dry-run=client -o yaml | kubectl apply -f - && \
         kubectl delete job k6-performance-test -n ${K8S_NAMESPACE} --ignore-not-found && \
-        kubectl apply -f src/test/java/k8s/k6_job.yaml
+        kubectl apply -f src/test/java/k8s/k6_job.yaml -n ${K8S_NAMESPACE} 
     """
 }
+
 
 tasks.register('connectorRunSingleJob', Exec) {
     group = 'test_performanceJob'
@@ -221,11 +230,13 @@ tasks.register('connectorRunSingleJob', Exec) {
 
     def scriptPath = "${projectDir}/src/test/java/performance/${scriptName}"
 
+    K8S_NAMESPACE = project.hasProperty("K8S_NAMESPACE") ? project.getProperty("K8S_NAMESPACE") : masterNamespace
+
     commandLine shell, shellFlag, """
-        echo "Running K6 test with script: ${scriptName}, mode: ${testMode}" && \
-        kubectl create configmap k6-performance --from-literal=scriptName=${scriptName} --from-literal=testMode=${testMode} --from-file=${scriptPath} -n test --dry-run=client -o yaml | kubectl apply -f - && \
+        echo "Running K6 test with script: ${scriptName}, mode: ${testMode} , namespace: ${K8S_NAMESPACE}"  && \
+        kubectl create configmap k6-performance --from-literal=scriptName=${scriptName} --from-literal=testMode=${testMode} --from-file=${scriptPath} -n ${K8S_NAMESPACE} --dry-run=client -o yaml | kubectl apply -f - && \
         kubectl delete job k6-performance-test -n ${K8S_NAMESPACE} --ignore-not-found && \
-        kubectl apply -f src/test/java/k8s/k6_job.yaml
+        kubectl apply -f src/test/java/k8s/k6_job.yaml -n ${K8S_NAMESPACE} 
     """
 }
 
@@ -241,11 +252,13 @@ tasks.register('processorRunBatchJob', Exec) {
 
     def scriptPath = "${projectDir}/src/test/java/performance/${scriptName}"
 
+    K8S_NAMESPACE = project.hasProperty("K8S_NAMESPACE") ? project.getProperty("K8S_NAMESPACE") : masterNamespace
+
     commandLine shell, shellFlag, """
-        echo "Running K6 test with script: ${scriptName}, mode: ${testMode}" && \
-        kubectl create configmap k6-performance --from-literal=scriptName=${scriptName} --from-literal=testMode=${testMode} --from-file=${scriptPath} -n test --dry-run=client -o yaml | kubectl apply -f - && \
+        echo "Running K6 test with script: ${scriptName}, mode: ${testMode}", namespace: ${K8S_NAMESPACE} && \
+        kubectl create configmap k6-performance --from-literal=scriptName=${scriptName} --from-literal=testMode=${testMode} --from-file=${scriptPath} -n ${K8S_NAMESPACE} --dry-run=client -o yaml | kubectl apply -f - && \
         kubectl delete job k6-performance-test -n ${K8S_NAMESPACE} --ignore-not-found && \
-        kubectl apply -f src/test/java/k8s/k6_job.yaml
+        kubectl apply -f src/test/java/k8s/k6_job.yaml -n ${K8S_NAMESPACE} 
     """
 }
 
@@ -261,11 +274,13 @@ tasks.register('processorRunSingleJob', Exec) {
 
     def scriptPath = "${projectDir}/src/test/java/performance/${scriptName}"
 
+    K8S_NAMESPACE = project.hasProperty("K8S_NAMESPACE") ? project.getProperty("K8S_NAMESPACE") : masterNamespace
+
     commandLine shell, shellFlag, """
-        echo "Running K6 test with script: ${scriptName}, mode: ${testMode}" && \
-        kubectl create configmap k6-performance --from-literal=scriptName=${scriptName} --from-literal=testMode=${testMode} --from-file=${scriptPath} -n test --dry-run=client -o yaml | kubectl apply -f - && \
+        echo "Running K6 test with script: ${scriptName}, mode: ${testMode} , namespace: ${K8S_NAMESPACE}" && \
+        kubectl create configmap k6-performance --from-literal=scriptName=${scriptName} --from-literal=testMode=${testMode} --from-file=${scriptPath} -n ${K8S_NAMESPACE} --dry-run=client -o yaml | kubectl apply -f - && \
         kubectl delete job k6-performance-test -n ${K8S_NAMESPACE} --ignore-not-found && \
-        kubectl apply -f src/test/java/k8s/k6_job.yaml
+        kubectl apply -f src/test/java/k8s/k6_job.yaml -n ${K8S_NAMESPACE} 
     """
 }
 

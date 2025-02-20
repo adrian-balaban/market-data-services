@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cucumber-tests
+  namespace: test
+spec:
+  template:
+    spec:
+      containers:
+        - name: cucumber-runner
+          image: 192.168.192.96:5001/cucumber-tests:latest
+          imagePullPolicy: Always
+          command: ["gradle", "cucumberFullRun"]  e
+      restartPolicy: Never
+      imagePullSecrets:
+        - name: regcred
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 600

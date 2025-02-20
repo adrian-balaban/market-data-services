@@ -2,6 +2,7 @@
 
 NAMESPACE="fxmarket" # default if not provided
 
+ps -ef | grep kubectl | grep port
 
 # Parse command-line options
 while [[ "$#" -gt 0 ]]; do
@@ -22,20 +23,12 @@ echo "ARGOCD PASSWORD: ${PASSWD}"
 #TOOLS
 kubectl port-forward -n ${NAMESPACE} svc/kafka 9093:9092 &
 kubectl port-forward -n ${NAMESPACE} svc/fx-flink-jobmanager 8081:8081 &
+kubectl port-forward -n ${NAMESPACE} svc/fx-redis-redis-cluster 6379:6379 &
 
 #STUBS
 kubectl port-forward -n ${NAMESPACE} svc/fx-market-data-stub-svc 3080:3080 &
-kubectl port-forward -n ${NAMESPACE} svc/fx-market-data-stub-ws-svc 3081:3081 &
+#kubectl port-forward -n ${NAMESPACE} svc/fx-market-data-stub-ws-svc 3081:3081 &
 
 #SERVICES (Add only if needed i.e. by e2e tests)
 kubectl port-forward -n ${NAMESPACE} svc/fx-market-processor-svc 4080:8080 &
-
-kubectl port-forward -n ${NAMESPACE} svc/kafka 9093:9092 &
-kubectl port-forward -n ${NAMESPACE} svc/fx-flink-jobmanager 8081:8081 &
-
-#STUBS
-kubectl port-forward -n ${NAMESPACE} svc/fx-market-data-stub-svc 3080:3080 &
-kubectl port-forward -n ${NAMESPACE} svc/fx-market-data-stub-ws-svc 3081:3081 &
-
-#SERVICES (Add only if needed i.e. by e2e tests)
-kubectl port-forward -n ${NAMESPACE} svc/fx-market-processor-svc 4080:8080 &
+kubectl port-forward -n ${NAMESPACE} svc/fx-redis-adapter-svc 4081:8080 &
