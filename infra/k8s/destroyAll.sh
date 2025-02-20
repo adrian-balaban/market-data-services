@@ -55,9 +55,10 @@ kubectl wait statefulset $RES --for=condition=delete --timeout=600s -n ${NAMESPA
 kubectl -n ${NAMESPACE} delete pod $RES
 kubectl wait pod $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
 
-export RES=kafka-0
+export RES=kafka
 kubectl -n ${NAMESPACE} delete statefulset $RES
 kubectl wait statefulset $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
+export RES=kafka-0
 kubectl -n ${NAMESPACE} delete pod $RES
 kubectl wait pod $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
 
