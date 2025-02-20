@@ -18,7 +18,7 @@ pipeline {
                 env.BRANCH_NAME ==~ /support\/.*/ ? '3' :
                     env.BRANCH_NAME ==~ /release/ ? '3' :
                         env.BRANCH_NAME ==~ /develop/ ? '3' :
-                            env.BRANCH_NAME ==~ /feature\/.*|bugfix\/.*|hotfix\/.*/ ? '3' : '3',
+                            env.BRANCH_NAME ==~ /feature\/.*|bugfix\/.*|hotfix\/.*/ ? '10' : '10',
             // number of builds to keep the artifacts from
             artifactNumToKeepStr: env.BRANCH_NAME ==~ /master/ ? '3' :
                 env.BRANCH_NAME ==~ /support\/.*/ ? '3' :
