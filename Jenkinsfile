@@ -50,7 +50,7 @@ pipeline {
                     println "SPECIFIC CAUSE ${specificCause}"
 
                     //SPECIFIC CAUSE [[_class:hudson.model.Cause$UserIdCause, shortDescription:Started by user admin, userId:admin, userName:admin]]
-                    if (!triggeredBy 'UserIdCause') {
+                    if (!triggeredBy()'UserIdCause')) {
                         currentBuild.result = 'ABORTED'
                         error('Stopping early because job wasn't started by an user')
                     }
