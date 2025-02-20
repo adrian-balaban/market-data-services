@@ -132,14 +132,14 @@ wait_for_pod "zookeeper-0"
 wait_for_pod "kafka-0"
 wait_for_pod "fx-redis-cluster-0"
 wait_for_pod "fx-market-data-stub"
-#wait_for_pod "fx-market-data-stub-ws"
 
 pushd ./scripts && ./deploySolution.sh -tag ${TAG} -registry ${DOCKER_REGISTRY} -n ${NAMESPACE} && popd
 
 wait_for_pod "fx-market-connector"
-wait_for_pod "fx-market-processor"
 wait_for_pod "flink-orchestrator"
-
+wait_for_pod "fx-market-processor-set-0"
+wait_for_pod "fx-market-processor-set-1"
+wait_for_pod "fx-market-processor-set-2"
 
 echo "$SEPARATOR"
 echo "DEPLOY PHASE - END"
