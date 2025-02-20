@@ -46,7 +46,7 @@ pipeline {
             when {
                 allOf {
                     triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
+                    //not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
                 }
             }
             steps {
@@ -57,7 +57,7 @@ pipeline {
             when {
                 allOf {
                     triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
+                    //not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
                 }
             }
             steps {
@@ -91,19 +91,23 @@ pipeline {
             environment {
                 JENKINS_RUN = "true"
             }
-
-          steps {
-              script {
-                 sh 'infra/k8s/stop-port-forwarding.sh'
-                 sh "infra/k8s/start-port-forwarding.sh -n ${params.k8s_namespace}"
-
-                  try {
-                      sh 'cd qa && ./gradlew cucumberFullRun'
-                  } finally {
-                      sh "./stop-port-forwarding.sh"
-                  }
-              }
-          }
+            when {
+                allOf {
+                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
+                    //not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
+                }
+            }
+            steps {
+                script {
+                    sh 'infra/k8s/stop-port-forwarding.sh'
+                    sh "infra/k8s/start-port-forwarding.sh -n ${params.k8s_namespace}"
+                    try {
+                        sh 'cd qa && ./gradlew cucumberFullRun'
+                    } finally {
+                        sh 'infra/k8s/stop-port-forwarding.sh'
+                    }
+                }
+            }
             post {
                 always {
                     junit '**/qa/build/reports/cucumber/cucumber.xml'
