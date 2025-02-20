@@ -45,27 +45,11 @@ pipeline {
             }
         }
         stage('Checkout') {
-            when {
-                allOf {
-                    expression {
-                        return (params.k8s_namespace.length() > 0)
-                    }
-                }
-            }
             steps {
                 checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
             }
         }
         stage("Delete namespace") {
-            when {
-                allOf {
-                    expression {
-                        return (params.k8s_namespace.length() > 0)
-                    }
-                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
-                }
-            }
             steps {
               script {
                 withKubeConfig(

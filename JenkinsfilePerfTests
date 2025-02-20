@@ -48,23 +48,11 @@ pipeline {
             }
         }
         stage('Checkout') {
-            when {
-                allOf {
-                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
-                }
-            }
             steps {
                 checkout scmGit(branches: [[name: "${branchAllowed}"]], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
             }
         }
         stage('PerfTestsRun') {
-            when {
-                allOf {
-                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
-                }
-            }
             environment {
                 JENKINS_RUN = "true"
             }
