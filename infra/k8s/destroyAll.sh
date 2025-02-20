@@ -37,34 +37,51 @@ helm uninstall fx-market-externals -n ${NAMESPACE}
 
 ./scripts/undeployKafka.sh -n ${NAMESPACE}
 
-kubectl -n ${NAMESPACE} delete statefulset controlcenter
-sleep 5
-kubectl -n ${NAMESPACE} delete statefulset kafka
-sleep 5
-kubectl -n ${NAMESPACE} delete statefulset zookeeper
-sleep 5
+RESTYPE='statefulset'
+RES='zookeeper'
+kubectl -n ${NAMESPACE} delete $RESTYPE $RES
+kubectl wait $RESTYPE $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
 
-kubectl -n ${NAMESPACE} delete pod zookeeper-0 --force
-sleep 10
-kubectl -n ${NAMESPACE} delete pod kafka-0 --force
-sleep 5
+RES='controlcenter'
+kubectl -n ${NAMESPACE} delete $RESTYPE $RES
+kubectl wait $RESTYPE $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
+
+RES='kafka'
+kubectl -n ${NAMESPACE} delete $RESTYPE $RES
+kubectl wait $RESTYPE $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
+
+RESTYPE='pod'
+RES='zookeeper'
+kubectl -n ${NAMESPACE} delete $RESTYPE $RES
+kubectl wait $RESTYPE $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
+
+RES='controlcenter'
+kubectl -n ${NAMESPACE} delete $RESTYPE $RES
+kubectl wait $RESTYPE $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
+
+RES='kafka'
+kubectl -n ${NAMESPACE} delete $RESTYPE $RES
+kubectl wait $RESTYPE $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
 
 kubectl get pods -n ${NAMESPACE} | grep argo && kubectl delete -n ${NAMESPACE} -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 #Delete annoying zookeeper
 kubectl patch zookeeper.platform.confluent.io/zookeeper -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
-sleep 5
 kubectl patch controlcenter.platform.confluent.io/controlcenter -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
-sleep 5
 kubectl patch kafka.platform.confluent.io/kafka -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
 sleep 5
 
-kubectl -n ${NAMESPACE} delete zookeeper.platform.confluent.io/zookeeper --force
-sleep 5
-kubectl -n ${NAMESPACE} delete controlcenter.platform.confluent.io/controlcenter --force
-sleep 5
-kubectl -n ${NAMESPACE} delete kafka.platform.confluent.io/kafka --force
-sleep 5
+RES='zookeeper.platform.confluent.io/zookeeper'
+kubectl -n ${NAMESPACE} delete $RES --force
+kubectl wait crd $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
+
+RES='controlcenter.platform.confluent.io/controlcenter'
+kubectl -n ${NAMESPACE} delete $RES --force
+kubectl wait crd $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
+
+RES='kafka.platform.confluent.io/kafka'
+kubectl -n ${NAMESPACE} delete $RES --force
+kubectl wait crd $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
 
 # DELETE PV AND PVC
 kubectl delete pvc --all -n ${NAMESPACE}
