@@ -145,6 +145,6 @@ echo "$SEPARATOR"
 echo "DEPLOY PHASE - END"
 echo "$SEPARATOR"
 
-sleep 5
+sleep 120
 
 kubectl config set-context --current --namespace=${NAMESPACE}
