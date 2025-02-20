@@ -40,6 +40,14 @@ pipeline {
                 cleanWs()
                 script {
                     deleteDir()
+                    if (!triggeredBy 'UserIdCause') {
+                        currentBuild.result = 'ABORTED'
+                        error('Stopping early because job wasn't started by an user')
+                    }
+                    if (params.k8s_namespace.trim().isEmpty()) {
+                        currentBuild.result = 'ABORTED'
+                        error('Stopping early because job namespace is empty')
+                    }
                 }
             }
         }
