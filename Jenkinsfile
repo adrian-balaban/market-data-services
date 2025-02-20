@@ -5,7 +5,6 @@ pipeline {
     }
     parameters {
         booleanParam(defaultValue: true, name: 'build')
-        booleanParam(defaultValue: false, name: 'test')
         string(defaultValue: "0.0.1", name: 'tag_root', description: 'if ArgoCD, use tag: 0.5.0')
         string(defaultValue: "192.168.192.96:5001", name: 'registry')
         string(defaultValue: env.BRANCH_NAME, name: 'k8s_namespace')
@@ -69,7 +68,7 @@ pipeline {
                 withKubeConfig(
                   clusterName: 'kind-kind', contextName: 'kind-kind', credentialsId: 'K8sConfigMichal', namespace: 'default',
                   restrictKubeConfigAccess: true, serverUrl: 'https://192.168.192.96:6443') {
-                    sh "cd ./infra/k8s && ./deployAll.sh      -build ${params.build} -test ${params.test} -n ${params.k8s_namespace} -tag ${params.tag_root}-${env.BRANCH_NAME} -registry ${params.registry}"
+                    sh "cd ./infra/k8s && ./deployAll.sh      -build ${params.build} -test true -n ${params.k8s_namespace} -tag ${params.tag_root}-${env.BRANCH_NAME} -registry ${params.registry}"
                 }
               }
             }
