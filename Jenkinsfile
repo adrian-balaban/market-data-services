@@ -47,8 +47,13 @@ pipeline {
                     def specificCause = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
                     println "SPECIFIC CAUSE ${specificCause}"
 
-SPECIFIC CAUSE [[_class:hudson.model.Cause$UserIdCause, shortDescription:Started by user admin, userId:admin, userName:admin]]
-[Pipeline] deleteDir
+if (!triggeredBy 'UserIdCause') {
+    currentBuild.result = 'ABORTED'
+    error('Stopping early…')
+}
+
+//SPECIFIC CAUSE [[_class:hudson.model.Cause$UserIdCause, shortDescription:Started by user admin, userId:admin, userName:admin]]
+
                     deleteDir()
                 }
             }
