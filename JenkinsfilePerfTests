@@ -39,7 +39,7 @@ pipeline {
                 cleanWs()
                 script {
                     deleteDir()
-                    if (!triggeredBy 'UserIdCause') {
+                    if (!triggeredBy('UserIdCause')) {
                         currentBuild.result = 'ABORTED'
                         error('Stopping early because job was not started by an user')
                     }
