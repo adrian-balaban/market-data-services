@@ -1,4 +1,3 @@
-def jenkinsfilename = 'Jenkinsfile'
 pipeline {
     agent any
     tools {
@@ -39,27 +38,32 @@ pipeline {
                 cleanWs()
                 script {
                     deleteDir()
+
+                    println "CAUSE ${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause).properties}"
+
+                    // Get all Causes for the current build
+                    def causes = currentBuild.getBuildCauses()
+                    println "CAUSES ${causes}"
+
+                    // Get a specific Cause type (in this case the user who kicked off the build),
+                    // if present.
+                    def specificCause = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
+                    println "SPECIFIC CAUSE ${specificCause}"
+
+                    //SPECIFIC CAUSE [[_class:hudson.model.Cause$UserIdCause, shortDescription:Started by user admin, userId:admin, userName:admin]]
+                    if (!triggeredBy('UserIdCause')) {
+                        currentBuild.result = 'ABORTED'
+                        error('Stopping early because job was not started by an user')
+                    }
                 }
             }
         }
         stage('Checkout') {
-            when {
-                allOf {
-                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    //not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
-                }
-            }
             steps {
                 checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
             }
         }
         stage("Build&Deploy with bash script") {
-            when {
-                allOf {
-                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    //not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
-                }
-            }
             steps {
               script {
                 withKubeConfig(
@@ -71,12 +75,6 @@ pipeline {
             }
         }
         /*stage("Build&Deploy with argocd script") {
-            when {
-                allOf {
-                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
-                }
-            }
             steps {
                 script {
                     withKubeConfig(
@@ -90,12 +88,6 @@ pipeline {
         stage('CucumberRun') {
             environment {
                 JENKINS_RUN = "true"
-            }
-            when {
-                allOf {
-                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    //not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
-                }
             }
             steps {
                 script {
@@ -130,6 +122,11 @@ pipeline {
         }
 
         stage("Delete namespace") {
+            when {
+              expression {
+                  return (delete_namespace_at_end == true)
+              }
+            }
             steps {
 
               script {
