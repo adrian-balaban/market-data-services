@@ -35,8 +35,9 @@ helm uninstall fx-market-services -n ${NAMESPACE}
 
 helm uninstall fx-market-externals -n ${NAMESPACE}
 
-./scripts/undeployKafka.sh -n ${NAMESPACE}
-
+pushd ./scripts
+./undeployKafka.sh -n ${NAMESPACE}
+popd
 RESTYPE='statefulset'
 RES='zookeeper'
 kubectl -n ${NAMESPACE} delete $RESTYPE $RES
