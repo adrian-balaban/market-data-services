@@ -36,34 +36,31 @@ helm uninstall fx-market-services -n ${NAMESPACE}
 helm uninstall fx-market-externals -n ${NAMESPACE}
 
 pushd ./scripts
+
 ./undeployKafka.sh -n ${NAMESPACE}
+
 popd
 
 set -v
 
-RES='zookeeper'
+export RES=zookeeper
 kubectl -n ${NAMESPACE} delete statefulset $RES
 kubectl wait statefulset $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
-
-RES='controlcenter'
-kubectl -n ${NAMESPACE} delete statefulset $RES
-kubectl wait statefulset $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
-
-RES='kafka'
-kubectl -n ${NAMESPACE} delete statefulset $RES
-kubectl wait statefulset $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
-
-RES='zookeeper'
 kubectl -n ${NAMESPACE} delete pod $RES
 kubectl wait pod $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
 
-RES='controlcenter'
+export RES=controlcenter
+kubectl -n ${NAMESPACE} delete statefulset $RES
+kubectl wait statefulset $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
 kubectl -n ${NAMESPACE} delete pod $RES
 kubectl wait pod $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
 
-RES='kafka-0'
+export RES=kafka-0
+kubectl -n ${NAMESPACE} delete statefulset $RES
+kubectl wait statefulset $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
 kubectl -n ${NAMESPACE} delete pod $RES
 kubectl wait pod $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
+
 
 kubectl get pods -n ${NAMESPACE} | grep argo && kubectl delete -n ${NAMESPACE} -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
