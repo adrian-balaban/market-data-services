@@ -40,31 +40,30 @@ pushd ./scripts
 popd
 
 set -v
-RESOURCE_TYPE='statefulset'
+
 RES='zookeeper'
-kubectl -n ${NAMESPACE} delete $RESOURCE_TYPE $RES
-kubectl wait $RESOURCE_TYPE $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
+kubectl -n ${NAMESPACE} delete statefulset $RES
+kubectl wait statefulset $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
 
 RES='controlcenter'
-kubectl -n ${NAMESPACE} delete $RESOURCE_TYPE $RES
-kubectl wait $RESOURCE_TYPE $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
+kubectl -n ${NAMESPACE} delete statefulset $RES
+kubectl wait statefulset $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
 
 RES='kafka'
-kubectl -n ${NAMESPACE} delete $RESOURCE_TYPE $RES
-kubectl wait $RESOURCE_TYPE $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
+kubectl -n ${NAMESPACE} delete statefulset $RES
+kubectl wait statefulset $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
 
-RESOURCE_TYPE='pod'
 RES='zookeeper'
-kubectl -n ${NAMESPACE} delete $RESOURCE_TYPE $RES
-kubectl wait $RESOURCE_TYPE $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
+kubectl -n ${NAMESPACE} delete pod $RES
+kubectl wait pod $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
 
 RES='controlcenter'
-kubectl -n ${NAMESPACE} delete $RESOURCE_TYPE $RES
-kubectl wait $RESOURCE_TYPE $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
+kubectl -n ${NAMESPACE} delete pod $RES
+kubectl wait pod $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
 
 RES='kafka'
-kubectl -n ${NAMESPACE} delete $RESOURCE_TYPE $RES
-kubectl wait $RESOURCE_TYPE $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
+kubectl -n ${NAMESPACE} delete pod $RES
+kubectl wait pod $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
 
 kubectl get pods -n ${NAMESPACE} | grep argo && kubectl delete -n ${NAMESPACE} -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
