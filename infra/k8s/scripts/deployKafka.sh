@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -v
 trap "exit 1" TERM
 export TOP_PID=$$
 
