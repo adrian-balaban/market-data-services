@@ -35,14 +35,12 @@ helm uninstall fx-market-services -n ${NAMESPACE}
 
 helm uninstall fx-market-externals -n ${NAMESPACE}
 
-pushd ./scripts
-
-./undeployKafka.sh -n ${NAMESPACE}
-
-popd
-
 set -v
 
+helm uninstall confluent-operator --namespace ${NAMESPACE}
+sleep 5
+
+# delete statefulsets and pods for zookeeper, controlcenter, kafka (zookeeper should be the 1-st)
 export RES=zookeeper
 kubectl -n ${NAMESPACE} delete statefulset $RES
 kubectl wait statefulset $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
@@ -62,15 +60,15 @@ export RES=kafka-0
 kubectl -n ${NAMESPACE} delete pod $RES
 kubectl wait pod $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
 
-
 kubectl get pods -n ${NAMESPACE} | grep argo && kubectl delete -n ${NAMESPACE} -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
-#Delete annoying zookeeper
+#Delete finalizers on crd's instances: zookeeper,...
 kubectl patch zookeeper.platform.confluent.io/zookeeper -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
 kubectl patch controlcenter.platform.confluent.io/controlcenter -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
 kubectl patch kafka.platform.confluent.io/kafka -p '{"metadata":{"finalizers":[]}}' --type=merge -n ${NAMESPACE}
 sleep 5
 
+#Delete crd's instances: zookeeper,...
 RES='zookeeper.platform.confluent.io/zookeeper'
 kubectl -n ${NAMESPACE} delete $RES --force
 kubectl wait crd $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}

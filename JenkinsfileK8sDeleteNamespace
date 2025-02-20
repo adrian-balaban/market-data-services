@@ -20,22 +20,13 @@ pipeline {
                 script {
                     deleteDir()
 
-                    println "CAUSE ${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause).properties}"
-
-                    // Get all Causes for the current build
-                    def causes = currentBuild.getBuildCauses()
-                    println "CAUSES ${causes}"
-
-                    // Get a specific Cause type (in this case the user who kicked off the build),
-                    // if present.
-                    def specificCause = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
-                    println "SPECIFIC CAUSE ${specificCause}"
-                    //SPECIFIC CAUSE [[_class:hudson.model.Cause$UserIdCause, shortDescription:Started by user admin, userId:admin, userName:admin]]
-
+                    println "Cause of job launch: ${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause).properties}"
+                    println "All causes for the current build ${currentBuild.getBuildCauses()}"
                     if (!triggeredBy('UserIdCause')) {
                         currentBuild.result = 'ABORTED'
                         error('Stopping early because job was not started by an user')
                     }
+
                     if (params.k8s_namespace.trim().isEmpty()) {
                         currentBuild.result = 'ABORTED'
                         error('Stopping early because job namespace is empty')
