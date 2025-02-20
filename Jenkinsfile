@@ -1,4 +1,3 @@
-def jenkinsfilename = 'Jenkinsfile'
 pipeline {
     agent any
     tools {

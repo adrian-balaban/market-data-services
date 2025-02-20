@@ -1,4 +1,3 @@
-def jenkinsfilename = 'JenkinsfilePerfTests'
 def branchAllowed   = 'master'
 pipeline {
     agent any
