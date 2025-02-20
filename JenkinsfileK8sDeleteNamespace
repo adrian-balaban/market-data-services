@@ -1,4 +1,3 @@
-def jenkinsfilename = 'JenkinsfileK8sDeleteNamespace'
 pipeline {
     agent any
     parameters {
