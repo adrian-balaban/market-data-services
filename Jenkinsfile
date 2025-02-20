@@ -5,7 +5,7 @@ pipeline {
     }
     parameters {
         booleanParam(defaultValue: true, name: 'build')
-        string(defaultValue: "0.0.1", name: 'tag_root', description: 'if ArgoCD, use tag: 0.5.0')
+        string(defaultValue: "0.0.1", name: 'tag_root')
         string(defaultValue: "192.168.192.96:5001", name: 'registry')
         string(defaultValue: env.BRANCH_NAME, name: 'k8s_namespace')
         booleanParam(defaultValue: false, name: 'delete_namespace_at_end')
