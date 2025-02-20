@@ -40,7 +40,7 @@ public class FxMarketFlinkProcessor {
         //        PipelineOptions.SERIALIZATION_CONFIG.key(),
         //        "[com.fx.market.flink.processor.model.FxRateEventProto: {type: kryo, kryo-type: registered, class: com.twitter.chill.protobuf.ProtobufSerializer}}]");
 
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment(config);
+        StreamExecutionEnvironment env = StreamExecutionEnvironment. //getExecutionEnvironment(config);
         //env.getConfig().registerKryoType(MyCustomType.class);
         //env.getConfig().disableGenericTypes();
 //        env.getConfig().registerTypeWithKryoSerializer(FxRateEventProto.class, ProtobufSerializer.class);

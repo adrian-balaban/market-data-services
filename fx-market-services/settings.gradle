@@ -29,3 +29,7 @@ project(":fx-market-flink-processor").projectDir = file("./flink-jobs/fx-market-
 include ':flink-orchestrator'
 include ':fx-market-connector'
 include ':fx-market-processor'
+
+
+//include ':fx-market-flink-connector-wordcount'
+//project(":fx-market-flink-connector-wordcount").projectDir = file("./flink-jobs/fx-market-flink-connector-wordcount")

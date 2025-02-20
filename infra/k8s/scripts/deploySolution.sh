@@ -58,6 +58,8 @@ helm upgrade --install \
 
 if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
+#kubectl apply -f flink-deployment-websocket-connector.yaml
+
 echo "$SEPARATOR"
 echo "DEPLOYING SOLUTION - END"
 echo "$SEPARATOR"
