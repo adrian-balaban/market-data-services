@@ -61,7 +61,7 @@ RES='controlcenter'
 kubectl -n ${NAMESPACE} delete pod $RES
 kubectl wait pod $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
 
-RES='kafka'
+RES='kafka-0'
 kubectl -n ${NAMESPACE} delete pod $RES
 kubectl wait pod $RES --for=condition=delete --timeout=600s -n ${NAMESPACE}
 
