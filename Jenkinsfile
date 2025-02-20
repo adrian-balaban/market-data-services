@@ -36,6 +36,17 @@ pipeline {
             steps {
                 cleanWs()
                 script {
+                    println "CAUSE ${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause).properties}"
+
+                    // Get all Causes for the current build
+                    def causes = currentBuild.getBuildCauses()
+                    println "CAUSES ${causes}"
+
+                    // Get a specific Cause type (in this case the user who kicked off the build),
+                    // if present.
+                    def specificCause = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
+                    println "SPECIFIC CAUSE ${specificCause}"
+
                     deleteDir()
                 }
             }
