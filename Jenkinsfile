@@ -34,9 +34,12 @@ pipeline {
     stages {
         stage("Clean workspace") {
             steps {
-                cleanWs()
+
                 script {
                     deleteDir()
+                    cleanWs()
+                    println "ls -la"
+                    sh "ls -la"
 
                     println "CAUSE ${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause).properties}"
 
@@ -59,7 +62,14 @@ pipeline {
         }
         stage('Checkout') {
             steps {
-                checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
+                checkout scmGit(
+                    branches: [[name: '**']],
+                    extensions: [[$class: 'WipeWorkspace']],
+                    userRemoteConfigs: [[
+                        credentialsId: 'github-owner-token',
+                        url: 'https://github.com/Jereczek/market-data-services.git'
+                    ]]
+                )
             }
         }
         stage("Build&Deploy with bash script") {
