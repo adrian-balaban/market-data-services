@@ -1,4 +1,3 @@
-def jenkinsfilename = 'JenkinsfileK8sDeleteNamespace'
 pipeline {
     agent any
     parameters {
@@ -20,33 +19,27 @@ pipeline {
                 cleanWs()
                 script {
                     deleteDir()
+
+                    println "Cause of job launch: ${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause).properties}"
+                    println "All causes for the current build ${currentBuild.getBuildCauses()}"
+                    if (!triggeredBy('UserIdCause')) {
+                        currentBuild.result = 'ABORTED'
+                        error('Stopping early because job was not started by an user')
+                    }
+
+                    if (params.k8s_namespace.trim().isEmpty()) {
+                        currentBuild.result = 'ABORTED'
+                        error('Stopping early because job namespace is empty')
+                    }
                 }
             }
         }
         stage('Checkout') {
-            when {
-                allOf {
-                    expression {
-                        return (params.k8s_namespace.length() > 0)
-                    }
-                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
-                }
-            }
             steps {
                 checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
             }
         }
         stage("Delete namespace") {
-            when {
-                allOf {
-                    expression {
-                        return (params.k8s_namespace.length() > 0)
-                    }
-                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
-                }
-            }
             steps {
               script {
                 withKubeConfig(

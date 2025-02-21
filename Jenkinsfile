@@ -1,4 +1,3 @@
-def jenkinsfilename = 'Jenkinsfile'
 pipeline {
     agent any
     tools {
@@ -37,27 +36,33 @@ pipeline {
                 cleanWs()
                 script {
                     deleteDir()
+
+                    println "Cause of job launch: ${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause).properties}"
+                    println "All causes for the current build ${currentBuild.getBuildCauses()}"
+                    if (!triggeredBy('UserIdCause')) {
+                        currentBuild.result = 'ABORTED'
+                        error('Stopping early because job was not started by an user')
+                    }
                 }
             }
         }
         stage('Checkout') {
-            when {
-                allOf {
-                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
-                }
-            }
             steps {
                 checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
             }
         }
-        stage("Build&Deploy with bash script") {
-            when {
-                allOf {
-                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
-                }
+        stage("Delete namespace") {
+            steps {
+              script {
+                withKubeConfig(
+                        clusterName: 'kind-kind', contextName: 'kind-kind', credentialsId: 'K8sConfigMichal', namespace: 'default',
+                        restrictKubeConfigAccess: true, serverUrl: 'https://192.168.192.96:6443') {
+                    sh "cd ./infra/k8s && ./destroyAll.sh -n ${params.k8s_namespace}"
+                 }
+              }
             }
+        }
+        stage("Build&Deploy with bash script") {
             steps {
               script {
                 withKubeConfig(
@@ -69,12 +74,6 @@ pipeline {
             }
         }
         /*stage("Build&Deploy with argocd script") {
-            when {
-                allOf {
-                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
-                }
-            }
             steps {
                 script {
                     withKubeConfig(
@@ -88,12 +87,6 @@ pipeline {
         stage('CucumberRun') {
             environment {
                 JENKINS_RUN = "true"
-            }
-            when {
-                allOf {
-                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
-                }
             }
             steps {
                 script {
