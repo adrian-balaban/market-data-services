@@ -63,7 +63,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scmGit(
-                    branches: [[name: '**']],
+                    branches: [[name: "${env.BRANCH_NAME}"]],
                     extensions: [[$class: 'WipeWorkspace']],
                     userRemoteConfigs: [[
                         credentialsId: 'github-owner-token',
