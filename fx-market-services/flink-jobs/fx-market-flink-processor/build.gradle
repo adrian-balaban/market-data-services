@@ -9,7 +9,7 @@ plugins {
 group = 'com.fx.market.flink.processor'
 version = rootProject.version
 mainClassName = 'com.fx.market.flink.processor.FxMarketFlinkProcessor'
-description = """Flink Sample Flink Job"""
+description = """Flink Processor Sample Flink Job"""
 
 
 // NOTE: We cannot use "compileOnly" or "shadow" configurations since then we could not run code
@@ -30,10 +30,10 @@ dependencies {
     // Compile-time dependencies that should NOT be part of the
     // shadow (uber) jar and are provided in the lib folder of Flink
     // --------------------------------------------------------------
-    implementation "org.apache.flink:flink-streaming-java_2.12:${FLINK_STREAMING_VERSION}"
-    implementation "org.apache.flink:flink-clients:${FLINK_CLIENTS_VERSION}"
+    implementation "org.apache.flink:flink-streaming-java:${FLINK_VERSION}"
+    implementation "org.apache.flink:flink-clients:${FLINK_VERSION}"
     implementation 'com.google.code.gson:gson:2.11.0'
-    implementation "org.apache.flink:flink-protobuf:${FLINK_PROTOBUF_VERSION}"
+    implementation "org.apache.flink:flink-protobuf:${FLINK_VERSION}"
 
     implementation('com.twitter:chill-protobuf:0.7.6') {
         exclude group: 'com.esotericsoftware.kryo', module: 'kryo'
