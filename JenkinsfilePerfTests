@@ -1,4 +1,3 @@
-def jenkinsfilename = 'JenkinsfilePerfTests'
 def branchAllowed   = 'master'
 pipeline {
     agent any
@@ -35,24 +34,24 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            when {
-                allOf {
-                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
+        stage("Clean workspace") {
+            steps {
+                cleanWs()
+                script {
+                    deleteDir()
+                    if (!triggeredBy('UserIdCause')) {
+                        currentBuild.result = 'ABORTED'
+                        error('Stopping early because job was not started by an user')
+                    }
                 }
             }
+        }
+        stage('Checkout') {
             steps {
                 checkout scmGit(branches: [[name: "${branchAllowed}"]], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
             }
         }
         stage('PerfTestsRun') {
-            when {
-                allOf {
-                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
-                }
-            }
             environment {
                 JENKINS_RUN = "true"
             }
