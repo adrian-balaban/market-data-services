@@ -46,6 +46,11 @@ pipeline {
                 }
             }
         }
+        stage('Checkout') {
+            steps {
+                checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
+            }
+        }
         stage("Delete namespace") {
             steps {
               script {
@@ -55,11 +60,6 @@ pipeline {
                     sh "cd ./infra/k8s && ./destroyAll.sh -n ${params.k8s_namespace}"
                  }
               }
-            }
-        }
-        stage('Checkout') {
-            steps {
-                checkout scmGit(branches: [[name: '**']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
             }
         }
         stage("Build&Deploy with bash script") {
