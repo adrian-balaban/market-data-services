@@ -40,23 +40,6 @@ pipeline {
                     cleanWs()
                     println "ls -la"
                     sh "ls -la"
-
-                    println "CAUSE ${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause).properties}"
-
-                    // Get all Causes for the current build
-                    def causes = currentBuild.getBuildCauses()
-                    println "CAUSES ${causes}"
-
-                    // Get a specific Cause type (in this case the user who kicked off the build),
-                    // if present.
-                    def specificCause = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
-                    println "SPECIFIC CAUSE ${specificCause}"
-
-                    //SPECIFIC CAUSE [[_class:hudson.model.Cause$UserIdCause, shortDescription:Started by user admin, userId:admin, userName:admin]]
-                    if (!triggeredBy('UserIdCause')) {
-                        currentBuild.result = 'ABORTED'
-                        error('Stopping early because job was not started by an user')
-                    }
                 }
             }
         }
@@ -73,6 +56,12 @@ pipeline {
             }
         }
         stage("Build&Deploy with bash script") {
+            when {
+                allOf {
+                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
+                    //not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
+                }
+            }
             steps {
               script {
                 withKubeConfig(
