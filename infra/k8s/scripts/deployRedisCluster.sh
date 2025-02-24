@@ -41,14 +41,7 @@ if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exi
 
 helm upgrade --install fx oci://${REGISTRY_NAME}/${REPOSITORY_NAME}/redis-cluster \
     --version 11.4.3 \
-    --set "
-        persistence.enabled=false,
-        password=${REDIS_DEFAULT_PASSWORD},
-        cluster.replicas=1,
-        cluster.nodes=6,
-        cluster.update.addNodes=true,
-        persistentVolumeClaimRetentionPolicy.whenDeleted=Delete,
-        volumePermissions.resourcesPreset=micro" \
+    --set "persistence.enabled=false,password=${REDIS_DEFAULT_PASSWORD},cluster.replicas=1,cluster.nodes=6,cluster.update.addNodes=true,persistentVolumeClaimRetentionPolicy.whenDeleted=Delete,volumePermissions.resourcesPreset=micro" \
     --timeout 600s \
     --namespace ${NAMESPACE} 
 
