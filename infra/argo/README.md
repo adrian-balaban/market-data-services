@@ -13,7 +13,7 @@ Usage:
 ```
 
 Samples:
-- `./deployAllWithArgo.sh -branch master -env test -build false -n test`
+- `./deployAllWithArgo.sh -branch master -env test -build false -n master`
 - `./deployAllWithArgo.sh -branch master -env dev -build false -n dev`
 - `./deployAllWithArgo.sh -branch <my_branch_with_changed_manifests> -env local -build true -n <my_namespace>`
 

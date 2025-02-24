@@ -122,8 +122,8 @@ pushd ../k8s/scripts
   ./deployKafka.sh -n ${NAMESPACE}
   if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
-  ./deployFlink.sh -n ${NAMESPACE}
-  if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
+#  ./deployFlink.sh -n ${NAMESPACE}
+#  if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
   ./deployRedisCluster.sh -n ${NAMESPACE}
   if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
@@ -135,10 +135,10 @@ popd
 
 sleep 5
 
-wait_for_pod "flink-jobmanager"
+#wait_for_pod "flink-jobmanager"
 wait_for_pod "zookeeper-0"
 wait_for_pod "kafka-0"
-#wait_for_pod "connect-0"
+
 ## Argo
 wait_for_pod "argocd-redis"
 wait_for_pod "argocd-server"
@@ -170,6 +170,18 @@ sed -i "s/${ENV}/___CHANGE_ME_ENV___/g" ./argoProject.yaml ## Revert
 
 sleep 10
 
+pushd ./flink-operator
+    sed -i "s/___CHANGE_ME_ENV___/${ENV}/g" ./application.yaml ## Set proper env
+    sed -i "s/___CHANGE_ME_BRANCH___/${BRANCH}/g" ./application.yaml ## Set proper namespace
+    sed -i "s/___CHANGE_ME_NAMESPACE___/${NAMESPACE}/g" ./application.yaml ## Set proper namespace
+    kubectl apply -f application.yaml
+    sed -i "s/${NAMESPACE}/___CHANGE_ME_NAMESPACE___/g" ./application.yaml ## Revert
+    sed -i "s/${BRANCH}/___CHANGE_ME_BRANCH___/g" ./application.yaml ## Revert
+    sed -i "s/${ENV}/___CHANGE_ME_ENV___/g" ./application.yaml ## Revert
+popd
+
+wait_for_pod "flink-kubernetes-operator"
+
 pushd ./externals
     sed -i "s/___CHANGE_ME_ENV___/${ENV}/g" ./application.yaml ## Set proper env
     sed -i "s/___CHANGE_ME_BRANCH___/${BRANCH}/g" ./application.yaml ## Set proper namespace
@@ -184,6 +196,16 @@ wait_for_pod "fx-market-data-stub"
 
 pushd ./solution
     sed -i "s/___CHANGE_ME_ENV___/${ENV}/g" ./application.yaml ## Set proper namespace
+    sed -i "s/___CHANGE_ME_BRANCH___/${BRANCH}/g" ./application.yaml ## Set proper namespace
+    sed -i "s/___CHANGE_ME_NAMESPACE___/${NAMESPACE}/g" ./application.yaml ## Set proper namespace
+    kubectl apply -f application.yaml
+    sed -i "s/${NAMESPACE}/___CHANGE_ME_NAMESPACE___/g" ./application.yaml ## Revert
+    sed -i "s/${BRANCH}/___CHANGE_ME_BRANCH___/g" ./application.yaml ## Revert
+    sed -i "s/${ENV}/___CHANGE_ME_ENV___/g" ./application.yaml ## Revert
+popd
+
+pushd ./flink-jobs
+    sed -i "s/___CHANGE_ME_ENV___/${ENV}/g" ./application.yaml ## Set proper env
     sed -i "s/___CHANGE_ME_BRANCH___/${BRANCH}/g" ./application.yaml ## Set proper namespace
     sed -i "s/___CHANGE_ME_NAMESPACE___/${NAMESPACE}/g" ./application.yaml ## Set proper namespace
     kubectl apply -f application.yaml

@@ -40,7 +40,15 @@ helm repo update
 if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 
 helm upgrade --install fx oci://${REGISTRY_NAME}/${REPOSITORY_NAME}/redis-cluster \
-    --set "password=${REDIS_DEFAULT_PASSWORD},cluster.nodes=6" \
+    --version 11.4.3 \
+    --set "
+        persistence.enabled=false,
+        password=${REDIS_DEFAULT_PASSWORD},
+        cluster.replicas=1,
+        cluster.nodes=6,
+        cluster.update.addNodes=true,
+        persistentVolumeClaimRetentionPolicy.whenDeleted=Delete,
+        volumePermissions.resourcesPreset=micro" \
     --timeout 600s \
     --namespace ${NAMESPACE} 
 

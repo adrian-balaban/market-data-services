@@ -6,15 +6,15 @@ export TOP_PID=$$
 SEPARATOR="==================================="
 
 BUILD_PHASE='true' # default if not provided
-TEST_MODE='false' # default if not provided
+TEST_MODE='true' # default if not provided
 DOCKER_REGISTRY="localhost:5001" # default if not provided
 NAMESPACE="fxmarket" # default if not provided
 TAG='0.1.0' # default if not provided
 
 print_usage() {
   echo "Usage:"
-  echo "-build <true|false>           <- to build with test mode - default: true"
-  echo "-test <true|false>            <- to build with test mode - default: false"
+  echo "-build <true|false>           <- to build images - default: true"
+  echo "-test <true|false>            <- to build with test mode - default: true"
   echo "-n <namespace>                <- to specify namespace"
   echo "-tag <docker_tag>             <- to specify docker tag for services"
   echo "-registry <DOCKER_REGISTRY>   <- to specify docker registry"
@@ -132,7 +132,6 @@ wait_for_pod "zookeeper-0"
 wait_for_pod "kafka-0"
 wait_for_pod "fx-redis-cluster-0"
 wait_for_pod "fx-market-data-stub"
-#wait_for_pod "fx-market-data-stub-ws"
 
 pushd ./scripts && ./deploySolution.sh -tag ${TAG} -registry ${DOCKER_REGISTRY} -n ${NAMESPACE} && popd
 

@@ -55,6 +55,9 @@ timeout 5 kubectl delete all --all -n ${NAMESPACE}
 echo "DELETING NAMESPACE"
 timeout 15 kubectl delete namespace ${NAMESPACE}
 
-kubectl get namespace "${NAMESPACE}" -o json \
-  | tr -d "\n" | sed "s/\"finalizers\": \[[^]]\+\]/\"finalizers\": []/" \
-  | kubectl replace --raw /api/v1/namespaces/${NAMESPACE}/finalize -f -
+# kubectl get namespace "${NAMESPACE}" -o json \
+#   | tr -d "\n" | sed "s/\"finalizers\": \[[^]]\+\]/\"finalizers\": []/" \
+#   | kubectl replace --raw /api/v1/namespaces/${NAMESPACE}/finalize -f -
+
+
+#kubectl delete -f https://github.com/jetstack/cert-manager/releases/download/v1.8.2/cert-manager.yaml
