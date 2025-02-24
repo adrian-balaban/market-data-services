@@ -14,7 +14,7 @@ spec:
       initContainers:
           # Sample sidecar container
         - name: fx-flink-processor
-          image: 192.168.192.96:5001/fx-market-flink-jobs/processor:0.0.7-logs
+          image: 192.168.192.96:5001/fx-market-flink-jobs/processor:0.0.8-logs
           command: ["sh", "-c", "cp /flink/jars/* /shared/"]
           volumeMounts:
             - mountPath: /shared
@@ -37,7 +37,7 @@ spec:
       memory: "2048m"
       cpu: 1
   job:
-    jarURI: local:///shared/fxmarketflinkproces-0.0.7-logs-all.jar
+    jarURI: local:///shared/fxmarketflinkproces-0.0.8-logs-all.jar
     parallelism: 2
     upgradeMode: stateless
     state: running
