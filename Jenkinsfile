@@ -32,6 +32,24 @@ pipeline {
     }
 
     stages {
+
+     stage("Clean namespace before") {
+                    steps {
+                        script {
+                            withKubeConfig(
+                                clusterName: 'kind-kind',
+                                contextName: 'kind-kind',
+                                credentialsId: 'K8sConfigMichal',
+                                namespace: 'default',
+                                restrictKubeConfigAccess: true,
+                                serverUrl: 'https://192.168.192.96:6443'
+                            ) {
+                                sh "cd ./infra/k8s && ./destroyAll.sh -n ${params.k8s_namespace}"
+                            }
+                        }
+                    }
+                }
+
         stage("Clean workspace") {
             steps {
 
@@ -44,22 +62,7 @@ pipeline {
             }
         }
 
-        stage("Clean namespace before") {
-                steps {
-                    script {
-                        withKubeConfig(
-                            clusterName: 'kind-kind',
-                            contextName: 'kind-kind',
-                            credentialsId: 'K8sConfigMichal',
-                            namespace: 'default',
-                            restrictKubeConfigAccess: true,
-                            serverUrl: 'https://192.168.192.96:6443'
-                        ) {
-                            sh "cd ./infra/k8s && ./destroyAll.sh -n ${params.k8s_namespace}"
-                        }
-                    }
-                }
-            }
+
 
         stage('Checkout') {
             steps {
