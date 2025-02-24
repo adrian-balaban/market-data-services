@@ -44,7 +44,7 @@ pipeline {
             }
         }
 
-        stage("Clean namespace") {
+        stage("Clean namespace before") {
                 steps {
                     script {
                         withKubeConfig(
