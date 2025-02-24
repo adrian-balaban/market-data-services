@@ -58,7 +58,7 @@ apps:
   ##### FX MARKET PROCESSOR APP #####
   ###################################
   fxmarketprocessor:
-    enabled: false
+    enabled: true
     name: fx-market-processor
     image:
       repository: localhost:5001/fx-market-services/fx-market-processor
@@ -120,7 +120,7 @@ apps:
   ##### FLINK ORCHESTRATOR APP ######
   ###################################
   flinkorchestrator:
-    enabled: false
+    enabled: true
     name: flink-orchestrator
     image:
       repository: localhost:5001/fx-market-services/flink-orchestrator
