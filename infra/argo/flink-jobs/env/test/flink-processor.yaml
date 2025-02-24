@@ -1,7 +1,7 @@
 apiVersion: flink.apache.org/v1beta1
 kind: FlinkDeployment
 metadata:
-  namespace: mj1
+  namespace: test
   name: fx-flink-processor
 spec:
   image: flink:1.20
