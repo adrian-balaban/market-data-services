@@ -28,10 +28,18 @@ echo "BUILDING SERVICES - START"
 echo "$SEPARATOR"
 sleep 2
 
-pushd ../../services/docker/fx-market-connector && ./build-image.sh -tag ${TAG} -registry ${DOCKER_REGISTRY} -profile k8s && popd
-pushd ../../services/docker/fx-market-processor && ./build-image.sh -tag ${TAG} -registry ${DOCKER_REGISTRY} -profile k8s && popd
-pushd ../../services/docker/flink-orchestrator && ./build-image.sh -tag ${TAG} -registry ${DOCKER_REGISTRY} -profile k8s && popd
-pushd ../../services/docker/fx-market-redis-adapter && ./build-image.sh -tag ${TAG} -registry ${DOCKER_REGISTRY} -profile k8s && popd
+pushd ../../services/docker/fx-market-connector
+./build-image.sh -tag ${TAG} -registry ${DOCKER_REGISTRY} -profile k8s
+popd
+pushd ../../services/docker/fx-market-processor
+./build-image.sh -tag ${TAG} -registry ${DOCKER_REGISTRY} -profile k8s
+popd
+pushd ../../services/docker/flink-orchestrator
+./build-image.sh -tag ${TAG} -registry ${DOCKER_REGISTRY} -profile k8s
+popd
+pushd ../../services/docker/fx-market-redis-adapter
+./build-image.sh -tag ${TAG} -registry ${DOCKER_REGISTRY} -profile k8s
+popd
 
 echo "$SEPARATOR"
 echo "BUILDING SERVICES - END"

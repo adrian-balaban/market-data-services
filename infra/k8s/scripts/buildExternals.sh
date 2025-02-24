@@ -38,7 +38,7 @@ sleep 2
 
 DOCKER_IMAGE_NAME=${DOCKER_REGISTRY}/fx-market-externals/market-data-stub:${TAG}
 
-pushd ../../../vendors/market-data-stub &&
+pushd ../../../vendors/market-data-stub
   docker build --build-arg TEST_MODE_ARG=$TEST_MODE -t ${DOCKER_IMAGE_NAME} . --load
   if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
   docker push ${DOCKER_IMAGE_NAME}
