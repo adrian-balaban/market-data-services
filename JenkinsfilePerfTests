@@ -5,7 +5,6 @@ pipeline {
         jdk '21'
     }
     parameters {
-        string(defaultValue: "0.0.1", name: 'tag_root')
         string(defaultValue: "192.168.192.96:5001", name: 'registry')
         string(defaultValue: "master", name: 'k8s_namespace')
         booleanParam(defaultValue: false, name: 'connectorRunBatchJob')
@@ -101,11 +100,11 @@ pipeline {
        post {
                 always {
                     // Архивируем логи K6
-                    archiveArtifacts artifacts: 'build/reports/k6/k6_test_results.log', fingerprint: true
+                    archiveArtifacts artifacts: 'build/reports/k6_test_results.log', fingerprint: true
 
                     // Если в логах K6 есть ошибки - падаем
                     script {
-                        def k6Log = readFile('build/reports/k6/k6_test_results.log')
+                        def k6Log = readFile('build/reports/k6_test_results.log')
                         if (k6Log.contains('"failed": 1') || k6Log.contains('"failed": true')) {
                             error("k6 failed")
                         }
