@@ -33,6 +33,19 @@ pipeline {
 
     stages {
 
+   stage('Checkout') {
+            steps {
+                checkout scmGit(
+                    branches: [[name: "${env.BRANCH_NAME}"]],
+                    extensions: [[$class: 'WipeWorkspace']],
+                    userRemoteConfigs: [[
+                        credentialsId: 'github-owner-token',
+                        url: 'https://github.com/Jereczek/market-data-services.git'
+                    ]]
+                )
+            }
+        }
+
      stage("Clean namespace before") {
                     steps {
                         script {
@@ -64,18 +77,7 @@ pipeline {
 
 
 
-        stage('Checkout') {
-            steps {
-                checkout scmGit(
-                    branches: [[name: "${env.BRANCH_NAME}"]],
-                    extensions: [[$class: 'WipeWorkspace']],
-                    userRemoteConfigs: [[
-                        credentialsId: 'github-owner-token',
-                        url: 'https://github.com/Jereczek/market-data-services.git'
-                    ]]
-                )
-            }
-        }
+
         stage("Build&Deploy with bash script") {
             when {
                 allOf {
