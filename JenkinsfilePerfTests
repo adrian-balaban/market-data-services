@@ -48,7 +48,14 @@ pipeline {
         }
         stage('Checkout') {
             steps {
-                checkout scmGit(branches: [[name: "${branchAllowed}"]], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
+               checkout scmGit(
+                                branches: [[name: "${env.BRANCH_NAME}"]],
+                                extensions: [[$class: 'WipeWorkspace']],
+                                userRemoteConfigs: [[
+                                    credentialsId: 'github-owner-token',
+                                    url: 'https://github.com/Jereczek/market-data-services.git'
+                                ]]
+                            )
             }
         }
         stage('PerfTestsRun') {
@@ -86,5 +93,23 @@ pipeline {
                 }
             }
         }
+
+
+
+
     }
+       post {
+                always {
+                    // Архивируем логи K6
+                    archiveArtifacts artifacts: 'build/reports/k6/k6_test_results.log', fingerprint: true
+
+                    // Если в логах K6 есть ошибки - падаем
+                    script {
+                        def k6Log = readFile('build/reports/k6/k6_test_results.log')
+                        if (k6Log.contains('"failed": 1') || k6Log.contains('"failed": true')) {
+                            error("k6 failed")
+                        }
+                    }
+                }
+            }
 }
