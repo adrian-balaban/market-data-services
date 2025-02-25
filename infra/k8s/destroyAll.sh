@@ -75,5 +75,4 @@ kubectl get pv | grep ${NAMESPACE} | awk {'print $1'} | xargs --no-run-if-empty 
 kubectl delete all --all -n ${NAMESPACE}
 
 echo "DELETING NAMESPACE"
-timeout 15
-kubectl delete namespace ${NAMESPACE} --force
+timeout 15 kubectl delete namespace ${NAMESPACE} --force
