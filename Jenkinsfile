@@ -32,6 +32,7 @@ pipeline {
     }
 
     stages {
+
      stage("Clean namespace before") {
                     steps {
                         script {
@@ -49,52 +50,45 @@ pipeline {
                     }
                 }
 
-                        stage("Clean workspace") {
-                            steps {
-
-                                script {
-                                    deleteDir()
-                                    cleanWs()
-                                    println "ls -la"
-                                    sh "ls -la"
-                                }
-                            }
-                        }
-
-            stage('Checkout') {
-                    steps {
-                        checkout scmGit(
-                            branches: [[name: "${env.BRANCH_NAME}"]],
-                            extensions: [[$class: 'WipeWorkspace']],
-                            userRemoteConfigs: [[
-                                credentialsId: 'github-owner-token',
-                                url: 'https://github.com/Jereczek/market-data-services.git'
-                            ]]
-                        )
-                    }
-                }
-
-
-
-
-        stage("Delete namespace") {
+        stage("Clean workspace") {
             steps {
-              script {
-                withKubeConfig(
-                        clusterName: 'kind-kind', contextName: 'kind-kind', credentialsId: 'K8sConfigMichal', namespace: 'default',
-                        restrictKubeConfigAccess: true, serverUrl: 'https://192.168.192.96:6443') {
-                    sh "cd ./infra/k8s && ./destroyAll.sh -n ${params.k8s_namespace}"
-                 }
-              }
+
+                script {
+                    deleteDir()
+                    cleanWs()
+                    println "ls -la"
+                    sh "ls -la"
+                }
+            }
+        }
+
+
+
+        stage('Checkout') {
+            steps {
+                checkout scmGit(
+                    branches: [[name: "${env.BRANCH_NAME}"]],
+                    extensions: [[$class: 'WipeWorkspace']],
+                    userRemoteConfigs: [[
+                        credentialsId: 'github-owner-token',
+                        url: 'https://github.com/Jereczek/market-data-services.git'
+                    ]]
+                )
             }
         }
         stage("Build&Deploy with bash script") {
+            when {
+                allOf {
+                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
+                    //not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
+                }
+            }
             steps {
               script {
                 withKubeConfig(
                   clusterName: 'kind-kind', contextName: 'kind-kind', credentialsId: 'K8sConfigMichal', namespace: 'default',
                   restrictKubeConfigAccess: true, serverUrl: 'https://192.168.192.96:6443') {
-                    sh "cd ./infra/k8s && ./deployAll.sh      -build ${params.build} -test true -n ${params.k8s_namespace} -tag ${params.tag_root} -registry ${params.registry}"
+                    sh "cd ./infra/k8s && ./deployAll.sh      -build ${params.build} -test true -n ${params.k8s_namespace} -tag ${params.tag_root}-${env.BRANCH_NAME} -registry ${params.registry}"
                 }
               }
             }
