@@ -104,7 +104,7 @@ pipeline {
 
                     // Если в логах K6 есть ошибки - падаем
                     script {
-                        def k6Log = readFile('build/reports/k6_test_results.log')
+                        def k6Log = readFile('qa/build/reports/k6_test_results.log')
                         if (k6Log.contains('"failed": 1') || k6Log.contains('"failed": true')) {
                             error("k6 failed")
                         }
