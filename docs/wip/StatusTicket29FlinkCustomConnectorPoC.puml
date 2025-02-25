@@ -2,7 +2,7 @@
 
 skin rose
 
-title 24/2/2025 Status for Ticket 29 Flink Custom Connector PoC
+title 25/2/2025 Status for Ticket [29] Flink Custom Connector PoC
 
 <style>
 
@@ -43,13 +43,14 @@ arrow {
 ** sources
 *** compile: ok with jdk 8,11,17,21
 *** tests: ko with jdk 8,11,17,21
+*** note: maven is th build tool used
 
 left side
 
-** docs.
-*** WIP from the site
-*** Abbandoned books
-*** flink source code
+** documenting
+*** WIP only from the site and from the source code
+*** Abbandoned books not found
+*** flink source code and examples
 **** WIP file source unbounded
 **** websocket unbounded - deprecated sources
 ** WIP write the code for the source
