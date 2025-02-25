@@ -1,4 +1,3 @@
-def jenkinsfilename = 'JenkinsfilePerfTests'
 def branchAllowed   = 'master'
 pipeline {
     agent any
@@ -34,41 +33,24 @@ pipeline {
     }
 
     stages {
-        stage("Clean namespace before") {
-                    steps {
-                        script {
-                            withKubeConfig(
-                                clusterName: 'kind-kind',
-                                contextName: 'kind-kind',
-                                credentialsId: 'K8sConfigMichal',
-                                namespace: 'default',
-                                restrictKubeConfigAccess: true,
-                                serverUrl: 'https://192.168.192.96:6443'
-                            ) {
-                                sh "cd ./infra/k8s && ./destroyAll.sh -n ${params.k8s_namespace}"
-                            }
-                        }
+        stage("Clean workspace") {
+            steps {
+                cleanWs()
+                script {
+                    deleteDir()
+                    if (!triggeredBy('UserIdCause')) {
+                        currentBuild.result = 'ABORTED'
+                        error('Stopping early because job was not started by an user')
                     }
                 }
-
-        stage('Checkout') {
-            when {
-                allOf {
-                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
-                }
             }
+        }
+        stage('Checkout') {
             steps {
                 checkout scmGit(branches: [[name: "${branchAllowed}"]], extensions: [], userRemoteConfigs: [[credentialsId: 'github-owner-token', url: 'https://github.com/Jereczek/market-data-services.git']])
             }
         }
         stage('PerfTestsRun') {
-            when {
-                allOf {
-                    triggeredBy 'UserIdCause' // start the job only if it is launched by user
-                    not { changeset pattern: "${jenkinsfilename}" }  // exclude this Jenkinsfile from the “changeset” detected by Jenkins Pipeline
-                }
-            }
             environment {
                 JENKINS_RUN = "true"
             }
