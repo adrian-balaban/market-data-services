@@ -100,7 +100,7 @@ pipeline {
        post {
                 always {
                     // Архивируем логи K6
-                    archiveArtifacts artifacts: 'build/reports/k6_test_results.log', fingerprint: true
+                    archiveArtifacts artifacts: 'qa/build/reports/k6_test_results.log', fingerprint: true
 
                     // Если в логах K6 есть ошибки - падаем
                     script {
