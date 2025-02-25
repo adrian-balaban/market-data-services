@@ -54,8 +54,13 @@ left side
 **** WIP file source unbounded
 **** websocket unbounded - deprecated sources
 ** WIP write the code for the source
-** WIP testing : setup
+*** DONE SseSourceSplit
+*** AbstractSseSource, SseSource
+*** SseSourceBuilder
+*** SseSourceSplitSerializer
+*** use SourceReaderBase SplitReader SplitChange RecordsWithSplitIds RecordEmitter ? \nsee https://cwiki.apache.org/confluence/display/FLINK/FLIP-27%3A+Refactor+Source+Interface#FLIP27:RefactorSourceInterface-SourceSplit
+** WIP testing locally
+** WIP testing perf locally
 ** others
-*** WIP architecture for HA
 
 @endwbs
