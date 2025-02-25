@@ -49,7 +49,7 @@ pipeline {
         stage('Checkout') {
             steps {
                checkout scmGit(
-                                branches: [[name: "${env.BRANCH_NAME}"]],
+                                branches: [[name: "tests-perftests-result-artifact"]],
                                 extensions: [[$class: 'WipeWorkspace']],
                                 userRemoteConfigs: [[
                                     credentialsId: 'github-owner-token',
