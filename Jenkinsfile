@@ -35,21 +35,6 @@ pipeline {
 
 
 
-        stage("Clean workspace") {
-            steps {
-                cleanWs()
-                script {
-                    deleteDir()
-
-                    println "Cause of job launch: ${currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause).properties}"
-                    println "All causes for the current build ${currentBuild.getBuildCauses()}"
-                    if (!triggeredBy('UserIdCause')) {
-                        currentBuild.result = 'ABORTED'
-                        error('Stopping early because job was not started by an user')
-                    }
-                }
-            }
-        }
 
             stage('Checkout') {
                     steps {
