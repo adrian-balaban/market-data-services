@@ -215,7 +215,7 @@ tasks.register('connectorRunBatchJob', Exec) {
         kubectl delete job k6-performance-test -n ${K8S_NAMESPACE} --ignore-not-found && \
         kubectl apply -f src/test/java/k8s/k6_job.yaml -n ${K8S_NAMESPACE} && \
         kubectl wait --for=condition=complete job/k6-performance-test -n ${K8S_NAMESPACE} --timeout=60s && \
-
+         mkdir -p build/reports/ && \
         kubectl logs \$(kubectl get pod -l job-name=k6-performance-test -n ${K8S_NAMESPACE} -o jsonpath="{.items[0].metadata.name}") -n ${K8S_NAMESPACE} > build/reports/k6_test_results.log
 
     """
