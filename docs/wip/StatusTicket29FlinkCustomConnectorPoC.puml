@@ -1,0 +1,60 @@
+@startmindmap
+
+skin rose
+
+title 24/2/2025 Status for Ticket 29 Flink Custom Connector PoC
+
+<style>
+
+node {
+    Padding 12
+    Margin 3
+    HorizontalAlignment center
+    LineColor blue
+    LineThickness 3.0
+}
+
+rootNode {
+    LineStyle 8.0;3.0
+    LineColor blue
+    BackgroundColor lightgreen
+    LineThickness 3.0
+    RoundCorner 0
+    Shadowing 5
+}
+
+leafNode {
+    LineStyle 1
+    LineColor red
+    LineThickness 1.0
+    RoundCorner 20
+    Padding 3
+}
+
+arrow {
+    LineStyle 4
+    LineThickness 1
+    LineColor blue
+}
+</style>
+
+* Flink\n1.20.1
+** DONE\nupgrade to Flink 1.20.1\n on local and \non k8s\ninstallations
+** sources
+*** compile: ok with jdk 8,11,17,21
+*** tests: ko with jdk 8,11,17,21
+
+left side
+
+** docs.
+*** WIP from the site
+*** Abbandoned books
+*** flink source code
+**** WIP file source unbounded
+**** websocket unbounded - deprecated sources
+** WIP write the code for the source
+** WIP testing : setup
+** others
+*** WIP architecture for HA
+
+@endwbs
