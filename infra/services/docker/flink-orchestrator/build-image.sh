@@ -26,10 +26,10 @@ done
 echo "Building OSI Image - flink-orchestrator - Start"
 
 pushd ../../../../fx-market-services
-
-./gradlew flink-orchestrator:clean && \
-./gradlew flink-orchestrator:bootBuildImage -Pversion=${TAG} -Pregistry=${DOCKER_REGISTRY} -Pprofile=${SPRING_PROFILE}
-
+  ./gradlew flink-orchestrator:clean
+  if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
+  ./gradlew flink-orchestrator:bootBuildImage -Pversion=${TAG} -Pregistry=${DOCKER_REGISTRY} -Pprofile=${SPRING_PROFILE}
+  if [[ $? != 0 ]]; then echo "ERROR | STOP" && exit; fi # check return value, exit if not 0
 popd
 
 echo "Building OSI Image - flink-orchestrator - Finish"
