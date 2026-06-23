@@ -1,5 +1,10 @@
 # market-data-processor
 
+> **Fork of [Jereczek/market-data-services](https://github.com/Jereczek/market-data-services)**
+>
+> Built during the first 4 months of onboarding at a UK Forex/payments company (top-4 card network subsidiary), while awaiting equipment, as a self-study of the domain — by a new team of 3.
+
+FX market data processing platform — multi-service streaming architecture for foreign-exchange rates, built for production use on Kubernetes.
 
 ### Requirements:
 - java Graavlm v 21
